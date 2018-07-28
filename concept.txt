@@ -1,0 +1,15 @@
+Spielmechaniken:
+	Es ist ein Platformer, in dem man Platformen schießen kann.
+	Man kann nur eine begrenzte Anzahl schießen
+	Platformarten:
+		Nichts besonderes machen
+		Links rechts bzw. oben unten bewegen
+		In der luft schweben
+		Den Spieler hoch werfen
+Gegner:
+	 Kann man mit Projektilen abschießen.
+	 Machen Schaden bei Berührung.
+	 Bewegen sich hin und her
+	 Manche schießen
+ Setting:
+ 	Man muss die Welt vor bösen Robotern verteidigen
