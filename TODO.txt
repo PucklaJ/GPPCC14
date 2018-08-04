@@ -1,3 +1,2 @@
-install box2d
-	2d shape rendereing for debug
-install tiled
+2d shape rendereing for debug
+add collision layer to tiled
