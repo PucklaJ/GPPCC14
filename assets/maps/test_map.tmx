@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" tiledversion="1.1.6" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="16" tileheight="16" infinite="0" backgroundcolor="#3465a4" nextobjectid="17">
+ <tileset firstgid="1" source="TileSet.tsx"/>
+ <layer name="Kachelebene 1" width="100" height="100">
+  <data encoding="base64" compression="zlib">
+   eJzt1jEOgEAIBED+gP7/q56dBVG7I2Qm2QYaCkiIYLJcOXcPAU24Bya79/t4pNr1/OgDAFB7+7WyqP3pAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANDbBRwMAeE=
+  </data>
+ </layer>
+ <objectgroup name="Collision">
+  <object id="6" x="4.54545" y="83.5758" width="71.2121" height="9.09091"/>
+  <object id="7" x="144.667" y="80.6667" width="63.3333" height="14"/>
+  <object id="8" x="254.667" y="48.6667" width="32" height="14.6667"/>
+  <object id="9" x="319.333" y="17.3333" width="31.3333" height="14.6667"/>
+  <object id="10" x="50" y="176.667" width="78.6667" height="14.6667"/>
+  <object id="11" x="160.333" y="176.667" width="47.3333" height="16"/>
+  <object id="12" x="272" y="176.667" width="48.6667" height="14.6667"/>
+  <object id="15" x="76.5455" y="82.5455">
+   <polyline points="0,0 11.2727,6.72727 34,8.72727 52,8 68.5455,-2.72727"/>
+  </object>
+  <object id="16" x="208.667" y="81.3333">
+   <polygon points="0,0 63.6667,95 -0.666667,95"/>
+  </object>
+ </objectgroup>
+ <objectgroup name="Settings">
+  <object id="4" name="start" x="48.6667" y="64">
+   <point/>
+  </object>
+ </objectgroup>
+</map>

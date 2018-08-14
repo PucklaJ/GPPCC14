@@ -1,2 +1,1 @@
-2d shape rendereing for debug
-add collision layer to tiled
+create shooting mechanic
