@@ -1,4 +1,2 @@
-camera control
-jumping on ground
 create shooting mechanic
 create inventory bar

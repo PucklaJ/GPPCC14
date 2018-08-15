@@ -36,6 +36,7 @@ const KEY_LEFT = gohome.KeyA
 const KEY_DOWN = gohome.KeyS
 const KEY_JUMP = gohome.KeyW
 const KEY_JUMP1 = gohome.KeySpace
+const KEY_SHOOT = gohome.MouseButtonLeft
 
 const CAMERA_BOX_WIDTH float32 = float32(GAME_WIDTH) / ZOOM
 const CAMERA_BOX_HEIGHT float32 = float32(GAME_HEIGHT) / ZOOM

@@ -14,6 +14,9 @@ type Player struct {
 	body            *box2d.B2Body
 	targetCameraPos mgl32.Vec2
 	PhysicsMgr      *physics2d.PhysicsManager2D
+
+	weapons       []Weapon
+	currentWeapon uint8
 }
 
 func (this *Player) Init(pos mgl32.Vec2, pmgr *physics2d.PhysicsManager2D) {
@@ -25,6 +28,12 @@ func (this *Player) Init(pos mgl32.Vec2, pmgr *physics2d.PhysicsManager2D) {
 	gohome.UpdateMgr.AddObject(this)
 	gohome.UpdateMgr.AddObject(&this.connector)
 	this.PhysicsMgr = pmgr
+	this.addWeapons()
+}
+
+func (this *Player) addWeapons() {
+	this.currentWeapon = 0
+	this.addWeapon(&NilWeapon{})
 }
 
 func (this *Player) createBody(pmgr *physics2d.PhysicsManager2D) {
@@ -65,7 +74,7 @@ func (this *Player) createBody(pmgr *physics2d.PhysicsManager2D) {
 	this.body.SetLinearDamping(PLAYER_DAMPING)
 }
 
-func (this *Player) Update(delta_time float32) {
+func (this *Player) updateVelocity(delta_time float32) {
 	vel := this.body.GetLinearVelocity()
 	pvel := physics2d.ToPixelDirection(vel).X()
 	if gohome.InputMgr.IsPressed(KEY_RIGHT) {
@@ -81,10 +90,63 @@ func (this *Player) Update(delta_time float32) {
 			this.body.SetLinearVelocity(vel)
 		}
 	}
+}
+
+func (this *Player) handleJump() {
 	if (gohome.InputMgr.JustPressed(KEY_JUMP) || gohome.InputMgr.JustPressed(KEY_JUMP1)) && this.IsGrounded() {
 		this.body.ApplyLinearImpulseToCenter(physics2d.ToBox2DDirection([2]float32{0.0, -PLAYER_JUMP_FORCE}), true)
 	}
+}
 
+const UP = true
+const DOWN = false
+
+func (this *Player) handleWeapon() {
+	w := this.weapons[this.currentWeapon]
+	if gohome.InputMgr.JustPressed(KEY_SHOOT) {
+		mpos := gohome.InputMgr.Mouse.ToWorldPosition2D()
+		w.Use(mpos)
+	}
+
+	if gohome.InputMgr.Mouse.Wheel[1] > 0 {
+
+	} else if gohome.InputMgr.Mouse.Wheel[1] < 0 {
+
+	}
+}
+
+func (this *Player) addWeapon(w Weapon) {
+	if len(this.weapons) == 0 {
+		w.Init(this)
+	}
+	this.weapons = append(this.weapons, w)
+}
+
+func (this *Player) changeWeapon(dir bool) {
+	w := this.weapons[this.currentWeapon]
+	w.Terminate()
+	if dir == UP {
+		this.currentWeapon++
+	} else {
+		if this.currentWeapon == 0 {
+			this.currentWeapon = uint8(len(this.weapons) - 1)
+		} else {
+			this.currentWeapon--
+		}
+	}
+
+	if this.currentWeapon > uint8(len(this.weapons)-1) {
+		this.currentWeapon = 0
+	}
+
+	w = this.weapons[this.currentWeapon]
+	w.Init(this)
+}
+
+func (this *Player) Update(delta_time float32) {
+	this.updateVelocity(delta_time)
+	this.handleJump()
+	this.handleWeapon()
 	this.updateCamera(delta_time)
 }
 
