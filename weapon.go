@@ -8,6 +8,7 @@ import (
 type Weapon interface {
 	Init(p *Player)
 	Use(target mgl32.Vec2)
+	GetInventoryTexture() gohome.Texture
 	Terminate()
 }
 
@@ -32,6 +33,10 @@ func (this *NilWeapon) Use(target mgl32.Vec2) {
 	shape2d.Load()
 	shape2d.SetDrawMode(gohome.DRAW_MODE_LINES)
 	gohome.RenderMgr.AddObject(&shape2d)
+}
+
+func (this *NilWeapon) GetInventoryTexture() gohome.Texture {
+	return nil
 }
 
 func (this *NilWeapon) Terminate() {

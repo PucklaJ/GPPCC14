@@ -14,6 +14,7 @@ type Player struct {
 	body            *box2d.B2Body
 	targetCameraPos mgl32.Vec2
 	PhysicsMgr      *physics2d.PhysicsManager2D
+	Inventory       InventoryBar
 
 	weapons       []Weapon
 	currentWeapon uint8
@@ -29,6 +30,8 @@ func (this *Player) Init(pos mgl32.Vec2, pmgr *physics2d.PhysicsManager2D) {
 	gohome.UpdateMgr.AddObject(&this.connector)
 	this.PhysicsMgr = pmgr
 	this.addWeapons()
+
+	this.Inventory.Init()
 }
 
 func (this *Player) addWeapons() {
@@ -195,4 +198,6 @@ func (this *Player) Terminate() {
 	gohome.UpdateMgr.RemoveObject(this)
 	gohome.RenderMgr.RemoveObject(this)
 	gohome.UpdateMgr.RemoveObject(&this.connector)
+
+	this.Inventory.Terminate()
 }
