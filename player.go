@@ -5,12 +5,14 @@ import (
 	"github.com/PucklaMotzer09/gohomeengine/src/gohome"
 	"github.com/PucklaMotzer09/gohomeengine/src/physics2d"
 	"github.com/go-gl/mathgl/mgl32"
+	"math"
 )
 
 type Player struct {
 	gohome.Sprite2D
-	connector physics2d.PhysicsConnector2D
-	body      *box2d.B2Body
+	connector       physics2d.PhysicsConnector2D
+	body            *box2d.B2Body
+	targetCameraPos mgl32.Vec2
 }
 
 func (this *Player) Init(pos mgl32.Vec2, pmgr *physics2d.PhysicsManager2D) {
@@ -73,11 +75,24 @@ func (this *Player) Update(delta_time float32) {
 			vel.X += force.X
 			this.body.SetLinearVelocity(vel)
 		}
-	} else {
-		// vel.X = 0.0
-		// this.body.SetLinearVelocity(vel)
 	}
 	if gohome.InputMgr.JustPressed(KEY_JUMP) || gohome.InputMgr.JustPressed(KEY_JUMP1) {
 		this.body.ApplyLinearImpulseToCenter(physics2d.ToBox2DDirection([2]float32{0.0, -PLAYER_JUMP_FORCE}), true)
 	}
+
+	this.updateCamera(delta_time)
+}
+
+func (this *Player) updateCamera(delta_time float32) {
+	boxXNC := float64(this.Transform.Position[0] / CAMERA_BOX_WIDTH)
+	boxYNC := float64(this.Transform.Position[1] / CAMERA_BOX_HEIGHT)
+	boxX := float32(math.Floor(boxXNC))
+	boxY := float32(math.Floor(boxYNC))
+	this.targetCameraPos[0] = boxX*CAMERA_BOX_WIDTH + CAMERA_OFFSET[0]
+	this.targetCameraPos[1] = boxY*CAMERA_BOX_HEIGHT + CAMERA_OFFSET[1]
+	var zero float32 = 0.0
+	mgl32.SetMax(&this.targetCameraPos[0], &zero)
+	mgl32.SetMax(&this.targetCameraPos[1], &zero)
+
+	Camera.Position = Camera.Position.Add(this.targetCameraPos.Sub(Camera.Position).Mul((1.0 / CAMERA_SPEED) * delta_time))
 }
