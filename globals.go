@@ -20,6 +20,8 @@ const PLAYER_VELOCITY float32 = 500.0
 const PLAYER_JUMP_FORCE float32 = 8.0
 const PLAYER_DAMPING float64 = 0.0
 const PLAYER_MAX_VELOCITY float32 = 50.0
+const PLAYER_CATEGORY uint16 = 1 << 0
+const PLAYER_FEET_CATEGORY uint16 = (1 << 1) | PLAYER_CATEGORY
 
 var (
 	LEVELS_TMX_MAPS = [NUM_LEVELS]string{
@@ -40,6 +42,9 @@ const CAMERA_BOX_HEIGHT float32 = float32(GAME_HEIGHT) / ZOOM
 const CAMERA_SPEED float32 = 0.25
 
 var CAMERA_OFFSET = [2]float32{0.0, 0.0}
+
+const GROUND_CATEGORY uint16 = 1 << 2
+const GROUND_FRICTION float64 = 1.8
 
 func LoadResources() {
 }

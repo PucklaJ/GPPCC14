@@ -13,6 +13,7 @@ type Player struct {
 	connector       physics2d.PhysicsConnector2D
 	body            *box2d.B2Body
 	targetCameraPos mgl32.Vec2
+	PhysicsMgr      *physics2d.PhysicsManager2D
 }
 
 func (this *Player) Init(pos mgl32.Vec2, pmgr *physics2d.PhysicsManager2D) {
@@ -23,6 +24,7 @@ func (this *Player) Init(pos mgl32.Vec2, pmgr *physics2d.PhysicsManager2D) {
 	this.connector.Init(this.Transform, this.body)
 	gohome.UpdateMgr.AddObject(this)
 	gohome.UpdateMgr.AddObject(&this.connector)
+	this.PhysicsMgr = pmgr
 }
 
 func (this *Player) createBody(pmgr *physics2d.PhysicsManager2D) {
@@ -35,6 +37,8 @@ func (this *Player) createBody(pmgr *physics2d.PhysicsManager2D) {
 	fdef.Density = PLAYER_DENSITY
 	fdef.Friction = PLAYER_FRICTION
 	fdef.Restitution = PLAYER_RESTITUITION
+	fdef.Filter.CategoryBits = PLAYER_FEET_CATEGORY
+	fdef.Filter.MaskBits = 0xffff
 
 	circleShape := box2d.MakeB2CircleShape()
 	circleShape.SetRadius(physics2d.ScalarToBox2D(PLAYER_WIDTH / 2.0))
@@ -46,6 +50,7 @@ func (this *Player) createBody(pmgr *physics2d.PhysicsManager2D) {
 	this.body.CreateFixtureFromDef(&fdef)
 
 	fdef.Friction = 0.0
+	fdef.Filter.CategoryBits = PLAYER_CATEGORY
 	circleShape.M_p = physics2d.ToBox2DDirection([2]float32{0.0, -PLAYER_HEIGHT / 4.0})
 
 	this.body.CreateFixtureFromDef(&fdef)
@@ -76,7 +81,7 @@ func (this *Player) Update(delta_time float32) {
 			this.body.SetLinearVelocity(vel)
 		}
 	}
-	if gohome.InputMgr.JustPressed(KEY_JUMP) || gohome.InputMgr.JustPressed(KEY_JUMP1) {
+	if (gohome.InputMgr.JustPressed(KEY_JUMP) || gohome.InputMgr.JustPressed(KEY_JUMP1)) && this.IsGrounded() {
 		this.body.ApplyLinearImpulseToCenter(physics2d.ToBox2DDirection([2]float32{0.0, -PLAYER_JUMP_FORCE}), true)
 	}
 
@@ -95,4 +100,32 @@ func (this *Player) updateCamera(delta_time float32) {
 	mgl32.SetMax(&this.targetCameraPos[1], &zero)
 
 	Camera.Position = Camera.Position.Add(this.targetCameraPos.Sub(Camera.Position).Mul((1.0 / CAMERA_SPEED) * delta_time))
+}
+
+func (this *Player) IsGrounded() (grounded bool) {
+	for ce := this.body.GetContactList(); ce != nil; ce = ce.Next {
+		c := ce.Contact
+		if !c.IsTouching() {
+			continue
+		}
+		fa := c.GetFixtureA()
+		fb := c.GetFixtureB()
+		if fb.GetFilterData().CategoryBits&PLAYER_CATEGORY == PLAYER_CATEGORY {
+			fa, fb = fb, fa
+		}
+
+		if fa.GetFilterData().CategoryBits&PLAYER_FEET_CATEGORY == PLAYER_FEET_CATEGORY {
+			grounded = true
+			return
+		}
+	}
+	grounded = false
+	return
+}
+
+func (this *Player) Terminate() {
+	this.PhysicsMgr.World.DestroyBody(this.body)
+	gohome.UpdateMgr.RemoveObject(this)
+	gohome.RenderMgr.RemoveObject(this)
+	gohome.UpdateMgr.RemoveObject(&this.connector)
 }

@@ -10,6 +10,8 @@ type LevelScene struct {
 	LevelID    uint32
 	Map        gohome.TiledMap
 	Player     Player
+
+	debugDraw physics2d.PhysicsDebugDraw2D
 }
 
 func (this *LevelScene) Init() {
@@ -22,10 +24,23 @@ func (this *LevelScene) Init() {
 
 	this.PhysicsMgr.Init([2]float32{0.0, GRAVITY})
 	gohome.UpdateMgr.AddObject(&this.PhysicsMgr)
-	debug := this.PhysicsMgr.GetDebugDraw()
-	gohome.RenderMgr.AddObject(&debug)
+	this.debugDraw = this.PhysicsMgr.GetDebugDraw()
+	gohome.RenderMgr.AddObject(&this.debugDraw)
 
-	this.PhysicsMgr.LayerToCollision(&this.Map, "Collision")
+	groundBodies := this.PhysicsMgr.LayerToCollision(&this.Map, "Collision")
+	for i := 0; i < len(groundBodies); i++ {
+		b := groundBodies[i]
+		if b == nil {
+			continue
+		}
+		for f := b.GetFixtureList(); f != nil; f = f.GetNext() {
+			filter := f.GetFilterData()
+			filter.CategoryBits = GROUND_CATEGORY
+			filter.MaskBits = 0xffff
+			f.SetFilterData(filter)
+			f.SetFriction(GROUND_FRICTION)
+		}
+	}
 
 	var playerStart [2]float32
 
@@ -52,8 +67,13 @@ func (this *LevelScene) Update(delta_time float32) {
 }
 
 func (this *LevelScene) Terminate() {
-	this.PhysicsMgr.Terminate()
+	gohome.UpdateMgr.RemoveObject(&this.PhysicsMgr)
+	gohome.RenderMgr.RemoveObject(&this.Map)
+	gohome.RenderMgr.RemoveObject(&this.debugDraw)
+
 	gohome.ResourceMgr.DeleteTMXMap("Level")
-	this.Map.Terminate()
+
 	this.Player.Terminate()
+	this.Map.Terminate()
+	this.PhysicsMgr.Terminate()
 }

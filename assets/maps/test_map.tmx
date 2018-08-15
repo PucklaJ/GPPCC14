@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.1.6" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="16" tileheight="16" infinite="0" backgroundcolor="#3465a4" nextobjectid="17">
+<map version="1.0" tiledversion="1.1.6" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="16" tileheight="16" infinite="0" backgroundcolor="#3465a4" nextobjectid="28">
  <tileset firstgid="1" source="TileSet.tsx"/>
  <layer name="Kachelebene 1" width="100" height="100">
   <data encoding="base64" compression="zlib">
-   eJzt1jEOgEAIBED+gP7/q56dBVG7I2Qm2QYaCkiIYLJcOXcPAU24Bya79/t4pNr1/OgDAFB7+7WyqP3pAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANDbBRwMAeE=
+   eJzt2cFqg0AABNBtc+2hje2t0OT/fzIWGljE2ibZxMF9D+YSYV0dg66WwpYNYz7WngSE8H9gy76v7/cqc9f68Md2+vM05rnKbt3pdO9lzFuV/brT6Z4+sugjS499LD1rDTO/LW2b3n+vzfm+/Vr666Ol6fm7NvtfxtPHZfSRRR9ZvsYcGuT4M54+sugjiz6y6COLPrLoI4s+skz7+Cz/e8/CfVy6njkWAOhXq+9It2bOI/ab9lzW6j35LVk6X/fed9q6JqGPNaOPrKT10eo7Up36eFuP3TpbX0ceZgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPNYJECAkyg==
   </data>
  </layer>
  <objectgroup name="Collision">
@@ -14,12 +14,15 @@
   <object id="10" x="50" y="176.667" width="78.6667" height="14.6667"/>
   <object id="11" x="160.333" y="176.667" width="47.3333" height="16"/>
   <object id="12" x="272" y="176.667" width="48.6667" height="14.6667"/>
-  <object id="15" x="76.5455" y="82.5455">
-   <polyline points="0,0 11.2727,6.72727 34,8.72727 52,8 68.5455,-2.72727"/>
-  </object>
-  <object id="16" x="208.667" y="81.3333">
-   <polygon points="0,0 63.6667,95 -0.666667,95"/>
-  </object>
+  <object id="17" x="354" y="178" width="301" height="77"/>
+  <object id="18" x="673" y="97" width="79" height="284"/>
+  <object id="20" x="748.833" y="353" width="130.667" height="30.5"/>
+  <object id="21" x="66.6667" y="452" width="524" height="73.3333"/>
+  <object id="22" x="384" y="526.667" width="81.3333" height="17.3333"/>
+  <object id="24" x="591" y="452" width="17.5" height="75"/>
+  <object id="25" x="606.727" y="466" width="99.5909" height="61"/>
+  <object id="26" x="688.485" y="448.667" width="413.515" height="17.9697"/>
+  <object id="27" x="705" y="466" width="398" height="61"/>
  </objectgroup>
  <objectgroup name="Settings">
   <object id="4" name="start" x="48.6667" y="64">
