@@ -63,7 +63,6 @@ func (this *LevelScene) Init() {
 }
 
 func (this *LevelScene) Update(delta_time float32) {
-	Camera.Zoom += float32(gohome.InputMgr.Mouse.Wheel[1]) * 0.1
 }
 
 func (this *LevelScene) Terminate() {

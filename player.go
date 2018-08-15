@@ -33,6 +33,7 @@ func (this *Player) Init(pos mgl32.Vec2, pmgr *physics2d.PhysicsManager2D) {
 
 func (this *Player) addWeapons() {
 	this.currentWeapon = 0
+	this.addWeapon(&DefaultWeapon{})
 	this.addWeapon(&NilWeapon{})
 }
 
@@ -109,9 +110,13 @@ func (this *Player) handleWeapon() {
 	}
 
 	if gohome.InputMgr.Mouse.Wheel[1] > 0 {
-
+		for i := 0; i < int(mgl32.Abs(float32(gohome.InputMgr.Mouse.Wheel[1]))); i++ {
+			this.changeWeapon(UP)
+		}
 	} else if gohome.InputMgr.Mouse.Wheel[1] < 0 {
-
+		for i := 0; i < int(mgl32.Abs(float32(gohome.InputMgr.Mouse.Wheel[1]))); i++ {
+			this.changeWeapon(DOWN)
+		}
 	}
 }
 
