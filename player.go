@@ -37,6 +37,7 @@ func (this *Player) addWeapons() {
 	this.currentWeapon = 0
 	this.addWeapon(&DefaultWeapon{})
 	this.addWeapon(&FreezeWeapon{})
+	this.addWeapon(&BallWeapon{})
 	this.addWeapon(&NilWeapon{})
 }
 
