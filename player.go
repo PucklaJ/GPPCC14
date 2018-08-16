@@ -106,7 +106,7 @@ const DOWN = false
 
 func (this *Player) handleWeapon() {
 	w := this.weapons[this.currentWeapon]
-	if gohome.InputMgr.JustPressed(KEY_SHOOT) {
+	if gohome.InputMgr.JustPressed(KEY_SHOOT) && w.GetAmmo() > 0 {
 		mpos := gohome.InputMgr.Mouse.ToWorldPosition2D()
 		w.Use(mpos)
 	}
@@ -150,6 +150,7 @@ func (this *Player) changeWeapon(dir bool) {
 
 	w = this.weapons[this.currentWeapon]
 	w.OnChange()
+	this.Inventory.SetCurrent(dir)
 }
 
 func (this *Player) Update(delta_time float32) {

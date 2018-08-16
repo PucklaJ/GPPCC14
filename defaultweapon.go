@@ -13,6 +13,7 @@ const DEFAULT_WEAPON_FRICTION float64 = 3.0
 const DEFAULT_WEAPON_WEIGHT float64 = 0.5
 const DEFAULT_WEAPON_RESTITUTION float64 = 0.0
 const DEFAULT_WEAPON_VELOCITY float32 = 200.0
+const DEFAULT_WEAPON_AMMO uint32 = 10
 
 type DefaultWeapon struct {
 	NilWeapon
@@ -23,11 +24,13 @@ func (this *DefaultWeapon) OnAdd(p *Player) {
 	this.tex.SetAsTarget()
 	gohome.Render.ClearScreen(gohome.Color{255, 0, 100, 255})
 	this.tex.UnsetAsTarget()
+	this.Ammo = DEFAULT_WEAPON_AMMO
 }
 
 func (this *DefaultWeapon) Use(target mgl32.Vec2) {
 	dir := target.Sub(this.Player.Transform.Position).Normalize()
 	this.createBox(dir)
+	this.Ammo--
 }
 
 func (this *DefaultWeapon) createBox(dir mgl32.Vec2) {

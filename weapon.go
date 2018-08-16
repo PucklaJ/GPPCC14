@@ -11,6 +11,7 @@ type Weapon interface {
 	Use(target mgl32.Vec2)
 	GetInventoryTexture() gohome.Texture
 	Terminate()
+	GetAmmo() uint32
 }
 
 type NilWeapon struct {
@@ -18,6 +19,7 @@ type NilWeapon struct {
 
 	Player *Player
 	tex    gohome.RenderTexture
+	Ammo   uint32
 }
 
 func (this *NilWeapon) OnAdd(p *Player) {
@@ -26,6 +28,7 @@ func (this *NilWeapon) OnAdd(p *Player) {
 	this.tex.SetAsTarget()
 	gohome.Render.ClearScreen(gohome.Color{255, 100, 0, 255})
 	this.tex.UnsetAsTarget()
+	this.Ammo = DEFAULT_WEAPON_AMMO
 }
 
 func (this *NilWeapon) OnChange() {
@@ -42,6 +45,8 @@ func (this *NilWeapon) Use(target mgl32.Vec2) {
 	shape2d.Load()
 	shape2d.SetDrawMode(gohome.DRAW_MODE_LINES)
 	gohome.RenderMgr.AddObject(&shape2d)
+
+	this.Ammo--
 }
 
 func (this *NilWeapon) GetInventoryTexture() gohome.Texture {
@@ -54,4 +59,8 @@ func (this *NilWeapon) Terminate() {
 
 func (this *NilWeapon) GetType() gohome.RenderType {
 	return gohome.TYPE_2D_NORMAL
+}
+
+func (this *NilWeapon) GetAmmo() uint32 {
+	return this.Ammo
 }
