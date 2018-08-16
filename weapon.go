@@ -6,7 +6,8 @@ import (
 )
 
 type Weapon interface {
-	Init(p *Player)
+	OnChange()
+	OnAdd(p *Player)
 	Use(target mgl32.Vec2)
 	GetInventoryTexture() gohome.Texture
 	Terminate()
@@ -16,11 +17,19 @@ type NilWeapon struct {
 	gohome.NilRenderObject
 
 	Player *Player
+	tex    gohome.RenderTexture
 }
 
-func (this *NilWeapon) Init(p *Player) {
-	gohome.RenderMgr.AddObject(this)
+func (this *NilWeapon) OnAdd(p *Player) {
 	this.Player = p
+	this.tex = gohome.Render.CreateRenderTexture("NilWeaponInventoryTexture", uint32(INVENTORY_TEXTURE_SIZE), uint32(INVENTORY_TEXTURE_SIZE), 1, false, false, false, false)
+	this.tex.SetAsTarget()
+	gohome.Render.ClearScreen(gohome.Color{255, 100, 0, 255})
+	this.tex.UnsetAsTarget()
+}
+
+func (this *NilWeapon) OnChange() {
+	gohome.RenderMgr.AddObject(this)
 }
 
 func (this *NilWeapon) Use(target mgl32.Vec2) {
@@ -36,7 +45,7 @@ func (this *NilWeapon) Use(target mgl32.Vec2) {
 }
 
 func (this *NilWeapon) GetInventoryTexture() gohome.Texture {
-	return nil
+	return this.tex
 }
 
 func (this *NilWeapon) Terminate() {

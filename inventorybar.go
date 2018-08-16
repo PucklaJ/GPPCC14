@@ -10,6 +10,9 @@ const INVENTORY_PADDING float32 = INVENTORY_TEXTURE_SIZE / 8.0
 
 type InventoryBar struct {
 	gohome.Sprite2D
+
+	weaponTextures []gohome.Texture
+	prevNumWeapons int
 }
 
 func (this *InventoryBar) Init() {
@@ -25,14 +28,31 @@ func (this *InventoryBar) Init() {
 	this.Transform.Position = gohome.Framew.WindowGetSize().Mul(0.5)
 	this.Transform.Position[1] = gohome.Framew.WindowGetSize()[1] - (INVENTORY_PADDING*2.0+INVENTORY_TEXTURE_SIZE)/2.0 - INVENTORY_PADDING
 	this.Transform.Origin = [2]float32{0.5, 0.5}
+	this.prevNumWeapons = -1
+}
+
+func (this *InventoryBar) AddWeapon(w Weapon) {
+	this.weaponTextures = append(this.weaponTextures, w.GetInventoryTexture())
 }
 
 func (this *InventoryBar) Update(delta_time float32) {
-	this.renderInventory()
+	if this.prevNumWeapons != len(this.weaponTextures) {
+		this.renderInventory()
+		this.prevNumWeapons = len(this.weaponTextures)
+	}
 }
 
 func (this *InventoryBar) renderInventory() {
 	rt := this.Texture.(gohome.RenderTexture)
+	width := INVENTORY_PADDING*2 + INVENTORY_TEXTURE_SIZE
+
+	imgWidth := uint32(len(this.weaponTextures)) * uint32(width)
+	imgHeight := uint32(rt.GetHeight())
+
+	rt.ChangeSize(imgWidth, imgHeight)
+	this.Transform.Size = [2]float32{float32(imgWidth), float32(imgHeight)}
+	this.TextureRegion.Max = this.Transform.Size
+
 	rt.SetAsTarget()
 	gohome.Render.ClearScreen(gohome.Color{0, 0, 0, 0})
 
@@ -49,29 +69,45 @@ func (this *InventoryBar) renderInventory() {
 	prevProj := gohome.RenderMgr.Projection2D
 	gohome.RenderMgr.Projection2D = &proj
 
-	gohome.DrawRectangle2D(
-		[2]float32{0.0, INVENTORY_PADDING*2.0 + INVENTORY_TEXTURE_SIZE},
-		[2]float32{INVENTORY_PADDING, INVENTORY_PADDING*2.0 + INVENTORY_TEXTURE_SIZE},
-		[2]float32{INVENTORY_PADDING, 0.0},
-		[2]float32{0.0, 0.0})
+	for i := 0; i < len(this.weaponTextures); i++ {
+		wt := this.weaponTextures[i]
+		// fmt.Println("Texture:", i)
 
-	gohome.DrawRectangle2D(
-		[2]float32{INVENTORY_PADDING + INVENTORY_TEXTURE_SIZE, INVENTORY_PADDING*2.0 + INVENTORY_TEXTURE_SIZE},
-		[2]float32{INVENTORY_PADDING*2 + INVENTORY_TEXTURE_SIZE, INVENTORY_PADDING*2.0 + INVENTORY_TEXTURE_SIZE},
-		[2]float32{INVENTORY_PADDING*2 + INVENTORY_TEXTURE_SIZE, 0.0},
-		[2]float32{INVENTORY_PADDING + INVENTORY_TEXTURE_SIZE, 0.0})
+		x := width * float32(i)
 
-	gohome.DrawRectangle2D(
-		[2]float32{INVENTORY_PADDING, INVENTORY_PADDING},
-		[2]float32{INVENTORY_PADDING + INVENTORY_TEXTURE_SIZE, INVENTORY_PADDING},
-		[2]float32{INVENTORY_PADDING + INVENTORY_TEXTURE_SIZE, 0.0},
-		[2]float32{INVENTORY_PADDING, 0.0})
+		gohome.DrawRectangle2D(
+			[2]float32{x, INVENTORY_PADDING*2.0 + INVENTORY_TEXTURE_SIZE},
+			[2]float32{x + INVENTORY_PADDING, INVENTORY_PADDING*2.0 + INVENTORY_TEXTURE_SIZE},
+			[2]float32{x + INVENTORY_PADDING, 0.0},
+			[2]float32{x, 0.0})
 
-	gohome.DrawRectangle2D(
-		[2]float32{INVENTORY_PADDING, INVENTORY_PADDING*2 + INVENTORY_TEXTURE_SIZE},
-		[2]float32{INVENTORY_PADDING + INVENTORY_TEXTURE_SIZE, INVENTORY_PADDING*2 + INVENTORY_TEXTURE_SIZE},
-		[2]float32{INVENTORY_PADDING + INVENTORY_TEXTURE_SIZE, INVENTORY_PADDING + INVENTORY_TEXTURE_SIZE},
-		[2]float32{INVENTORY_PADDING, INVENTORY_PADDING + INVENTORY_TEXTURE_SIZE})
+		gohome.DrawRectangle2D(
+			[2]float32{x + INVENTORY_PADDING + INVENTORY_TEXTURE_SIZE, INVENTORY_PADDING*2.0 + INVENTORY_TEXTURE_SIZE},
+			[2]float32{x + INVENTORY_PADDING*2 + INVENTORY_TEXTURE_SIZE, INVENTORY_PADDING*2.0 + INVENTORY_TEXTURE_SIZE},
+			[2]float32{x + INVENTORY_PADDING*2 + INVENTORY_TEXTURE_SIZE, 0.0},
+			[2]float32{x + INVENTORY_PADDING + INVENTORY_TEXTURE_SIZE, 0.0})
+
+		gohome.DrawRectangle2D(
+			[2]float32{x + INVENTORY_PADDING, INVENTORY_PADDING},
+			[2]float32{x + INVENTORY_PADDING + INVENTORY_TEXTURE_SIZE, INVENTORY_PADDING},
+			[2]float32{x + INVENTORY_PADDING + INVENTORY_TEXTURE_SIZE, 0.0},
+			[2]float32{x + INVENTORY_PADDING, 0.0})
+
+		gohome.DrawRectangle2D(
+			[2]float32{x + INVENTORY_PADDING, INVENTORY_PADDING*2 + INVENTORY_TEXTURE_SIZE},
+			[2]float32{x + INVENTORY_PADDING + INVENTORY_TEXTURE_SIZE, INVENTORY_PADDING*2 + INVENTORY_TEXTURE_SIZE},
+			[2]float32{x + INVENTORY_PADDING + INVENTORY_TEXTURE_SIZE, INVENTORY_PADDING + INVENTORY_TEXTURE_SIZE},
+			[2]float32{x + INVENTORY_PADDING, INVENTORY_PADDING + INVENTORY_TEXTURE_SIZE})
+		// fmt.Println("Texture:", wt)
+		if wt != nil {
+			var spr gohome.Sprite2D
+			spr.InitTexture(wt)
+			spr.Transform.Position[0] = x + INVENTORY_PADDING
+			spr.Transform.Position[1] = INVENTORY_PADDING
+			gohome.RenderMgr.RenderRenderObject(&spr)
+			// fmt.Println("Rendering To", spr.Transform.Position)
+		}
+	}
 
 	gohome.RenderMgr.SetCamera2D(&Camera, 0)
 	gohome.RenderMgr.Projection2D = prevProj

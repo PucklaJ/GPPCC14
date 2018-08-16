@@ -29,9 +29,8 @@ func (this *Player) Init(pos mgl32.Vec2, pmgr *physics2d.PhysicsManager2D) {
 	gohome.UpdateMgr.AddObject(this)
 	gohome.UpdateMgr.AddObject(&this.connector)
 	this.PhysicsMgr = pmgr
-	this.addWeapons()
-
 	this.Inventory.Init()
+	this.addWeapons()
 }
 
 func (this *Player) addWeapons() {
@@ -124,10 +123,12 @@ func (this *Player) handleWeapon() {
 }
 
 func (this *Player) addWeapon(w Weapon) {
+	w.OnAdd(this)
 	if len(this.weapons) == 0 {
-		w.Init(this)
+		w.OnChange()
 	}
 	this.weapons = append(this.weapons, w)
+	this.Inventory.AddWeapon(w)
 }
 
 func (this *Player) changeWeapon(dir bool) {
@@ -148,7 +149,7 @@ func (this *Player) changeWeapon(dir bool) {
 	}
 
 	w = this.weapons[this.currentWeapon]
-	w.Init(this)
+	w.OnChange()
 }
 
 func (this *Player) Update(delta_time float32) {
@@ -194,6 +195,7 @@ func (this *Player) IsGrounded() (grounded bool) {
 }
 
 func (this *Player) Terminate() {
+	this.weapons[this.currentWeapon].Terminate()
 	this.PhysicsMgr.World.DestroyBody(this.body)
 	gohome.UpdateMgr.RemoveObject(this)
 	gohome.RenderMgr.RemoveObject(this)

@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/ByteArena/box2d"
+	"github.com/PucklaMotzer09/gohomeengine/src/gohome"
 	"github.com/PucklaMotzer09/gohomeengine/src/physics2d"
 	"github.com/go-gl/mathgl/mgl32"
 )
@@ -15,6 +16,13 @@ const DEFAULT_WEAPON_VELOCITY float32 = 200.0
 
 type DefaultWeapon struct {
 	NilWeapon
+}
+
+func (this *DefaultWeapon) OnAdd(p *Player) {
+	this.NilWeapon.OnAdd(p)
+	this.tex.SetAsTarget()
+	gohome.Render.ClearScreen(gohome.Color{255, 0, 100, 255})
+	this.tex.UnsetAsTarget()
 }
 
 func (this *DefaultWeapon) Use(target mgl32.Vec2) {
