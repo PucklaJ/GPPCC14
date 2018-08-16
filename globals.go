@@ -48,4 +48,6 @@ const GROUND_CATEGORY uint16 = 1 << 2
 const GROUND_FRICTION float64 = 1.8
 
 func LoadResources() {
+	gohome.ResourceMgr.LoadFont("Ammo", "UbuntuMono-R.ttf")
+	// gohome.ResourceMgr.LoadPreloadedResources()
 }

@@ -1,5 +1,3 @@
-add ammunition to inventory bar
-	rewrite text shader
 add weapon which shoots blocks that are freezing in mid air
 add weapon that shoots blocks that hover in mid air
 add weapon that shoots rolling balls
