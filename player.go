@@ -198,6 +198,11 @@ func (this *Player) IsGrounded() (grounded bool) {
 	return
 }
 
+func (this *Player) IsMoving() bool {
+	return gohome.InputMgr.IsPressed(KEY_RIGHT) || gohome.InputMgr.IsPressed(KEY_LEFT) ||
+		gohome.InputMgr.JustPressed(KEY_JUMP) || gohome.InputMgr.JustPressed(KEY_JUMP1)
+}
+
 func (this *Player) Terminate() {
 	this.weapons[this.currentWeapon].Terminate()
 	this.PhysicsMgr.World.DestroyBody(this.body)

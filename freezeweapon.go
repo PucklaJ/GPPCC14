@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	FREEZE_TIME float32 = 1.0
+	FREEZE_TIME float32 = 0.5
 	FREEZE_AMMO uint32  = 50
 
 	FREEZE_WIDTH    float32 = 32.0

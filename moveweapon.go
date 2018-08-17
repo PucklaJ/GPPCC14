@@ -17,12 +17,13 @@ const (
 	MOVE_WEAPON_HEIGHT         float32 = 6.0
 	MOVE_WEAPON_WEIGHT         float64 = 1.0
 	MOVE_WEAPON_VELOCITY       float32 = 200.0
-	MOVE_WEAPON_TIME           float32 = 1.0
+	MOVE_WEAPON_TIME           float32 = 0.5
 	MOVE_WEAPON_FRICTION       float64 = GROUND_FRICTION * 2.0
 	MOVE_WEAPON_RESTITUTION    float64 = DEFAULT_WEAPON_RESTITUTION
 	MOVE_WEAPON_ROTATE_SPEED   float64 = 5.0
 	MOVE_WEAPON_VELOCITY_SPEED float64 = 0.5
 	MOVE_WEAPON_MIN_DISTANCE   float32 = 10.0
+	MOVE_WEAPON_SLOW_DISTANCE  float32 = 32.0
 )
 
 type MoveWeapon struct {
@@ -53,6 +54,7 @@ func (this *MoveWeapon) Use(target mgl32.Vec2) {
 		box2d.B2Vec2{0.0, 0.0},
 		box2d.B2Vec2{0.0, 0.0},
 		dir.X() >= 0.0,
+		this.Player,
 	})
 
 	// this.Ammo--
@@ -100,6 +102,7 @@ type MovePlatform struct {
 	TargetPosition     box2d.B2Vec2
 	PrevTargetPosition box2d.B2Vec2
 	Direction          bool
+	Player             *Player
 }
 
 func (this *MovePlatform) HoldRotation() {
@@ -135,22 +138,36 @@ func (this *MovePlatform) HoldPosition() {
 }
 
 func (this *MovePlatform) Move() {
+
+	minDist := physics2d.ScalarToBox2D(MOVE_WEAPON_MIN_DISTANCE)
+	pos := this.Body.GetPosition()
+	target := this.TargetPosition
+	rel := box2d.B2Vec2Sub(target, pos)
+	dist := math.Abs(rel.X)
+
+	dist1 := math.Abs(box2d.B2Vec2Sub(this.PrevTargetPosition, pos).X)
+	mdist := physics2d.ScalarToBox2D(MOVE_WEAPON_SLOW_DISTANCE)
+
 	speed := physics2d.ScalarToBox2D(MOVE_WEAPON_SPEED)
 	if this.Direction == LEFT {
 		speed = -speed
 	}
 
+	var mul float64
+	if dist < dist1 {
+		mul = dist / mdist
+	} else {
+		mul = dist1 / mdist
+	}
+	if mul > 1.0 {
+		mul = 1.0
+	}
+	speed *= mul
+
 	this.Body.SetLinearVelocity(box2d.B2Vec2{
 		speed,
 		this.Body.GetLinearVelocity().Y,
 	})
-
-	minDist := physics2d.ScalarToBox2D(MOVE_WEAPON_MIN_DISTANCE)
-	minDist *= minDist
-	pos := this.Body.GetPosition()
-	target := this.TargetPosition
-	rel := box2d.B2Vec2Sub(target, pos)
-	dist := math.Abs(rel.X)
 
 	if dist <= minDist {
 		this.PrevTargetPosition = this.TargetPosition

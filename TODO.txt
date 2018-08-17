@@ -1,4 +1,3 @@
-add weapon that moves left and right
 assets
 	player sprite
 	weapons
