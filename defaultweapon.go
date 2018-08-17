@@ -45,6 +45,7 @@ func (this *DefaultWeapon) createBox(dir mgl32.Vec2) {
 	fdef.Friction = DEFAULT_WEAPON_FRICTION
 	fdef.Density = 1.0 / (physics2d.ScalarToBox2D(DEFAULT_WEAPON_WIDTH) * physics2d.ScalarToBox2D(DEFAULT_WEAPON_HEIGHT)) * DEFAULT_WEAPON_WEIGHT
 	fdef.Restitution = DEFAULT_WEAPON_RESTITUTION
+	fdef.Filter.CategoryBits = WEAPON_CATEGORY
 	shape := box2d.MakeB2PolygonShape()
 	shape.SetAsBox(physics2d.ScalarToBox2D(size[0])/2.0, physics2d.ScalarToBox2D(size[1])/2.0)
 	fdef.Shape = &shape

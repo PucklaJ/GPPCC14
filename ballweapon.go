@@ -68,6 +68,7 @@ func (this *BallWeapon) createBall(dir mgl32.Vec2) *box2d.B2Body {
 	fdef.Friction = BALL_WEAPON_FRICTION
 	fdef.Density = 1.0 / (2.0 * math.Pi * physics2d.ScalarToBox2D(BALL_WEAPON_RADIUS) * physics2d.ScalarToBox2D(BALL_WEAPON_RADIUS)) * BALL_WEAPON_WEIGHT
 	fdef.Restitution = BALL_WEAPON_RESTITUTION
+	fdef.Filter.CategoryBits = WEAPON_CATEGORY
 	shape := box2d.MakeB2CircleShape()
 	shape.SetRadius(physics2d.ScalarToBox2D(BALL_WEAPON_RADIUS))
 	fdef.Shape = &shape

@@ -18,7 +18,7 @@ const PLAYER_WIDTH float32 = PLAYER_HEIGHT / 2.0
 const PLAYER_VELOCITY float32 = 500.0
 const PLAYER_JUMP_FORCE float32 = 25.0
 const PLAYER_DAMPING float64 = 0.0
-const PLAYER_MAX_VELOCITY float32 = 50.0
+const PLAYER_MAX_VELOCITY float32 = 75.0
 const PLAYER_CATEGORY uint16 = 1 << 0
 const PLAYER_FEET_CATEGORY uint16 = (1 << 1) | PLAYER_CATEGORY
 const PLAYER_DENSITY float64 = 3.0
@@ -46,6 +46,8 @@ var CAMERA_OFFSET = [2]float32{0.0, 0.0}
 
 const GROUND_CATEGORY uint16 = 1 << 2
 const GROUND_FRICTION float64 = 1.8
+
+const WEAPON_CATEGORY uint16 = 1 << 3
 
 func LoadResources() {
 	gohome.ResourceMgr.LoadFont("Ammo", "UbuntuMono-R.ttf")

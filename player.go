@@ -38,7 +38,8 @@ func (this *Player) addWeapons() {
 	this.addWeapon(&DefaultWeapon{})
 	this.addWeapon(&FreezeWeapon{})
 	this.addWeapon(&BallWeapon{})
-	this.addWeapon(&NilWeapon{})
+	this.addWeapon(&MoveWeapon{})
+	this.addWeapon(&DeleteWeapon{})
 }
 
 func (this *Player) createBody(pmgr *physics2d.PhysicsManager2D) {

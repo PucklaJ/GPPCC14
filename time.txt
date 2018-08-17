@@ -8,5 +8,7 @@
 45min
 3h30min
 45min
+2h
+3h
 --
-25h
+30h
