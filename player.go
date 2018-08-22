@@ -8,6 +8,25 @@ import (
 	"math"
 )
 
+const (
+	PLAYER_RESTITUITION float64 = 0.0
+	PLAYER_FRICTION     float64 = 1.0
+	PLAYER_HEIGHT       float32 = 32.0
+	PLAYER_WIDTH        float32 = PLAYER_HEIGHT / 2.0
+	PLAYER_VELOCITY     float32 = 500.0
+	PLAYER_JUMP_FORCE   float32 = 25.0
+	PLAYER_DAMPING      float64 = 0.0
+	PLAYER_MAX_VELOCITY float32 = 75.0
+	PLAYER_WEIGHT       float64 = 0.08
+
+	PLAYER_FEET_SENSOR_WIDTH    float32 = PLAYER_WIDTH / 2.0
+	PLAYER_FEET_SENSOR_HEIGHT   float32 = 5.0
+	PLAYER_FEET_SENSOR_OFFSET_X float32 = 0.0
+	PLAYER_FEET_SENSOR_OFFSET_Y float32 = 16.0 - PLAYER_FEET_SENSOR_HEIGHT/2.0
+
+	PLAYER_ENEMY_BOUNCE float32 = -100.0
+)
+
 type Player struct {
 	gohome.Sprite2D
 	connector       physics2d.PhysicsConnector2D
@@ -18,6 +37,7 @@ type Player struct {
 
 	weapons       []Weapon
 	currentWeapon uint8
+	terminated    bool
 }
 
 func (this *Player) Init(pos mgl32.Vec2, pmgr *physics2d.PhysicsManager2D) {
@@ -31,6 +51,7 @@ func (this *Player) Init(pos mgl32.Vec2, pmgr *physics2d.PhysicsManager2D) {
 	this.PhysicsMgr = pmgr
 	this.Inventory.Init()
 	this.addWeapons()
+	this.terminated = false
 }
 
 func (this *Player) addWeapons() {
@@ -48,15 +69,16 @@ func (this *Player) createBody(pmgr *physics2d.PhysicsManager2D) {
 	bdef.Type = box2d.B2BodyType.B2_dynamicBody
 	bdef.Position = physics2d.ToBox2DCoordinates(this.Transform.Position)
 
+	radius := physics2d.ScalarToBox2D(PLAYER_WIDTH / 2.0)
+
 	fdef := box2d.MakeB2FixtureDef()
-	fdef.Density = PLAYER_DENSITY
+	fdef.Density = 1.0 / (2.0 * math.Pi * radius * radius) * PLAYER_WEIGHT
 	fdef.Friction = PLAYER_FRICTION
 	fdef.Restitution = PLAYER_RESTITUITION
 	fdef.Filter.CategoryBits = PLAYER_FEET_CATEGORY
-	fdef.Filter.MaskBits = 0xffff
 
 	circleShape := box2d.MakeB2CircleShape()
-	circleShape.SetRadius(physics2d.ScalarToBox2D(PLAYER_WIDTH / 2.0))
+	circleShape.SetRadius(radius)
 	circleShape.M_p = physics2d.ToBox2DDirection([2]float32{0.0, PLAYER_HEIGHT / 4.0})
 
 	fdef.Shape = &circleShape
@@ -71,10 +93,22 @@ func (this *Player) createBody(pmgr *physics2d.PhysicsManager2D) {
 	this.body.CreateFixtureFromDef(&fdef)
 
 	boxShape := box2d.MakeB2PolygonShape()
-	boxShape.SetAsBox(physics2d.ScalarToBox2D(PLAYER_WIDTH/2.0), physics2d.ScalarToBox2D(PLAYER_HEIGHT/4.0))
+	w, h := physics2d.ScalarToBox2D(PLAYER_WIDTH/2.0), physics2d.ScalarToBox2D(PLAYER_HEIGHT/4.0)
+	boxShape.SetAsBox(w, h)
 
 	fdef.Shape = &boxShape
+	fdef.Density = 1.0 / (w * 2.0 * h * 2.0) * PLAYER_WEIGHT
 
+	this.body.CreateFixtureFromDef(&fdef)
+
+	boxShape.SetAsBox(physics2d.ScalarToBox2D(PLAYER_FEET_SENSOR_WIDTH)/2.0, physics2d.ScalarToBox2D(PLAYER_FEET_SENSOR_HEIGHT)/2.0)
+	offset := physics2d.ToBox2DDirection([2]float32{PLAYER_FEET_SENSOR_OFFSET_X, PLAYER_FEET_SENSOR_OFFSET_Y})
+	for i := 0; i < 4; i++ {
+		v := &boxShape.M_vertices[i]
+		*v = box2d.B2Vec2Add(*v, offset)
+	}
+	fdef.IsSensor = true
+	fdef.Filter.CategoryBits = PLAYER_FEET_SENSOR_CATEGORY
 	this.body.CreateFixtureFromDef(&fdef)
 
 	this.body.SetLinearDamping(PLAYER_DAMPING)
@@ -161,6 +195,7 @@ func (this *Player) Update(delta_time float32) {
 	this.handleJump()
 	this.handleWeapon()
 	this.updateCamera(delta_time)
+	this.checkEnemy()
 }
 
 func (this *Player) updateCamera(delta_time float32) {
@@ -198,12 +233,57 @@ func (this *Player) IsGrounded() (grounded bool) {
 	return
 }
 
+func (this *Player) checkEnemy() {
+	var fc, bc bool = false, false
+	var enemy *Enemy
+	for ce := this.body.GetContactList(); ce != nil; ce = ce.Next {
+		c := ce.Contact
+		if !c.IsTouching() {
+			continue
+		}
+		fa := c.GetFixtureA()
+		fb := c.GetFixtureB()
+
+		if fb.GetFilterData().CategoryBits&PLAYER_CATEGORY != 0 {
+			fa, fb = fb, fa
+		}
+		if fb.GetFilterData().CategoryBits != ENEMY_CATEGORY {
+			continue
+		}
+
+		switch fa.GetFilterData().CategoryBits {
+		case PLAYER_CATEGORY:
+			bc = true
+		case PLAYER_FEET_SENSOR_CATEGORY, PLAYER_FEET_CATEGORY:
+			enemy = fb.GetBody().GetUserData().(*Enemy)
+			fc = true
+		default:
+			break
+		}
+	}
+
+	if bc {
+		this.Terminate()
+	}
+
+	if fc {
+		vel := this.body.GetLinearVelocity()
+		vel.Y = -physics2d.ScalarToBox2D(PLAYER_ENEMY_BOUNCE)
+		this.body.SetLinearVelocity(vel)
+		enemy.Terminate()
+	}
+}
+
 func (this *Player) IsMoving() bool {
 	return gohome.InputMgr.IsPressed(KEY_RIGHT) || gohome.InputMgr.IsPressed(KEY_LEFT) ||
 		gohome.InputMgr.JustPressed(KEY_JUMP) || gohome.InputMgr.JustPressed(KEY_JUMP1)
 }
 
 func (this *Player) Terminate() {
+	if this.terminated {
+		return
+	}
+
 	this.weapons[this.currentWeapon].Terminate()
 	this.PhysicsMgr.World.DestroyBody(this.body)
 	gohome.UpdateMgr.RemoveObject(this)
@@ -211,4 +291,6 @@ func (this *Player) Terminate() {
 	gohome.UpdateMgr.RemoveObject(&this.connector)
 
 	this.Inventory.Terminate()
+
+	this.terminated = true
 }

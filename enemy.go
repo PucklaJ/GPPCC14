@@ -28,10 +28,11 @@ const (
 
 type Enemy struct {
 	gohome.Sprite2D
-	Body      *box2d.B2Body
-	connector physics2d.PhysicsConnector2D
-	Player    *Player
-	direction bool
+	Body       *box2d.B2Body
+	connector  physics2d.PhysicsConnector2D
+	Player     *Player
+	direction  bool
+	terminated bool
 }
 
 func (this *Enemy) Init(pos mgl32.Vec2, player *Player) {
@@ -39,6 +40,7 @@ func (this *Enemy) Init(pos mgl32.Vec2, player *Player) {
 	this.Transform.Position = pos
 	this.Player = player
 	this.direction = RIGHT
+	this.terminated = false
 
 	this.createBody()
 
@@ -69,6 +71,7 @@ func (this *Enemy) createBody() {
 	fdef.Shape = &shape
 
 	this.Body = this.Player.PhysicsMgr.World.CreateBody(&bdef)
+	this.Body.SetUserData(this)
 	this.Body.CreateFixtureFromDef(&fdef)
 
 	fdef.IsSensor = true
@@ -173,7 +176,14 @@ func (this *Enemy) Update(delta_time float32) {
 }
 
 func (this *Enemy) Terminate() {
+	if this.terminated {
+		return
+	}
+
+	this.Player.PhysicsMgr.World.DestroyBody(this.Body)
 	gohome.UpdateMgr.RemoveObject(this)
 	gohome.RenderMgr.RemoveObject(this)
 	gohome.UpdateMgr.RemoveObject(&this.connector)
+
+	this.terminated = true
 }

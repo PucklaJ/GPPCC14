@@ -17,7 +17,7 @@ type LevelScene struct {
 
 func (this *LevelScene) Init() {
 	gohome.Init2DShaders()
-
+	physics2d.PIXEL_PER_METER = 10.0
 	gohome.ResourceMgr.LoadTMXMap("Level", LEVELS_TMX_MAPS[this.LevelID])
 
 	this.Map.Init("Level")
