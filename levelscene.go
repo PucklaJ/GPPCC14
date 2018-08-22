@@ -10,6 +10,7 @@ type LevelScene struct {
 	LevelID    uint32
 	Map        gohome.TiledMap
 	Player     Player
+	Enemies    []*Enemy
 
 	debugDraw physics2d.PhysicsDebugDraw2D
 }
@@ -54,12 +55,20 @@ func (this *LevelScene) Init() {
 				if o.Name == "start" {
 					playerStart[0] = float32(o.X)
 					playerStart[1] = float32(o.Y)
+				} else if o.Name == "enemy" {
+					enemy := &Enemy{}
+					enemy.Sprite2D.Init("")
+					enemy.Transform.Position = [2]float32{float32(o.X), float32(o.Y)}
+					this.Enemies = append(this.Enemies, enemy)
 				}
 			}
 		}
 	}
 
 	this.Player.Init(playerStart, &this.PhysicsMgr)
+	for i := 0; i < len(this.Enemies); i++ {
+		this.Enemies[i].Init(this.Enemies[i].Transform.Position, &this.Player)
+	}
 }
 
 func (this *LevelScene) Update(delta_time float32) {
@@ -72,6 +81,9 @@ func (this *LevelScene) Terminate() {
 
 	gohome.ResourceMgr.DeleteTMXMap("Level")
 
+	for i := 0; i < len(this.Enemies); i++ {
+		this.Enemies[i].Terminate()
+	}
 	this.Player.Terminate()
 	this.Map.Terminate()
 	this.PhysicsMgr.Terminate()

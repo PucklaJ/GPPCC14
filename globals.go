@@ -49,6 +49,8 @@ const GROUND_FRICTION float64 = 1.8
 
 const WEAPON_CATEGORY uint16 = 1 << 3
 
+const ENEMY_CATEGORY uint16 = 1 << 4
+
 func LoadResources() {
 	gohome.ResourceMgr.LoadFont("Ammo", "UbuntuMono-R.ttf")
 	// gohome.ResourceMgr.LoadPreloadedResources()
