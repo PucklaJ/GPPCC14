@@ -1,4 +1,3 @@
-enemy
 assets
 	player sprite
 	weapons
