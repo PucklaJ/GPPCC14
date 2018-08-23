@@ -13,5 +13,8 @@
 1h15min
 1h15min
 2h45min
+
+15min
+30min
 --
-35h15min
+36h
