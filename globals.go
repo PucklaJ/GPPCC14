@@ -49,6 +49,9 @@ const ENEMY_BIG_LEFT_SENSOR_CATEGORY uint16 = 1<<8 | ENEMY_SENSOR_CATEGORY
 const ENEMY_BIG_RIGHT_SENSOR_CATEGORY uint16 = 1<<9 | ENEMY_SENSOR_CATEGORY
 
 func LoadResources() {
-	gohome.ResourceMgr.LoadFont("Ammo", "UbuntuMono-R.ttf")
-	// gohome.ResourceMgr.LoadPreloadedResources()
+	gohome.ResourceMgr.PreloadFont("Ammo", "UbuntuMono-R.ttf")
+	gohome.ResourceMgr.PreloadTexture("Player", "GPPCC14_Player.png")
+	gohome.ResourceMgr.LoadPreloadedResources()
+
+	gohome.ResourceMgr.GetTexture("Player").SetFiltering(gohome.FILTERING_NEAREST)
 }

@@ -1,9 +1,24 @@
 assets
 	player sprite
+		walk animation
+		jump animation
+		shoot animation
+		look animation
 	weapons
 		default
 		freeze
 		ball
-	tileset
 	blocks
 	enemy
+	sounds
+		walk sound
+		shoot sound
+		jump sound
+		enemy kill sound
+	music
+	ammo font
+
+Menu when player dies
+Main menu
+level select screen
+

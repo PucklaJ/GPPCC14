@@ -16,5 +16,6 @@
 
 15min
 30min
+30min
 --
-36h
+36h30min

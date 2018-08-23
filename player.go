@@ -11,8 +11,8 @@ import (
 const (
 	PLAYER_RESTITUITION float64 = 0.0
 	PLAYER_FRICTION     float64 = 1.0
-	PLAYER_HEIGHT       float32 = 32.0
-	PLAYER_WIDTH        float32 = PLAYER_HEIGHT / 2.0
+	PLAYER_HEIGHT       float32 = 28.0
+	PLAYER_WIDTH        float32 = 13.0
 	PLAYER_VELOCITY     float32 = 500.0
 	PLAYER_JUMP_FORCE   float32 = 25.0
 	PLAYER_DAMPING      float64 = 0.0
@@ -41,13 +41,14 @@ type Player struct {
 }
 
 func (this *Player) Init(pos mgl32.Vec2, pmgr *physics2d.PhysicsManager2D) {
-	this.Sprite2D.Init("")
+	this.Sprite2D.Init("Player")
 	this.Transform.Position = pos
 
 	this.createBody(pmgr)
 	this.connector.Init(this.Transform, this.body)
 	gohome.UpdateMgr.AddObject(this)
 	gohome.UpdateMgr.AddObject(&this.connector)
+	gohome.RenderMgr.AddObject(this)
 	this.PhysicsMgr = pmgr
 	this.Inventory.Init()
 	this.addWeapons()
