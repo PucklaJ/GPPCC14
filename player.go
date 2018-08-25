@@ -25,6 +25,17 @@ const (
 	PLAYER_FEET_SENSOR_OFFSET_Y float32 = 16.0 - PLAYER_FEET_SENSOR_HEIGHT/2.0
 
 	PLAYER_ENEMY_BOUNCE float32 = -100.0
+
+	NO_ANIM   uint8 = 0
+	ANIM_WALK uint8 = 1
+
+	PLAYER_FRAME_WIDTH  float32 = 14.0
+	PLAYER_FRAME_HEIGHT float32 = 29.0
+	PLAYER_FRAME_TIME   float32 = 1.0 / 7.0
+
+	PLAYER_STAND_THRESHOLD float32 = 10.0
+	PLAYER_PREVX_THRESHOLD float32 = 2.0
+	PLAYER_JUMP_THRESHOLD  float32 = 10.0
 )
 
 type Player struct {
@@ -38,21 +49,117 @@ type Player struct {
 	weapons       []Weapon
 	currentWeapon uint8
 	terminated    bool
+
+	currentAnimation *gohome.Tweenset
+	currentAnim      uint8
+	walkAnimation    gohome.Tweenset
+	prevX            float64
 }
 
 func (this *Player) Init(pos mgl32.Vec2, pmgr *physics2d.PhysicsManager2D) {
 	this.Sprite2D.Init("Player")
 	this.Transform.Position = pos
+	this.Transform.Origin = [2]float32{0.5, 0.5}
 
 	this.createBody(pmgr)
 	this.connector.Init(this.Transform, this.body)
+
 	gohome.UpdateMgr.AddObject(this)
 	gohome.UpdateMgr.AddObject(&this.connector)
 	gohome.RenderMgr.AddObject(this)
+
 	this.PhysicsMgr = pmgr
+
 	this.Inventory.Init()
 	this.addWeapons()
+	this.setupAnimations()
+
 	this.terminated = false
+
+	this.SetAnimation(ANIM_WALK)
+}
+
+func (this *Player) setupAnimations() {
+	this.walkAnimation = gohome.SpriteAnimation2DRegions([]gohome.TextureRegion{
+		gohome.TextureRegion{
+			[2]float32{0, 0},
+			[2]float32{PLAYER_FRAME_WIDTH * 1, PLAYER_FRAME_HEIGHT * 1},
+		},
+		gohome.TextureRegion{
+			[2]float32{PLAYER_FRAME_WIDTH, PLAYER_FRAME_HEIGHT},
+			[2]float32{PLAYER_FRAME_WIDTH * 2, PLAYER_FRAME_HEIGHT * 2},
+		},
+		gohome.TextureRegion{
+			[2]float32{PLAYER_FRAME_WIDTH, 0.0},
+			[2]float32{PLAYER_FRAME_WIDTH * 2, PLAYER_FRAME_HEIGHT * 1},
+		},
+		gohome.TextureRegion{
+			[2]float32{0, PLAYER_FRAME_HEIGHT},
+			[2]float32{PLAYER_FRAME_WIDTH * 1, PLAYER_FRAME_HEIGHT * 2},
+		},
+	}, PLAYER_FRAME_TIME)
+	this.walkAnimation.Loop = true
+	this.walkAnimation.SetParent(&this.Sprite2D)
+
+	gohome.UpdateMgr.AddObject(&this.walkAnimation)
+}
+
+func (this *Player) SetAnimation(anim uint8) {
+	if anim == this.currentAnim {
+		return
+	}
+
+	this.StopAnimation()
+
+	switch anim {
+	case ANIM_WALK:
+		this.currentAnimation = &this.walkAnimation
+	}
+
+	this.currentAnimation.Start()
+	this.currentAnim = anim
+}
+
+func (this *Player) StopAnimation() {
+	if this.currentAnim == NO_ANIM {
+		return
+	}
+
+	if this.currentAnimation != nil {
+		this.currentAnimation.Stop()
+	}
+	this.TextureRegion = gohome.TextureRegion{
+		[2]float32{0.0, 0.0},
+		[2]float32{14.0, 29.0},
+	}
+	this.Transform.Size = [2]float32{PLAYER_FRAME_WIDTH, PLAYER_FRAME_HEIGHT}
+	this.currentAnim = NO_ANIM
+}
+
+func (this *Player) updateAnimation() {
+	x := this.body.GetLinearVelocity().X
+	y := this.body.GetLinearVelocity().Y
+	if math.Abs(x) > physics2d.ScalarToBox2D(PLAYER_PREVX_THRESHOLD) {
+		this.prevX = x
+	}
+	if this.prevX < 0.0 {
+		this.Flip = gohome.FLIP_HORIZONTAL
+	} else {
+		this.Flip = gohome.FLIP_NONE
+	}
+
+	px := physics2d.ScalarToPixel(math.Abs(x))
+	py := physics2d.ScalarToPixel(math.Abs(y))
+
+	if py < PLAYER_JUMP_THRESHOLD {
+		if px < PLAYER_STAND_THRESHOLD {
+			this.StopAnimation()
+		} else {
+			this.SetAnimation(ANIM_WALK)
+		}
+	} else {
+		this.StopAnimation()
+	}
 }
 
 func (this *Player) addWeapons() {
@@ -197,6 +304,7 @@ func (this *Player) Update(delta_time float32) {
 	this.handleWeapon()
 	this.updateCamera(delta_time)
 	this.checkEnemy()
+	this.updateAnimation()
 }
 
 func (this *Player) updateCamera(delta_time float32) {
