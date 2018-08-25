@@ -6,7 +6,7 @@ import (
 )
 
 type Weapon interface {
-	OnChange()
+	OnChange(dir bool)
 	OnAdd(p *Player)
 	Use(target mgl32.Vec2)
 	GetInventoryTexture() gohome.Texture
@@ -15,12 +15,17 @@ type Weapon interface {
 }
 
 type NilWeapon struct {
-	gohome.NilRenderObject
+	gohome.Sprite2D
 
 	Player *Player
 	tex    gohome.RenderTexture
 	Ammo   uint32
 }
+
+const (
+	IN  bool = true
+	OUT bool = false
+)
 
 func (this *NilWeapon) OnAdd(p *Player) {
 	this.Player = p
@@ -31,8 +36,12 @@ func (this *NilWeapon) OnAdd(p *Player) {
 	this.Ammo = DEFAULT_WEAPON_AMMO
 }
 
-func (this *NilWeapon) OnChange() {
-	gohome.RenderMgr.AddObject(this)
+func (this *NilWeapon) OnChange(dir bool) {
+	if dir == IN {
+		gohome.RenderMgr.AddObject(this)
+	} else {
+		gohome.RenderMgr.RemoveObject(this)
+	}
 }
 
 func (this *NilWeapon) Use(target mgl32.Vec2) {

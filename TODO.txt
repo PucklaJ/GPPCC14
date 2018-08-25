@@ -1,6 +1,4 @@
 assets
-	player sprite
-		look animation
 	weapons
 		default
 		freeze

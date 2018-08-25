@@ -51,7 +51,9 @@ const ENEMY_BIG_RIGHT_SENSOR_CATEGORY uint16 = 1<<9 | ENEMY_SENSOR_CATEGORY
 func LoadResources() {
 	gohome.ResourceMgr.PreloadFont("Ammo", "UbuntuMono-R.ttf")
 	gohome.ResourceMgr.PreloadTexture("Player", "GPPCC14_Player.png")
+	gohome.ResourceMgr.PreloadTexture("DefaultWeapon", "GPPCC14_DefaultWeapon.png")
 	gohome.ResourceMgr.LoadPreloadedResources()
 
 	gohome.ResourceMgr.GetTexture("Player").SetFiltering(gohome.FILTERING_NEAREST)
+	gohome.ResourceMgr.GetTexture("DefaultWeapon").SetFiltering(gohome.FILTERING_NEAREST)
 }

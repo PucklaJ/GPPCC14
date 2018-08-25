@@ -7,30 +7,45 @@ import (
 	"github.com/go-gl/mathgl/mgl32"
 )
 
-const DEFAULT_WEAPON_WIDTH float32 = 32.0
-const DEFAULT_WEAPON_HEIGHT float32 = 16.0
-const DEFAULT_WEAPON_FRICTION float64 = 3.0
-const DEFAULT_WEAPON_WEIGHT float64 = 0.5
-const DEFAULT_WEAPON_RESTITUTION float64 = 0.0
-const DEFAULT_WEAPON_VELOCITY float32 = 200.0
-const DEFAULT_WEAPON_AMMO uint32 = 10
+const (
+	DEFAULT_WEAPON_WIDTH       float32 = 32.0
+	DEFAULT_WEAPON_HEIGHT      float32 = 16.0
+	DEFAULT_WEAPON_FRICTION    float64 = 3.0
+	DEFAULT_WEAPON_WEIGHT      float64 = 0.5
+	DEFAULT_WEAPON_RESTITUTION float64 = 0.0
+	DEFAULT_WEAPON_VELOCITY    float32 = 200.0
+	DEFAULT_WEAPON_AMMO        uint32  = 10
+
+	DEFAULT_WEAPON_OFFSET_X float32 = 0.0
+	DEFAULT_WEAPON_OFFSET_Y float32 = 0.0
+)
 
 type DefaultWeapon struct {
 	NilWeapon
 }
 
 func (this *DefaultWeapon) OnAdd(p *Player) {
+	this.Sprite2D.Init("DefaultWeapon")
+	this.Transform.Origin = [2]float32{0.5, 0.5}
+
 	this.NilWeapon.OnAdd(p)
 	this.tex.SetAsTarget()
 	gohome.Render.ClearScreen(gohome.Color{255, 0, 100, 255})
 	this.tex.UnsetAsTarget()
 	this.Ammo = DEFAULT_WEAPON_AMMO
+
+	gohome.UpdateMgr.AddObject(this)
 }
 
 func (this *DefaultWeapon) Use(target mgl32.Vec2) {
 	dir := target.Sub(this.Player.Transform.Position).Normalize()
 	this.createBox(dir)
 	this.Ammo--
+}
+
+func (this *DefaultWeapon) Update(delta_time float32) {
+	this.Transform.Position = this.Player.Transform.Position.Add(this.Player.GetWeaponOffset()).Add([2]float32{DEFAULT_WEAPON_OFFSET_X, DEFAULT_WEAPON_OFFSET_Y})
+	this.Flip = this.Player.Flip
 }
 
 func (this *DefaultWeapon) createBox(dir mgl32.Vec2) {

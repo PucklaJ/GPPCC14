@@ -308,7 +308,7 @@ func (this *Player) handleWeapon() {
 func (this *Player) addWeapon(w Weapon) {
 	w.OnAdd(this)
 	if len(this.weapons) == 0 {
-		w.OnChange()
+		w.OnChange(IN)
 	}
 	this.weapons = append(this.weapons, w)
 	this.Inventory.AddWeapon(w)
@@ -316,7 +316,7 @@ func (this *Player) addWeapon(w Weapon) {
 
 func (this *Player) changeWeapon(dir bool) {
 	w := this.weapons[this.currentWeapon]
-	w.Terminate()
+	w.OnChange(OUT)
 	if dir == UP {
 		this.currentWeapon++
 	} else {
@@ -332,7 +332,7 @@ func (this *Player) changeWeapon(dir bool) {
 	}
 
 	w = this.weapons[this.currentWeapon]
-	w.OnChange()
+	w.OnChange(IN)
 	this.Inventory.SetCurrent(dir)
 }
 
@@ -437,8 +437,41 @@ func (this *Player) Terminate() {
 	gohome.UpdateMgr.RemoveObject(&this.fallAnimation)
 	gohome.RenderMgr.RemoveObject(this)
 
-	this.weapons[this.currentWeapon].Terminate()
+	for _, w := range this.weapons {
+		w.Terminate()
+	}
 	this.Inventory.Terminate()
 	this.PhysicsMgr.World.DestroyBody(this.body)
 	this.terminated = true
+}
+
+func (this *Player) GetWeaponOffset() (off mgl32.Vec2) {
+	tx := this.TextureRegion.Min[0]
+	ty := this.TextureRegion.Min[1]
+
+	if tx == 0.0 && ty == 0.0 {
+		off[1] = 4.0
+	} else if tx == PLAYER_FRAME_WIDTH && ty == 0.0 {
+		off[1] = 3.5
+	} else if tx == 0.0 && ty == PLAYER_FRAME_HEIGHT {
+		off[1] = 3.0
+	} else if tx == PLAYER_FRAME_WIDTH && ty == PLAYER_FRAME_HEIGHT {
+		off[1] = 3.0
+	} else if tx == 0.0 && ty == PLAYER_FRAME_HEIGHT*2 {
+		off[1] = 1.0
+	} else if tx == PLAYER_FRAME_WIDTH && ty == PLAYER_FRAME_HEIGHT*2 {
+		off[1] = 2.0
+	} else if tx == 0.0 && ty == PLAYER_FRAME_HEIGHT*3 {
+		off[1] = 4.0
+		off[0] = -2.0
+	} else if tx == PLAYER_FRAME_WIDTH && ty == PLAYER_FRAME_HEIGHT*3 {
+		off[1] = 4.0
+		off[0] = -1.0
+	}
+
+	if this.Flip == gohome.FLIP_HORIZONTAL {
+		off[0] = -off[0]
+	}
+
+	return
 }
