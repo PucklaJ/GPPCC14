@@ -26,9 +26,10 @@ const (
 
 	PLAYER_ENEMY_BOUNCE float32 = -100.0
 
-	NO_ANIM   uint8 = 0
-	ANIM_WALK uint8 = 1
-	ANIM_FALL uint8 = 2
+	NO_ANIM    uint8 = 0
+	ANIM_WALK  uint8 = 1
+	ANIM_FALL  uint8 = 2
+	ANIM_SHOOT uint8 = 3
 
 	PLAYER_FRAME_WIDTH  float32 = 14.0
 	PLAYER_FRAME_HEIGHT float32 = 29.0
@@ -53,10 +54,10 @@ type Player struct {
 
 	currentAnimation *gohome.Tweenset
 	currentAnim      uint8
-	prevX            float64
 
-	walkAnimation gohome.Tweenset
-	fallAnimation gohome.Tweenset
+	walkAnimation  gohome.Tweenset
+	fallAnimation  gohome.Tweenset
+	shootAnimation gohome.Tweenset
 }
 
 func (this *Player) Init(pos mgl32.Vec2, pmgr *physics2d.PhysicsManager2D) {
@@ -78,8 +79,6 @@ func (this *Player) Init(pos mgl32.Vec2, pmgr *physics2d.PhysicsManager2D) {
 	this.setupAnimations()
 
 	this.terminated = false
-
-	this.SetAnimation(ANIM_WALK)
 }
 
 func (this *Player) setupAnimations() {
@@ -111,15 +110,29 @@ func (this *Player) setupAnimations() {
 			[2]float32{PLAYER_FRAME_WIDTH * 2, PLAYER_FRAME_HEIGHT * 3},
 		},
 	}, PLAYER_FRAME_TIME)
+	this.shootAnimation = gohome.SpriteAnimation2DRegions([]gohome.TextureRegion{
+		gohome.TextureRegion{
+			[2]float32{0, PLAYER_FRAME_HEIGHT * 3},
+			[2]float32{PLAYER_FRAME_WIDTH * 1, PLAYER_FRAME_HEIGHT * 4},
+		},
+		gohome.TextureRegion{
+			[2]float32{PLAYER_FRAME_WIDTH * 1, PLAYER_FRAME_HEIGHT * 3},
+			[2]float32{PLAYER_FRAME_WIDTH * 2, PLAYER_FRAME_HEIGHT * 4},
+		},
+	}, PLAYER_FRAME_TIME)
 
 	this.walkAnimation.Loop = true
 	this.fallAnimation.Loop = true
 
 	this.walkAnimation.SetParent(&this.Sprite2D)
 	this.fallAnimation.SetParent(&this.Sprite2D)
+	this.shootAnimation.SetParent(&this.Sprite2D)
 
 	gohome.UpdateMgr.AddObject(&this.walkAnimation)
 	gohome.UpdateMgr.AddObject(&this.fallAnimation)
+	gohome.UpdateMgr.AddObject(&this.shootAnimation)
+
+	this.StopAnimation()
 }
 
 func (this *Player) SetAnimation(anim uint8) {
@@ -134,6 +147,8 @@ func (this *Player) SetAnimation(anim uint8) {
 		this.currentAnimation = &this.walkAnimation
 	case ANIM_FALL:
 		this.currentAnimation = &this.fallAnimation
+	case ANIM_SHOOT:
+		this.currentAnimation = &this.shootAnimation
 	}
 
 	this.currentAnimation.Start()
@@ -141,16 +156,13 @@ func (this *Player) SetAnimation(anim uint8) {
 }
 
 func (this *Player) StopAnimation() {
-	if this.currentAnim == NO_ANIM {
-		return
-	}
+	this.walkAnimation.Stop()
+	this.fallAnimation.Stop()
+	this.shootAnimation.Stop()
 
-	if this.currentAnimation != nil {
-		this.currentAnimation.Stop()
-	}
 	this.TextureRegion = gohome.TextureRegion{
-		[2]float32{0.0, 0.0},
-		[2]float32{14.0, 29.0},
+		[2]float32{0, 0},
+		[2]float32{PLAYER_FRAME_WIDTH * 1, PLAYER_FRAME_HEIGHT * 1},
 	}
 	this.Transform.Size = [2]float32{PLAYER_FRAME_WIDTH, PLAYER_FRAME_HEIGHT}
 	this.currentAnim = NO_ANIM
@@ -158,25 +170,20 @@ func (this *Player) StopAnimation() {
 
 func (this *Player) updateAnimation() {
 	x := this.body.GetLinearVelocity().X
-	if math.Abs(x) > physics2d.ScalarToBox2D(PLAYER_PREVX_THRESHOLD) {
-		this.prevX = x
-	}
-	if this.prevX < 0.0 {
-		this.Flip = gohome.FLIP_HORIZONTAL
-	} else {
-		this.Flip = gohome.FLIP_NONE
-	}
-
 	px := physics2d.ScalarToPixel(math.Abs(x))
 
-	if this.IsGrounded() {
-		if px < PLAYER_STAND_THRESHOLD {
-			this.StopAnimation()
+	this.walkAnimation.LoopBackwards = (px > 0.0 && this.Flip == gohome.FLIP_HORIZONTAL) || (px < 0.0 && this.Flip == gohome.FLIP_NONE)
+
+	if this.shootAnimation.Done() {
+		if this.IsGrounded() {
+			if px < PLAYER_STAND_THRESHOLD {
+				this.StopAnimation()
+			} else {
+				this.SetAnimation(ANIM_WALK)
+			}
 		} else {
-			this.SetAnimation(ANIM_WALK)
+			this.SetAnimation(ANIM_FALL)
 		}
-	} else {
-		this.SetAnimation(ANIM_FALL)
 	}
 }
 
@@ -267,11 +274,24 @@ func (this *Player) handleJump() {
 const UP = true
 const DOWN = false
 
+func (this *Player) handleAngle(mpos mgl32.Vec2) {
+	angle := 360.0 - mgl32.RadToDeg(mpos.Sub(this.Transform.Position).Angle())
+	if angle > 90.0 && angle < 270.0 {
+		this.Flip = gohome.FLIP_HORIZONTAL
+	} else {
+		this.Flip = gohome.FLIP_NONE
+	}
+}
+
 func (this *Player) handleWeapon() {
+	mpos := gohome.InputMgr.Mouse.ToWorldPosition2D()
+	this.handleAngle(mpos)
 	w := this.weapons[this.currentWeapon]
 	if gohome.InputMgr.JustPressed(KEY_SHOOT) && w.GetAmmo() > 0 {
-		mpos := gohome.InputMgr.Mouse.ToWorldPosition2D()
 		w.Use(mpos)
+		if this.currentAnim == NO_ANIM {
+			this.SetAnimation(ANIM_SHOOT)
+		}
 	}
 
 	if gohome.InputMgr.Mouse.Wheel[1] > 0 {

@@ -1,8 +1,5 @@
 assets
 	player sprite
-		walk animation
-		jump animation
-		shoot animation
 		look animation
 	weapons
 		default
