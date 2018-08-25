@@ -28,6 +28,7 @@ const (
 
 	NO_ANIM   uint8 = 0
 	ANIM_WALK uint8 = 1
+	ANIM_FALL uint8 = 2
 
 	PLAYER_FRAME_WIDTH  float32 = 14.0
 	PLAYER_FRAME_HEIGHT float32 = 29.0
@@ -52,8 +53,10 @@ type Player struct {
 
 	currentAnimation *gohome.Tweenset
 	currentAnim      uint8
-	walkAnimation    gohome.Tweenset
 	prevX            float64
+
+	walkAnimation gohome.Tweenset
+	fallAnimation gohome.Tweenset
 }
 
 func (this *Player) Init(pos mgl32.Vec2, pmgr *physics2d.PhysicsManager2D) {
@@ -90,7 +93,7 @@ func (this *Player) setupAnimations() {
 			[2]float32{PLAYER_FRAME_WIDTH * 2, PLAYER_FRAME_HEIGHT * 2},
 		},
 		gohome.TextureRegion{
-			[2]float32{PLAYER_FRAME_WIDTH, 0.0},
+			[2]float32{PLAYER_FRAME_WIDTH, 0},
 			[2]float32{PLAYER_FRAME_WIDTH * 2, PLAYER_FRAME_HEIGHT * 1},
 		},
 		gohome.TextureRegion{
@@ -98,10 +101,25 @@ func (this *Player) setupAnimations() {
 			[2]float32{PLAYER_FRAME_WIDTH * 1, PLAYER_FRAME_HEIGHT * 2},
 		},
 	}, PLAYER_FRAME_TIME)
+	this.fallAnimation = gohome.SpriteAnimation2DRegions([]gohome.TextureRegion{
+		gohome.TextureRegion{
+			[2]float32{0, PLAYER_FRAME_HEIGHT * 2},
+			[2]float32{PLAYER_FRAME_WIDTH * 1, PLAYER_FRAME_HEIGHT * 3},
+		},
+		gohome.TextureRegion{
+			[2]float32{PLAYER_FRAME_WIDTH * 1, PLAYER_FRAME_HEIGHT * 2},
+			[2]float32{PLAYER_FRAME_WIDTH * 2, PLAYER_FRAME_HEIGHT * 3},
+		},
+	}, PLAYER_FRAME_TIME)
+
 	this.walkAnimation.Loop = true
+	this.fallAnimation.Loop = true
+
 	this.walkAnimation.SetParent(&this.Sprite2D)
+	this.fallAnimation.SetParent(&this.Sprite2D)
 
 	gohome.UpdateMgr.AddObject(&this.walkAnimation)
+	gohome.UpdateMgr.AddObject(&this.fallAnimation)
 }
 
 func (this *Player) SetAnimation(anim uint8) {
@@ -114,6 +132,8 @@ func (this *Player) SetAnimation(anim uint8) {
 	switch anim {
 	case ANIM_WALK:
 		this.currentAnimation = &this.walkAnimation
+	case ANIM_FALL:
+		this.currentAnimation = &this.fallAnimation
 	}
 
 	this.currentAnimation.Start()
@@ -138,7 +158,6 @@ func (this *Player) StopAnimation() {
 
 func (this *Player) updateAnimation() {
 	x := this.body.GetLinearVelocity().X
-	y := this.body.GetLinearVelocity().Y
 	if math.Abs(x) > physics2d.ScalarToBox2D(PLAYER_PREVX_THRESHOLD) {
 		this.prevX = x
 	}
@@ -149,16 +168,15 @@ func (this *Player) updateAnimation() {
 	}
 
 	px := physics2d.ScalarToPixel(math.Abs(x))
-	py := physics2d.ScalarToPixel(math.Abs(y))
 
-	if py < PLAYER_JUMP_THRESHOLD {
+	if this.IsGrounded() {
 		if px < PLAYER_STAND_THRESHOLD {
 			this.StopAnimation()
 		} else {
 			this.SetAnimation(ANIM_WALK)
 		}
 	} else {
-		this.StopAnimation()
+		this.SetAnimation(ANIM_FALL)
 	}
 }
 
@@ -393,13 +411,14 @@ func (this *Player) Terminate() {
 		return
 	}
 
-	this.weapons[this.currentWeapon].Terminate()
-	this.PhysicsMgr.World.DestroyBody(this.body)
 	gohome.UpdateMgr.RemoveObject(this)
-	gohome.RenderMgr.RemoveObject(this)
 	gohome.UpdateMgr.RemoveObject(&this.connector)
+	gohome.UpdateMgr.RemoveObject(&this.walkAnimation)
+	gohome.UpdateMgr.RemoveObject(&this.fallAnimation)
+	gohome.RenderMgr.RemoveObject(this)
 
+	this.weapons[this.currentWeapon].Terminate()
 	this.Inventory.Terminate()
-
+	this.PhysicsMgr.World.DestroyBody(this.body)
 	this.terminated = true
 }
