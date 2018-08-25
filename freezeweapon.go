@@ -39,6 +39,10 @@ func (this *FreezeWeapon) OnAdd(p *Player) {
 	this.Ammo = FREEZE_AMMO
 }
 
+func (this *FreezeWeapon) GetInventoryTexture() gohome.Texture {
+	return gohome.ResourceMgr.GetTexture("FreezeWeaponInv")
+}
+
 func (this *FreezeWeapon) Update(delta_time float32) {
 	for i := 0; i < len(this.times); i++ {
 		if this.times[i] > 0.0 {

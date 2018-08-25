@@ -28,7 +28,6 @@ func (this *LevelScene) Init() {
 	this.debugDraw = this.PhysicsMgr.GetDebugDraw()
 	gohome.RenderMgr.AddObject(&this.debugDraw)
 	this.debugDraw.OnlyDrawDynamic = true
-	this.debugDraw.DrawBodies = false
 
 	groundBodies := this.PhysicsMgr.LayerToCollision(&this.Map, "Collision")
 	for i := 0; i < len(groundBodies); i++ {

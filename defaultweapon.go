@@ -29,12 +29,13 @@ func (this *DefaultWeapon) OnAdd(p *Player) {
 	this.Transform.Origin = [2]float32{0.5, 0.5}
 
 	this.NilWeapon.OnAdd(p)
-	this.tex.SetAsTarget()
-	gohome.Render.ClearScreen(gohome.Color{255, 0, 100, 255})
-	this.tex.UnsetAsTarget()
 	this.Ammo = DEFAULT_WEAPON_AMMO
 
 	gohome.UpdateMgr.AddObject(this)
+}
+
+func (this *DefaultWeapon) GetInventoryTexture() gohome.Texture {
+	return gohome.ResourceMgr.GetTexture("DefaultWeaponInv")
 }
 
 func (this *DefaultWeapon) Use(target mgl32.Vec2) {

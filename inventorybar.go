@@ -185,6 +185,7 @@ func (this *InventoryBar) renderTextures() {
 		if wt != nil {
 			var spr gohome.Sprite2D
 			spr.InitTexture(wt)
+			spr.Flip = gohome.FLIP_VERTICAL
 			spr.Transform.Position[0] = x + INVENTORY_PADDING
 			spr.Transform.Position[1] = INVENTORY_PADDING
 			gohome.RenderMgr.RenderRenderObject(&spr)

@@ -1,7 +1,5 @@
 assets
 	weapons
-		default
-		freeze
 		ball
 	blocks
 	enemy
