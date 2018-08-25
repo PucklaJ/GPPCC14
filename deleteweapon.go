@@ -14,6 +14,9 @@ const (
 
 	DELETE_RAYS_SPEED float32 = 0.3
 	DELETE_RAYS_WIDTH float32 = 5.0
+
+	DELETE_WEAPON_OFFSET_X float32 = 5.0
+	DELETE_WEAPON_OFFSET_Y float32 = -2.0
 )
 
 type DeleteWeapon struct {
@@ -23,11 +26,16 @@ type DeleteWeapon struct {
 }
 
 func (this *DeleteWeapon) OnAdd(p *Player) {
+	this.Sprite2D.Init("DeleteWeapon")
+	this.Transform.Origin = [2]float32{0.5, 0.5}
+
 	this.NilWeapon.OnAdd(p)
 	this.tex.SetAsTarget()
 	gohome.Render.ClearScreen(colornames.Red)
 	this.tex.UnsetAsTarget()
 	this.Ammo = DELETE_WEAPON_AMMO
+
+	gohome.UpdateMgr.AddObject(this)
 }
 
 func (this *DeleteWeapon) castRay(dir mgl32.Vec2) {
@@ -55,12 +63,21 @@ func (this *DeleteWeapon) castRay(dir mgl32.Vec2) {
 	}
 }
 
+func (this *DeleteWeapon) Update(delta_time float32) {
+	off := [2]float32{DELETE_WEAPON_OFFSET_X, DELETE_WEAPON_OFFSET_Y}
+	this.Flip = this.Player.Flip
+	if this.Flip == gohome.FLIP_HORIZONTAL {
+		off[0] = -off[0]
+	}
+	this.Transform.Position = this.Player.Transform.Position.Add(this.Player.GetWeaponOffset()).Add(off)
+}
+
 func (this *DeleteWeapon) Use(target mgl32.Vec2) {
 	dir := target.Sub(this.Player.Transform.Position).Normalize()
 
 	var ray DeleteRay
 	ray.Init()
-	ray.Transform.Position = this.Player.Transform.Position.Add(dir.Mul(DELETE_WEAPON_DISTANCE / 2.0))
+	ray.Transform.Position = this.Player.Transform.Position.Add(dir.Mul(DELETE_WEAPON_DISTANCE / 2.0)).Add(this.Player.GetWeaponOffset()).Sub([2]float32{0.0, DELETE_RAYS_WIDTH / 2.0})
 
 	// this.Ammo--
 
@@ -98,6 +115,7 @@ func (this *DeleteRay) Init() {
 	gohome.UpdateMgr.AddObject(this)
 
 	this.Transform.Size = [2]float32{DELETE_WEAPON_DISTANCE, DELETE_RAYS_WIDTH}
+	this.Depth = DELETE_RAY_DEPTH
 }
 
 func (this *DeleteRay) Update(delta_time float32) {

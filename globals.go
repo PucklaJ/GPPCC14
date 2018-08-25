@@ -11,6 +11,10 @@ const GRAVITY float32 = 200.0
 const NUM_LEVELS uint32 = 1
 const ZOOM float32 = 3.0
 
+const DELETE_RAY_DEPTH uint8 = 0
+const PLAYER_DEPTH uint8 = 1
+const WEAPON_DEPTH uint8 = 2
+
 const PLAYER_CATEGORY uint16 = 1 << 0
 const PLAYER_FEET_CATEGORY uint16 = (1 << 1) | PLAYER_CATEGORY
 const PLAYER_FEET_SENSOR_CATEGORY uint16 = (1 << 10) | PLAYER_CATEGORY
@@ -52,8 +56,16 @@ func LoadResources() {
 	gohome.ResourceMgr.PreloadFont("Ammo", "UbuntuMono-R.ttf")
 	gohome.ResourceMgr.PreloadTexture("Player", "GPPCC14_Player.png")
 	gohome.ResourceMgr.PreloadTexture("DefaultWeapon", "GPPCC14_DefaultWeapon.png")
+	gohome.ResourceMgr.PreloadTexture("FreezeWeapon", "GPPCC14_FreezeWeapon.png")
+	gohome.ResourceMgr.PreloadTexture("BallWeapon", "GPPCC14_BallWeapon.png")
+	gohome.ResourceMgr.PreloadTexture("MoveWeapon", "GPPCC14_MoveWeapon.png")
+	gohome.ResourceMgr.PreloadTexture("DeleteWeapon", "GPPCC14_DeleteWeapon.png")
 	gohome.ResourceMgr.LoadPreloadedResources()
 
 	gohome.ResourceMgr.GetTexture("Player").SetFiltering(gohome.FILTERING_NEAREST)
 	gohome.ResourceMgr.GetTexture("DefaultWeapon").SetFiltering(gohome.FILTERING_NEAREST)
+	gohome.ResourceMgr.GetTexture("FreezeWeapon").SetFiltering(gohome.FILTERING_NEAREST)
+	gohome.ResourceMgr.GetTexture("BallWeapon").SetFiltering(gohome.FILTERING_NEAREST)
+	gohome.ResourceMgr.GetTexture("MoveWeapon").SetFiltering(gohome.FILTERING_NEAREST)
+	gohome.ResourceMgr.GetTexture("DeleteWeapon").SetFiltering(gohome.FILTERING_NEAREST)
 }

@@ -24,6 +24,9 @@ const (
 	MOVE_WEAPON_VELOCITY_SPEED float64 = 0.5
 	MOVE_WEAPON_MIN_DISTANCE   float32 = 10.0
 	MOVE_WEAPON_SLOW_DISTANCE  float32 = 32.0
+
+	MOVE_WEAPON_OFFSET_X float32 = 1.0
+	MOVE_WEAPON_OFFSET_Y float32 = -2.0
 )
 
 type MoveWeapon struct {
@@ -33,6 +36,9 @@ type MoveWeapon struct {
 }
 
 func (this *MoveWeapon) OnAdd(p *Player) {
+	this.Sprite2D.Init("MoveWeapon")
+	this.Transform.Origin = [2]float32{0.5, 0.5}
+
 	this.NilWeapon.OnAdd(p)
 	this.tex.SetAsTarget()
 	gohome.Render.ClearScreen(colornames.Chocolate)
@@ -64,6 +70,13 @@ func (this *MoveWeapon) Update(delta_time float32) {
 	for i := 0; i < len(this.platforms); i++ {
 		this.platforms[i].Update(delta_time)
 	}
+
+	off := [2]float32{MOVE_WEAPON_OFFSET_X, MOVE_WEAPON_OFFSET_Y}
+	this.Flip = this.Player.Flip
+	if this.Flip == gohome.FLIP_HORIZONTAL {
+		off[0] = -off[0]
+	}
+	this.Transform.Position = this.Player.Transform.Position.Add(this.Player.GetWeaponOffset()).Add(off)
 }
 
 func (this *MoveWeapon) createBox(dir mgl32.Vec2) *box2d.B2Body {

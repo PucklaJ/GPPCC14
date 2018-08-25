@@ -34,6 +34,7 @@ func (this *NilWeapon) OnAdd(p *Player) {
 	gohome.Render.ClearScreen(gohome.Color{255, 100, 0, 255})
 	this.tex.UnsetAsTarget()
 	this.Ammo = DEFAULT_WEAPON_AMMO
+	this.Depth = WEAPON_DEPTH
 }
 
 func (this *NilWeapon) OnChange(dir bool) {

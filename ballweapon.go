@@ -8,13 +8,18 @@ import (
 	"math"
 )
 
-const BALL_WEAPON_RADIUS float32 = 16.0
-const BALL_WEAPON_FRICTION float64 = 1.0
-const BALL_WEAPON_WEIGHT float64 = 0.5
-const BALL_WEAPON_RESTITUTION float64 = 0.0
-const BALL_WEAPON_VELOCITY float32 = 50.0
-const BALL_WEAPON_AMMO uint32 = 10
-const BALL_WEAPON_ANGLE_VELOCITY float32 = 120.0
+const (
+	BALL_WEAPON_RADIUS         float32 = 16.0
+	BALL_WEAPON_FRICTION       float64 = 1.0
+	BALL_WEAPON_WEIGHT         float64 = 0.5
+	BALL_WEAPON_RESTITUTION    float64 = 0.0
+	BALL_WEAPON_VELOCITY       float32 = 50.0
+	BALL_WEAPON_AMMO           uint32  = 10
+	BALL_WEAPON_ANGLE_VELOCITY float32 = 120.0
+
+	BALL_WEAPON_OFFSET_X float32 = 2.0
+	BALL_WEAPON_OFFSET_Y float32 = -2.0
+)
 
 type BallWeapon struct {
 	NilWeapon
@@ -24,6 +29,9 @@ type BallWeapon struct {
 }
 
 func (this *BallWeapon) OnAdd(p *Player) {
+	this.Sprite2D.Init("BallWeapon")
+	this.Transform.Origin = [2]float32{0.5, 0.5}
+
 	this.NilWeapon.OnAdd(p)
 	this.tex.SetAsTarget()
 	gohome.Render.ClearScreen(gohome.Color{100, 20, 255, 255})
@@ -55,6 +63,13 @@ func (this *BallWeapon) Update(delta_time float32) {
 			b.SetAngularVelocity(v)
 		}
 	}
+
+	off := [2]float32{BALL_WEAPON_OFFSET_X, BALL_WEAPON_OFFSET_Y}
+	this.Flip = this.Player.Flip
+	if this.Flip == gohome.FLIP_HORIZONTAL {
+		off[0] = -off[0]
+	}
+	this.Transform.Position = this.Player.Transform.Position.Add(this.Player.GetWeaponOffset()).Add(off)
 }
 
 func (this *BallWeapon) createBall(dir mgl32.Vec2) *box2d.B2Body {

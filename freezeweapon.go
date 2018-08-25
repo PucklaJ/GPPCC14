@@ -16,6 +16,9 @@ const (
 	FREEZE_FRICTION float64 = 0.3
 
 	FREEZE_VELOCITY float32 = 250.0
+
+	FREEZE_OFFSET_X float32 = 2.0
+	FREEZE_OFFSET_Y float32 = -1.0
 )
 
 type FreezeWeapon struct {
@@ -25,6 +28,9 @@ type FreezeWeapon struct {
 }
 
 func (this *FreezeWeapon) OnAdd(p *Player) {
+	this.Sprite2D.Init("FreezeWeapon")
+	this.Transform.Origin = [2]float32{0.5, 0.5}
+
 	this.NilWeapon.OnAdd(p)
 	this.tex.SetAsTarget()
 	gohome.Render.ClearScreen(gohome.Color{0, 255, 50, 255})
@@ -42,6 +48,12 @@ func (this *FreezeWeapon) Update(delta_time float32) {
 			this.bodies[i].SetType(box2d.B2BodyType.B2_staticBody)
 		}
 	}
+	off := [2]float32{FREEZE_OFFSET_X, FREEZE_OFFSET_Y}
+	this.Flip = this.Player.Flip
+	if this.Flip == gohome.FLIP_HORIZONTAL {
+		off[0] = -off[0]
+	}
+	this.Transform.Position = this.Player.Transform.Position.Add(this.Player.GetWeaponOffset()).Add(off)
 }
 
 func (this *FreezeWeapon) Use(target mgl32.Vec2) {

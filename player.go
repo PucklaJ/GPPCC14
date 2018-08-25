@@ -78,6 +78,7 @@ func (this *Player) Init(pos mgl32.Vec2, pmgr *physics2d.PhysicsManager2D) {
 	this.addWeapons()
 	this.setupAnimations()
 
+	this.Depth = PLAYER_DEPTH
 	this.terminated = false
 }
 
@@ -176,7 +177,7 @@ func (this *Player) updateAnimation() {
 
 	if this.shootAnimation.Done() {
 		if this.IsGrounded() {
-			if px < PLAYER_STAND_THRESHOLD {
+			if px < PLAYER_STAND_THRESHOLD || !this.IsMoving() {
 				this.StopAnimation()
 			} else {
 				this.SetAnimation(ANIM_WALK)
