@@ -11,12 +11,10 @@ func (this *StartupScene) Init() {
 	LoadResources()
 	gohome.RenderMgr.SetCamera2D(&Camera, 0)
 	Camera.Zoom = ZOOM
-	gohome.SceneMgr.SwitchScene(&LevelScene{LevelID: 0})
-
 }
 
 func (this *StartupScene) Update(delta_time float32) {
-
+	gohome.SceneMgr.SwitchScene(&LevelScene{LevelID: 0})
 }
 
 func (this *StartupScene) Terminate() {

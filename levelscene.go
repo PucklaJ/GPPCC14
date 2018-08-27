@@ -26,8 +26,8 @@ func (this *LevelScene) Init() {
 	this.PhysicsMgr.Init([2]float32{0.0, GRAVITY})
 	gohome.UpdateMgr.AddObject(&this.PhysicsMgr)
 	this.debugDraw = this.PhysicsMgr.GetDebugDraw()
+	this.debugDraw.Visible = false
 	gohome.RenderMgr.AddObject(&this.debugDraw)
-	this.debugDraw.OnlyDrawDynamic = true
 
 	groundBodies := this.PhysicsMgr.LayerToCollision(&this.Map, "Collision")
 	for i := 0; i < len(groundBodies); i++ {
@@ -73,6 +73,9 @@ func (this *LevelScene) Init() {
 }
 
 func (this *LevelScene) Update(delta_time float32) {
+	if gohome.InputMgr.JustPressed(gohome.KeyF3) {
+		this.debugDraw.Visible = !this.debugDraw.Visible
+	}
 }
 
 func (this *LevelScene) Terminate() {

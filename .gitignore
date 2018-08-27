@@ -1,3 +1,5 @@
 gppcc14
 .*
 !.gitignore
+*.exe
+*.dll
