@@ -69,4 +69,20 @@ func (this *DefaultWeapon) createBox(dir mgl32.Vec2) {
 	body.CreateFixtureFromDef(&fdef)
 
 	body.SetLinearVelocity(physics2d.ToBox2DDirection(dir.Mul(DEFAULT_WEAPON_VELOCITY)))
+
+	var spr gohome.Sprite2D
+	var con physics2d.PhysicsConnector2D
+
+	spr.Init("DefaultWeaponBlock")
+	con.Init(spr.Transform, body)
+
+	gohome.RenderMgr.AddObject(&spr)
+	gohome.UpdateMgr.AddObject(&con)
+
+	var block WeaponBlock
+	block.Sprite = &spr
+	block.Connector = &con
+	this.blocks = append(this.blocks, block)
+
+	body.SetUserData(&this.blocks[len(this.blocks)-1])
 }

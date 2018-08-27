@@ -19,13 +19,27 @@ const (
 
 	BALL_WEAPON_OFFSET_X float32 = 2.0
 	BALL_WEAPON_OFFSET_Y float32 = -2.0
+
+	BALL_WEAPON_FRAME_TIME float32 = 1.0 / 4.0
+	BALL_WEAPON_ANIM_WAIT  float32 = 1.0
 )
+
+type BallWeaponBlock struct {
+	WeaponBlock
+	anim gohome.Tweenset
+}
+
+func (this *BallWeaponBlock) Terminate() {
+	this.WeaponBlock.Terminate()
+	gohome.UpdateMgr.RemoveObject(&this.anim)
+}
 
 type BallWeapon struct {
 	NilWeapon
 
-	bodies []*box2d.B2Body
-	vels   []float64
+	bodies     []*box2d.B2Body
+	vels       []float64
+	ballBlocks []BallWeaponBlock
 }
 
 func (this *BallWeapon) OnAdd(p *Player) {
@@ -92,5 +106,41 @@ func (this *BallWeapon) createBall(dir mgl32.Vec2) *box2d.B2Body {
 	body.CreateFixtureFromDef(&fdef)
 
 	body.SetLinearVelocity(physics2d.ToBox2DDirection(dir.Mul(BALL_WEAPON_VELOCITY)))
+
+	var spr gohome.Sprite2D
+	var con physics2d.PhysicsConnector2D
+
+	spr.Init("BallWeaponBlock")
+	spr.TextureRegion.Max[0] = float32(spr.Texture.GetWidth()) / 7.0
+	spr.Transform.Size[0] = spr.TextureRegion.Max[0]
+	con.Init(spr.Transform, body)
+
+	gohome.RenderMgr.AddObject(&spr)
+	gohome.UpdateMgr.AddObject(&con)
+
+	var block BallWeaponBlock
+	block.Sprite = &spr
+	block.Connector = &con
+	block.anim = gohome.SpriteAnimation2D(spr.Texture, 7, 1, BALL_WEAPON_FRAME_TIME)
+	block.anim.Tweens = append(block.anim.Tweens, &gohome.TweenRegion2D{
+		TweenType: gohome.TWEEN_TYPE_AFTER_PREVIOUS,
+		Destination: gohome.TextureRegion{
+			[2]float32{0.0, 0.0},
+			[2]float32{float32(spr.Texture.GetWidth()) / 7.0, float32(spr.Texture.GetHeight())},
+		},
+		Time: 0.0,
+	})
+	block.anim.Tweens = append(block.anim.Tweens, &gohome.TweenWait{
+		Time:      BALL_WEAPON_ANIM_WAIT,
+		TweenType: gohome.TWEEN_TYPE_AFTER_PREVIOUS,
+	})
+	block.anim.Loop = true
+	block.anim.SetParent(&spr)
+	block.anim.Start()
+	gohome.UpdateMgr.AddObject(&block.anim)
+	this.ballBlocks = append(this.ballBlocks, block)
+
+	body.SetUserData(&this.ballBlocks[len(this.ballBlocks)-1])
+
 	return body
 }

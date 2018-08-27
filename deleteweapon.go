@@ -19,6 +19,10 @@ const (
 	DELETE_WEAPON_OFFSET_Y float32 = -2.0
 )
 
+type TerminateObject interface {
+	Terminate()
+}
+
 type DeleteWeapon struct {
 	NilWeapon
 
@@ -60,6 +64,10 @@ func (this *DeleteWeapon) castRay(dir mgl32.Vec2) {
 	}
 
 	for i := 0; i < len(bodies); i++ {
+		t, ok := bodies[i].GetUserData().(TerminateObject)
+		if ok {
+			t.Terminate()
+		}
 		w.DestroyBody(bodies[i])
 	}
 }

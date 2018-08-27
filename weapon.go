@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/PucklaMotzer09/gohomeengine/src/gohome"
+	"github.com/PucklaMotzer09/gohomeengine/src/physics2d"
 	"github.com/go-gl/mathgl/mgl32"
 )
 
@@ -14,12 +15,23 @@ type Weapon interface {
 	GetAmmo() uint32
 }
 
+type WeaponBlock struct {
+	Sprite    *gohome.Sprite2D
+	Connector *physics2d.PhysicsConnector2D
+}
+
+func (this *WeaponBlock) Terminate() {
+	gohome.RenderMgr.RemoveObject(this.Sprite)
+	gohome.UpdateMgr.RemoveObject(this.Connector)
+}
+
 type NilWeapon struct {
 	gohome.Sprite2D
 
 	Player *Player
 	tex    gohome.RenderTexture
 	Ammo   uint32
+	blocks []WeaponBlock
 }
 
 const (
@@ -65,6 +77,9 @@ func (this *NilWeapon) GetInventoryTexture() gohome.Texture {
 
 func (this *NilWeapon) Terminate() {
 	gohome.RenderMgr.RemoveObject(this)
+	for _, block := range this.blocks {
+		block.Terminate()
+	}
 }
 
 func (this *NilWeapon) GetType() gohome.RenderType {

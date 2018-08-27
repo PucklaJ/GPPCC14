@@ -26,6 +26,8 @@ const (
 
 	MOVE_WEAPON_OFFSET_X float32 = 1.0
 	MOVE_WEAPON_OFFSET_Y float32 = -2.0
+
+	MOVE_WEAPON_FRAME_TIME float32 = 1.0 / 8.0
 )
 
 type MoveWeapon struct {
@@ -50,27 +52,58 @@ func (this *MoveWeapon) GetInventoryTexture() gohome.Texture {
 
 func (this *MoveWeapon) Use(target mgl32.Vec2) {
 	dir := target.Sub(this.Player.Transform.Position).Normalize()
+	bdir := dir.X() >= 0.0
 	body := this.createBox(dir)
 
 	this.platforms = append(this.platforms, MovePlatform{
+		WeaponBlock{},
 		body,
 		0.0,
 		[2]float32{0.0, 0.0},
 		false,
 		box2d.B2Vec2{0.0, 0.0},
 		box2d.B2Vec2{0.0, 0.0},
-		dir.X() >= 0.0,
+		bdir,
 		this.Player,
+		gohome.Tweenset{},
+		gohome.Tweenset{},
 	})
+
+	var spr gohome.Sprite2D
+	var con physics2d.PhysicsConnector2D
+
+	spr.Init("MoveWeaponBlock")
+	spr.TextureRegion.Max[0] = float32(spr.Texture.GetWidth()) / 3.0
+	spr.TextureRegion.Min[1] = (float32(spr.Texture.GetHeight()) / 3.0) * 2.0
+	spr.Transform.Size[0], spr.Transform.Size[1] = float32(spr.Texture.GetWidth())/3.0, float32(spr.Texture.GetHeight())/3.0
+	spr.Transform.Origin = [2]float32{0.5, 0.5}
+	con.Init(spr.Transform, body)
+
+	gohome.RenderMgr.AddObject(&spr)
+	gohome.UpdateMgr.AddObject(&con)
+
+	p := &this.platforms[len(this.platforms)-1]
+	p.Sprite = &spr
+	p.Connector = &con
+	p.rightAnim = gohome.SpriteAnimation2DOffset(spr.Texture, 3, 1, 0, 0, 0, spr.Texture.GetHeight()/3*2, MOVE_WEAPON_FRAME_TIME)
+	p.leftAnim = gohome.SpriteAnimation2DOffset(spr.Texture, 3, 1, 0, spr.Texture.GetHeight()/3, 0, spr.Texture.GetHeight()/3, MOVE_WEAPON_FRAME_TIME)
+	p.rightAnim.SetParent(&spr)
+	p.leftAnim.SetParent(&spr)
+	p.rightAnim.Loop = true
+	p.leftAnim.Loop = true
+	p.rightAnim.Stop()
+	p.leftAnim.Stop()
+
+	gohome.UpdateMgr.AddObject(p)
+	gohome.UpdateMgr.AddObject(&p.rightAnim)
+	gohome.UpdateMgr.AddObject(&p.leftAnim)
+
+	body.SetUserData(p)
 
 	// this.Ammo--
 }
 
 func (this *MoveWeapon) Update(delta_time float32) {
-	for i := 0; i < len(this.platforms); i++ {
-		this.platforms[i].Update(delta_time)
-	}
-
 	off := [2]float32{MOVE_WEAPON_OFFSET_X, MOVE_WEAPON_OFFSET_Y}
 	this.Flip = this.Player.Flip
 	if this.Flip == gohome.FLIP_HORIZONTAL {
@@ -99,7 +132,15 @@ func (this *MoveWeapon) createBox(dir mgl32.Vec2) *box2d.B2Body {
 	body.CreateFixtureFromDef(&fdef)
 
 	body.SetLinearVelocity(physics2d.ToBox2DDirection(dir.Mul(MOVE_WEAPON_VELOCITY)))
+
 	return body
+}
+
+func (this *MoveWeapon) Terminate() {
+	this.NilWeapon.Terminate()
+	for _, p := range this.platforms {
+		p.Terminate()
+	}
 }
 
 const (
@@ -108,6 +149,7 @@ const (
 )
 
 type MovePlatform struct {
+	WeaponBlock
 	Body               *box2d.B2Body
 	Time               float32
 	PrevPosition       mgl32.Vec2
@@ -116,18 +158,18 @@ type MovePlatform struct {
 	PrevTargetPosition box2d.B2Vec2
 	Direction          bool
 	Player             *Player
+
+	rightAnim gohome.Tweenset
+	leftAnim  gohome.Tweenset
 }
 
 func (this *MovePlatform) HoldRotation() {
 	b := this.Body
-	const NUM_TARGET_ANGLES uint8 = 5
+	const NUM_TARGET_ANGLES uint8 = 2
 
 	var targetAngles = [NUM_TARGET_ANGLES]float64{
 		0.0,
 		-math.Pi * 2.0,
-		-math.Pi,
-		math.Pi,
-		math.Pi * 2.0,
 	}
 	curAngle := b.GetAngle()
 	var smallestError float64 = targetAngles[0] - curAngle
@@ -148,6 +190,23 @@ func (this *MovePlatform) HoldPosition() {
 		b.GetLinearVelocity().X,
 		errorPos.Y * MOVE_WEAPON_VELOCITY_SPEED,
 	})
+}
+
+func (this *MovePlatform) changeDirection() {
+	this.PrevTargetPosition = this.TargetPosition
+	if this.Direction == RIGHT {
+		this.TargetPosition = box2d.B2Vec2Sub(this.TargetPosition, box2d.B2Vec2{physics2d.ScalarToBox2D(MOVE_WEAPON_DISTANCE), 0.0})
+	} else {
+		this.TargetPosition = box2d.B2Vec2Add(this.TargetPosition, box2d.B2Vec2{physics2d.ScalarToBox2D(MOVE_WEAPON_DISTANCE), 0.0})
+	}
+	this.Direction = !this.Direction
+	if this.Direction == RIGHT {
+		this.leftAnim.Stop()
+		this.rightAnim.Start()
+	} else {
+		this.rightAnim.Stop()
+		this.leftAnim.Start()
+	}
 }
 
 func (this *MovePlatform) Move() {
@@ -183,33 +242,40 @@ func (this *MovePlatform) Move() {
 	})
 
 	if dist <= minDist {
-		this.PrevTargetPosition = this.TargetPosition
-		if this.Direction == RIGHT {
-			this.TargetPosition = box2d.B2Vec2Sub(this.TargetPosition, box2d.B2Vec2{physics2d.ScalarToBox2D(MOVE_WEAPON_DISTANCE), 0.0})
-		} else {
-			this.TargetPosition = box2d.B2Vec2Add(this.TargetPosition, box2d.B2Vec2{physics2d.ScalarToBox2D(MOVE_WEAPON_DISTANCE), 0.0})
-		}
-		this.Direction = !this.Direction
+		this.changeDirection()
 	}
+}
+
+func (this *MovePlatform) startMoving() {
+	this.IsMoving = true
+	this.TargetPosition = this.Body.GetPosition()
+	dist := physics2d.ScalarToBox2D(MOVE_WEAPON_DISTANCE)
+	if this.Direction == RIGHT {
+		this.TargetPosition.X += dist
+		this.rightAnim.Start()
+	} else {
+		this.TargetPosition.X -= dist
+		this.leftAnim.Start()
+	}
+	this.PrevPosition = physics2d.ToPixelCoordinates(this.Body.GetPosition())
 }
 
 func (this *MovePlatform) Update(delta_time float32) {
 	if !this.IsMoving {
 		this.Time += delta_time
 		if this.Time > MOVE_WEAPON_TIME {
-			this.IsMoving = true
-			this.TargetPosition = this.Body.GetPosition()
-			dist := physics2d.ScalarToBox2D(MOVE_WEAPON_DISTANCE)
-			if this.Direction == RIGHT {
-				this.TargetPosition.X += dist
-			} else {
-				this.TargetPosition.X -= dist
-			}
-			this.PrevPosition = physics2d.ToPixelCoordinates(this.Body.GetPosition())
+			this.startMoving()
 		}
 	} else {
 		this.Move()
 		this.HoldRotation()
 		this.HoldPosition()
 	}
+}
+
+func (this *MovePlatform) Terminate() {
+	this.WeaponBlock.Terminate()
+	gohome.UpdateMgr.RemoveObject(&this.rightAnim)
+	gohome.UpdateMgr.RemoveObject(&this.leftAnim)
+	gohome.UpdateMgr.RemoveObject(this)
 }

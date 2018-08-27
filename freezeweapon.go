@@ -19,6 +19,9 @@ const (
 
 	FREEZE_OFFSET_X float32 = 2.0
 	FREEZE_OFFSET_Y float32 = -1.0
+
+	FREEZE_FRAME_WIDTH  float32 = 36.0
+	FREEZE_FRAME_HEIGHT float32 = 16.0
 )
 
 type FreezeWeapon struct {
@@ -50,6 +53,8 @@ func (this *FreezeWeapon) Update(delta_time float32) {
 		}
 		if this.times[i] <= 0.0 {
 			this.bodies[i].SetType(box2d.B2BodyType.B2_staticBody)
+			block := this.bodies[i].GetUserData().(*WeaponBlock)
+			block.Sprite.TextureRegion.Min[0], block.Sprite.TextureRegion.Max[0] = FREEZE_FRAME_WIDTH, FREEZE_FRAME_WIDTH*2
 		}
 	}
 	off := [2]float32{FREEZE_OFFSET_X, FREEZE_OFFSET_Y}
@@ -88,6 +93,26 @@ func (this *FreezeWeapon) createBox(dir mgl32.Vec2) *box2d.B2Body {
 	body.CreateFixtureFromDef(&fdef)
 
 	body.SetLinearVelocity(physics2d.ToBox2DDirection(dir.Mul(FREEZE_VELOCITY)))
+
+	var spr gohome.Sprite2D
+	var con physics2d.PhysicsConnector2D
+
+	spr.Init("FreezeWeaponBlock")
+	spr.TextureRegion.Max[0] = FREEZE_FRAME_WIDTH
+	spr.Transform.Size[0], spr.Transform.Size[1] = FREEZE_FRAME_WIDTH, FREEZE_FRAME_HEIGHT
+	spr.Transform.Origin = [2]float32{0.5, 0.5}
+	con.Init(spr.Transform, body)
+
+	gohome.RenderMgr.AddObject(&spr)
+	gohome.UpdateMgr.AddObject(&con)
+
+	var block WeaponBlock
+	block.Sprite = &spr
+	block.Connector = &con
+	this.blocks = append(this.blocks, block)
+
+	body.SetUserData(&this.blocks[len(this.blocks)-1])
+
 	return body
 }
 
