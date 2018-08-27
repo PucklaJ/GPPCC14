@@ -62,6 +62,9 @@ func LoadResources() {
 	gohome.ResourceMgr.PreloadTexture("DeleteWeapon", "GPPCC14_DeleteWeapon.png")
 	gohome.ResourceMgr.PreloadTexture("DefaultWeaponInv", "GPPCC14_DefaultWeaponInv.png")
 	gohome.ResourceMgr.PreloadTexture("FreezeWeaponInv", "GPPCC14_FreezeWeaponInv.png")
+	gohome.ResourceMgr.PreloadTexture("BallWeaponInv", "GPPCC14_BallWeaponInv.png")
+	gohome.ResourceMgr.PreloadTexture("MoveWeaponInv", "GPPCC14_MoveWeaponInv.png")
+	gohome.ResourceMgr.PreloadTexture("DeleteWeaponInv", "GPPCC14_DeleteWeaponInv.png")
 	gohome.ResourceMgr.LoadPreloadedResources()
 
 	gohome.ResourceMgr.GetTexture("Player").SetFiltering(gohome.FILTERING_NEAREST)
@@ -72,4 +75,7 @@ func LoadResources() {
 	gohome.ResourceMgr.GetTexture("DeleteWeapon").SetFiltering(gohome.FILTERING_NEAREST)
 	gohome.ResourceMgr.GetTexture("DefaultWeaponInv").SetFiltering(gohome.FILTERING_NEAREST)
 	gohome.ResourceMgr.GetTexture("FreezeWeaponInv").SetFiltering(gohome.FILTERING_NEAREST)
+	gohome.ResourceMgr.GetTexture("BallWeaponInv").SetFiltering(gohome.FILTERING_NEAREST)
+	gohome.ResourceMgr.GetTexture("MoveWeaponInv").SetFiltering(gohome.FILTERING_NEAREST)
+	gohome.ResourceMgr.GetTexture("DeleteWeaponInv").SetFiltering(gohome.FILTERING_NEAREST)
 }

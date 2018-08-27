@@ -33,12 +33,13 @@ func (this *BallWeapon) OnAdd(p *Player) {
 	this.Transform.Origin = [2]float32{0.5, 0.5}
 
 	this.NilWeapon.OnAdd(p)
-	this.tex.SetAsTarget()
-	gohome.Render.ClearScreen(gohome.Color{100, 20, 255, 255})
-	this.tex.UnsetAsTarget()
 	this.Ammo = BALL_WEAPON_AMMO
 
 	gohome.UpdateMgr.AddObject(this)
+}
+
+func (this *BallWeapon) GetInventoryTexture() gohome.Texture {
+	return gohome.ResourceMgr.GetTexture("BallWeaponInv")
 }
 
 func (this *BallWeapon) Use(target mgl32.Vec2) {

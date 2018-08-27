@@ -30,12 +30,13 @@ func (this *DeleteWeapon) OnAdd(p *Player) {
 	this.Transform.Origin = [2]float32{0.5, 0.5}
 
 	this.NilWeapon.OnAdd(p)
-	this.tex.SetAsTarget()
-	gohome.Render.ClearScreen(colornames.Red)
-	this.tex.UnsetAsTarget()
 	this.Ammo = DELETE_WEAPON_AMMO
 
 	gohome.UpdateMgr.AddObject(this)
+}
+
+func (this *DeleteWeapon) GetInventoryTexture() gohome.Texture {
+	return gohome.ResourceMgr.GetTexture("DeleteWeaponInv")
 }
 
 func (this *DeleteWeapon) castRay(dir mgl32.Vec2) {

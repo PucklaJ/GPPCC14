@@ -5,7 +5,6 @@ import (
 	"github.com/PucklaMotzer09/gohomeengine/src/gohome"
 	"github.com/PucklaMotzer09/gohomeengine/src/physics2d"
 	"github.com/go-gl/mathgl/mgl32"
-	"golang.org/x/image/colornames"
 	"math"
 )
 
@@ -40,12 +39,13 @@ func (this *MoveWeapon) OnAdd(p *Player) {
 	this.Transform.Origin = [2]float32{0.5, 0.5}
 
 	this.NilWeapon.OnAdd(p)
-	this.tex.SetAsTarget()
-	gohome.Render.ClearScreen(colornames.Chocolate)
-	this.tex.UnsetAsTarget()
 	this.Ammo = MOVE_WEAPON_AMMO
 
 	gohome.UpdateMgr.AddObject(this)
+}
+
+func (this *MoveWeapon) GetInventoryTexture() gohome.Texture {
+	return gohome.ResourceMgr.GetTexture("MoveWeaponInv")
 }
 
 func (this *MoveWeapon) Use(target mgl32.Vec2) {
