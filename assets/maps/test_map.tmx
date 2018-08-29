@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.1.6" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="16" tileheight="16" infinite="0" backgroundcolor="#3465a4" nextobjectid="36">
+<map version="1.0" tiledversion="1.1.6" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="16" tileheight="16" infinite="0" backgroundcolor="#3465a4" nextobjectid="51">
  <tileset firstgid="1" source="GPPCC14_Tileset.tsx"/>
  <layer name="Kachelebene 1" width="100" height="100">
   <data encoding="base64" compression="zlib">
-   eJzt2v9P1DAYx/FigmiMJ/Ib6MERI0SQEFH5dggBNQRQ/Mb//7fwNNfGh+bZ7cYdtGHvV/JJt3UsS0u3dTvn8JD9lVzlPgmgEL8kf3KfBHBHziTnKhfGPj8kP0Mu7+/UULC3khWV1byn03qfJFuSz6H8mPd0Wu+D+98XPtt5T6f14viIY4TxkZcfH1uuXePDzyV+q+h5hZ93/3P23Ds+f+lnrynJdMgjtWytW9vj8uNwvNgf8ZrVhv6YpOeSlyqdZL1ue6ybC8fT93OuV83NOru9O8m2dD3d90U4nr5/MD6ai+Nj2P//sHERl2N/6OsV46O5eUlXshDSVWU3WV9Itun1V+F4fnzwvFsO7h9l4fmqLOn9g/7Ii/l5WbhelSXtD8ZHXtb79hnJM8kTo3ya5zRb44vkUOVIsiR5E9ILicvLGc4RAIBSWN+RrO9Edd+YrL8Z9v1JJ36DSq1L3qtsGsu63Gy4vy83btFmd8m/J9ffJHSZxqqvWrbqqur9O3b/+553bvDbHl+uSfYlu5J+KEdN1f59VRfLg/GbcKJ0f1S1/7A+atov1rrvD/17kvi+asfdbMO0rdM6XW/VWdkbvwknKvbHqG1ft1/dGLGO6fvD+h7ox0f6/zzquOi7+r4scXy8dje/GeXIohvM/47dYO7nyxPJV8m3kNMRl08r6q39/PL38ZuwaH4O3VNh3gwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwP27BhSyTIA=
+   eJzt2uluEzEUhmEDYhOiQP/REihCgNhUUXbCIjZV7GW5/2vhHMUWp+bMlkyx1Xkf6ZNn4sloZMdJPOMQcJj9lPwufRFAJb5LfpS+COCAfJR8MvnsHPNF8jXm2/+7NFTsuuSGyc2ylzN5DyU7kkexfFD2cibvfvjbF5rHZS9n8tL4SGOE8VGWjo+dMK3xoXOJPRM7r9B596/gz73T/y/73+uI5HjMUbPt7Xuvp+0T8XypP9J31hT6Y0xnJRdM1rL9rtdT3Xo8n/095/tquPPBb++17LV8Pz/2XDyf/f1gfAyXxkfb579tXKTt1B/2+4rxMdxFyUyyETMz5Szb38hes/ub8Xw6Pvi/Ww9+P+rC/6u65L8f9EdZzM/rwvdVXfL+YHyU5d1vPyk5IznllKfLXOZkvJS8MnktuSK5FrMVk7avFrhGAABq4T1H8p4TdT1j8t7T9vzJJj2Dyt2R3DXZdrZtuT3weC3vLdFmB0nvk9tnErbM49U3bXt1TfV6j13X99wKi7U9Wt6WPJc8lcxj2TdNx89NXSpfrN6Eo7L90dT+bX00tF+8fe0Pu54k3a96Eva3Yd7WeZ2t9+q8PFu9CUeV+qNv23cd1zVGvHNqf3jPA3V85J/nvuNiHrr7ssbxcSnsf2ZUIpfDYv73Jizmflq+lbyTvI/Z7bm921DvHafbH1ZvwqrpHHrLhHkzABxOOh/UedqxJd7XNpfDcnQdm12H1ldabzX0fWi3bLumect614EYZNXxQX+My67ztPcOm7ZTaefWGE8aH33uf3jrc+mPcem623zNbb7ONq+z+5v/nhIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEzcHyI0UOg=
   </data>
  </layer>
  <objectgroup name="Collision">
@@ -21,15 +21,18 @@
   <object id="22" x="384" y="526.667" width="81.3333" height="17.3333"/>
   <object id="25" x="606.727" y="464" width="83.5909" height="64"/>
   <object id="27" x="689" y="448.5" width="414" height="79.8333"/>
+  <object id="45" x="64" y="592" width="48" height="112"/>
+  <object id="46" x="112" y="656" width="176" height="48"/>
+  <object id="47" x="288" y="592" width="48" height="112"/>
  </objectgroup>
  <objectgroup name="Settings">
-  <object id="4" name="start" x="112.333" y="432.333">
+  <object id="4" name="start" x="112" y="432">
    <point/>
   </object>
   <object id="30" name="enemy" x="640.167" y="448.333">
    <point/>
   </object>
-  <object id="32" name="enemy" x="768.667" y="432">
+  <object id="32" name="enemy" x="912.667" y="432">
    <point/>
   </object>
   <object id="33" name="enemy" x="800" y="336.667">
@@ -39,6 +42,15 @@
    <point/>
   </object>
   <object id="35" name="enemy" x="576" y="431.333">
+   <point/>
+  </object>
+  <object id="36" name="enemy" x="784" y="431.333">
+   <point/>
+  </object>
+  <object id="37" name="enemy" x="224" y="640">
+   <point/>
+  </object>
+  <object id="38" name="enemy" x="272" y="640">
    <point/>
   </object>
  </objectgroup>

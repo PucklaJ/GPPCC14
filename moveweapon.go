@@ -33,7 +33,7 @@ const (
 type MoveWeapon struct {
 	NilWeapon
 
-	platforms []MovePlatform
+	platforms []*MovePlatform
 }
 
 func (this *MoveWeapon) OnAdd(p *Player) {
@@ -55,7 +55,7 @@ func (this *MoveWeapon) Use(target mgl32.Vec2) {
 	bdir := dir.X() >= 0.0
 	body := this.createBox(dir)
 
-	this.platforms = append(this.platforms, MovePlatform{
+	this.platforms = append(this.platforms, &MovePlatform{
 		WeaponBlock{},
 		body,
 		0.0,
@@ -82,7 +82,7 @@ func (this *MoveWeapon) Use(target mgl32.Vec2) {
 	gohome.RenderMgr.AddObject(&spr)
 	gohome.UpdateMgr.AddObject(&con)
 
-	p := &this.platforms[len(this.platforms)-1]
+	p := this.platforms[len(this.platforms)-1]
 	p.Sprite = &spr
 	p.Connector = &con
 	p.rightAnim = gohome.SpriteAnimation2DOffset(spr.Texture, 3, 1, 0, 0, 0, spr.Texture.GetHeight()/3*2, MOVE_WEAPON_FRAME_TIME)
@@ -142,6 +142,7 @@ func (this *MoveWeapon) Terminate() {
 	for _, p := range this.platforms {
 		p.Terminate()
 	}
+	gohome.UpdateMgr.RemoveObject(this)
 }
 
 const (

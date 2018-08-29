@@ -32,6 +32,7 @@ const (
 	ENEMY_OFFSET_X         float32 = 1.0
 	ENEMY_OFFSET_Y         float32 = 0.0
 	ENEMY_DESTRUCTION_TIME float32 = 0.5
+	ENEMY_FALL_DESTRUCTION float32 = 175.0
 )
 
 type Enemy struct {
@@ -50,6 +51,7 @@ type Enemy struct {
 func (this *Enemy) Init(pos mgl32.Vec2, player *Player) {
 	this.Sprite2D.Init("Enemy")
 	this.Transform.Position = pos
+	this.Transform.Origin = [2]float32{0.5, 0.5}
 	this.Player = player
 	this.direction = RIGHT
 	this.terminated = false
@@ -133,6 +135,36 @@ func (this *Enemy) createBody() {
 	this.Body.CreateFixtureFromDef(&fdef)
 }
 
+type Explosion struct {
+	gohome.Sprite2D
+	anim gohome.Tweenset
+}
+
+func (this *Explosion) Update(delta_time float32) {
+	if this.anim.Done() {
+		gohome.RenderMgr.RemoveObject(this)
+		gohome.UpdateMgr.RemoveObject(&this.anim)
+		gohome.UpdateMgr.RemoveObject(this)
+	}
+}
+
+func (this *Enemy) Die() {
+	var exp Explosion
+	exp.Init("Explosion")
+	exp.Transform.Origin = [2]float32{0.5, 0.5}
+	exp.Transform.Position = this.Transform.Position
+	exp.anim = gohome.SpriteAnimation2D(exp.Texture, 5, 1, 1.0/8.0)
+	exp.anim.Tweens = append(exp.anim.Tweens, &gohome.TweenWait{
+		TweenType: gohome.TWEEN_TYPE_AFTER_PREVIOUS,
+		Time:      0.5,
+	})
+	exp.anim.SetParent(&exp.Sprite2D)
+	exp.anim.Start()
+	gohome.RenderMgr.AddObject(&exp)
+	gohome.UpdateMgr.AddObject(&exp.anim)
+	gohome.UpdateMgr.AddObject(&exp)
+}
+
 func (this *Enemy) checkCollisions() {
 	var sl, sr, bl, br bool = false, false, false, false
 	for ce := this.Body.GetContactList(); ce != nil; ce = ce.Next {
@@ -142,12 +174,17 @@ func (this *Enemy) checkCollisions() {
 		}
 		fa := c.GetFixtureA()
 		fb := c.GetFixtureB()
-		if !(fa.GetFilterData().CategoryBits&ENEMY_SENSOR_CATEGORY != 0 ||
-			fb.GetFilterData().CategoryBits&ENEMY_SENSOR_CATEGORY != 0) {
+
+		if fb.GetBody() == this.Body {
+			fa, fb = fb, fa
+		}
+
+		if fb.GetBody() == this.Body {
 			continue
 		}
-		if fb.GetFilterData().CategoryBits&ENEMY_SENSOR_CATEGORY != 0 {
-			fa, fb = fb, fa
+
+		if fa.GetFilterData().CategoryBits&ENEMY_SENSOR_CATEGORY == 0 {
+			continue
 		}
 
 		if fb.GetFilterData().CategoryBits != GROUND_CATEGORY &&
@@ -158,8 +195,14 @@ func (this *Enemy) checkCollisions() {
 
 		switch fa.GetFilterData().CategoryBits {
 		case ENEMY_SMALL_LEFT_SENSOR_CATEGORY:
+			if fb.GetFilterData().CategoryBits == ENEMY_CATEGORY {
+				continue
+			}
 			sl = true
 		case ENEMY_SMALL_RIGHT_SENSOR_CATEGORY:
+			if fb.GetFilterData().CategoryBits == ENEMY_CATEGORY {
+				continue
+			}
 			sr = true
 		case ENEMY_BIG_LEFT_SENSOR_CATEGORY:
 			bl = true
@@ -213,9 +256,11 @@ func (this *Enemy) Update(delta_time float32) {
 
 	if this.destructed {
 		this.destructionTime += delta_time
-		if this.destructionTime >= ENEMY_DESTRUCTION_TIME {
-			this.Terminate()
-		}
+	}
+
+	if (this.destructed && this.destructionTime >= ENEMY_DESTRUCTION_TIME) || physics2d.ScalarToPixel(this.Body.GetLinearVelocity().Y) < -ENEMY_FALL_DESTRUCTION {
+		this.Die()
+		this.Terminate()
 	}
 }
 

@@ -35,9 +35,6 @@ func (this *FreezeWeapon) OnAdd(p *Player) {
 	this.Transform.Origin = [2]float32{0.5, 0.5}
 
 	this.NilWeapon.OnAdd(p)
-	this.tex.SetAsTarget()
-	gohome.Render.ClearScreen(gohome.Color{0, 255, 50, 255})
-	this.tex.UnsetAsTarget()
 	gohome.UpdateMgr.AddObject(this)
 	this.Ammo = FREEZE_AMMO
 }
@@ -119,4 +116,5 @@ func (this *FreezeWeapon) createBox(dir mgl32.Vec2) *box2d.B2Body {
 
 func (this *FreezeWeapon) Terminate() {
 	this.NilWeapon.Terminate()
+	gohome.UpdateMgr.RemoveObject(this)
 }

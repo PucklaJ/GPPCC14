@@ -72,9 +72,17 @@ func (this *LevelScene) Init() {
 	}
 }
 
+func (this *LevelScene) Restart() {
+	gohome.SceneMgr.SwitchScene(&LevelScene{LevelID: this.LevelID})
+}
+
 func (this *LevelScene) Update(delta_time float32) {
 	if gohome.InputMgr.JustPressed(gohome.KeyF3) {
 		this.debugDraw.Visible = !this.debugDraw.Visible
+	} else if gohome.InputMgr.JustPressed(gohome.KeyR) {
+		this.Restart()
+	} else if gohome.InputMgr.JustPressed(gohome.KeyU) {
+		gohome.SceneMgr.SwitchScene(&gohome.NilScene{})
 	}
 }
 

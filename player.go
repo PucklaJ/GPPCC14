@@ -412,12 +412,14 @@ func (this *Player) checkEnemy() {
 
 	if bc {
 		this.Terminate()
+
 	}
 
 	if fc {
 		vel := this.body.GetLinearVelocity()
 		vel.Y = -physics2d.ScalarToBox2D(PLAYER_ENEMY_BOUNCE)
 		this.body.SetLinearVelocity(vel)
+		enemy.Die()
 		enemy.Terminate()
 	}
 }
@@ -436,6 +438,7 @@ func (this *Player) Terminate() {
 	gohome.UpdateMgr.RemoveObject(&this.connector)
 	gohome.UpdateMgr.RemoveObject(&this.walkAnimation)
 	gohome.UpdateMgr.RemoveObject(&this.fallAnimation)
+	gohome.UpdateMgr.RemoveObject(&this.shootAnimation)
 	gohome.RenderMgr.RemoveObject(this)
 
 	for _, w := range this.weapons {

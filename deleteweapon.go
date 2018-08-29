@@ -26,7 +26,7 @@ type TerminateObject interface {
 type DeleteWeapon struct {
 	NilWeapon
 
-	rays []*DeleteRay
+	sparcles []*Sparcles
 }
 
 func (this *DeleteWeapon) OnAdd(p *Player) {
@@ -41,6 +41,63 @@ func (this *DeleteWeapon) OnAdd(p *Player) {
 
 func (this *DeleteWeapon) GetInventoryTexture() gohome.Texture {
 	return gohome.ResourceMgr.GetTexture("DeleteWeaponInv")
+}
+
+type Sparcles struct {
+	gohome.Sprite2D
+	anim   gohome.Tweenset
+	body   *box2d.B2Body
+	world  *box2d.B2World
+	weapon *DeleteWeapon
+}
+
+func (this *Sparcles) Update(delta_time float32) {
+	if this.anim.Done() {
+		t, ok := this.body.GetUserData().(TerminateObject)
+		if ok {
+			t.Terminate()
+		}
+		this.world.DestroyBody(this.body)
+		this.Terminate()
+	} else {
+		this.Transform.Position = physics2d.ToPixelCoordinates(this.body.GetPosition())
+	}
+}
+
+func (this *Sparcles) Terminate() {
+	gohome.RenderMgr.RemoveObject(this)
+	gohome.UpdateMgr.RemoveObject(this)
+	gohome.UpdateMgr.RemoveObject(&this.anim)
+	for i := 0; i < len(this.weapon.sparcles); i++ {
+		if this.weapon.sparcles[i] == this {
+			this.weapon.sparcles = append(this.weapon.sparcles[:i], this.weapon.sparcles[i+1:]...)
+			return
+		}
+	}
+}
+
+func disappear(body *box2d.B2Body, world *box2d.B2World, wp *DeleteWeapon) *Sparcles {
+	for f := body.GetFixtureList(); f != nil; f = f.GetNext() {
+		var i int = 1
+		f.SetUserData(&i)
+	}
+
+	var sp Sparcles
+	sp.Init("Disappear")
+	sp.Transform.Position = physics2d.ToPixelCoordinates(body.GetPosition())
+	sp.Transform.Origin = [2]float32{0.5, 0.5}
+	sp.world = world
+	sp.body = body
+	sp.weapon = wp
+	sp.anim = gohome.SpriteAnimation2D(sp.Texture, 3, 2, 1.0/8.0)
+	sp.anim.SetParent(&sp.Sprite2D)
+	sp.anim.Start()
+	sp.anim.Update(0.0)
+	gohome.RenderMgr.AddObject(&sp)
+	gohome.UpdateMgr.AddObject(&sp.anim)
+	gohome.UpdateMgr.AddObject(&sp)
+
+	return &sp
 }
 
 func (this *DeleteWeapon) castRay(dir mgl32.Vec2) {
@@ -64,11 +121,16 @@ func (this *DeleteWeapon) castRay(dir mgl32.Vec2) {
 	}
 
 	for i := 0; i < len(bodies); i++ {
-		t, ok := bodies[i].GetUserData().(TerminateObject)
-		if ok {
-			t.Terminate()
+		var disappeared bool = true
+		for f := bodies[i].GetFixtureList(); f != nil; f = f.GetNext() {
+			if i, ok := f.GetUserData().(*int); !(ok && *i == 1) {
+				disappeared = false
+				break
+			}
 		}
-		w.DestroyBody(bodies[i])
+		if !disappeared {
+			this.sparcles = append(this.sparcles, disappear(bodies[i], w, this))
+		}
 	}
 }
 
@@ -91,15 +153,15 @@ func (this *DeleteWeapon) Use(target mgl32.Vec2) {
 	// this.Ammo--
 
 	ray.Transform.Rotation = mgl32.RadToDeg(-dir.Angle())
-	this.rays = append(this.rays, &ray)
 	this.castRay(dir)
 }
 
-func (this *DeleteWeapon) Render() {
-	for i := 0; i < len(this.rays); i++ {
-		if this.rays[i].time >= DELETE_RAYS_SPEED {
-			gohome.UpdateMgr.RemoveObject(this.rays[i])
-		}
+func (this *DeleteWeapon) Terminate() {
+	this.NilWeapon.Terminate()
+	gohome.UpdateMgr.RemoveObject(this)
+
+	for len(this.sparcles) > 0 {
+		this.sparcles[0].Terminate()
 	}
 }
 
@@ -131,6 +193,7 @@ func (this *DeleteRay) Update(delta_time float32) {
 	this.time += delta_time
 	if this.time >= DELETE_RAYS_SPEED {
 		gohome.RenderMgr.RemoveObject(this)
+		gohome.UpdateMgr.RemoveObject(this)
 	}
 	width := DELETE_RAYS_WIDTH * (1.0 - this.time/DELETE_RAYS_SPEED)
 	this.Transform.Size[1] = width

@@ -39,7 +39,7 @@ type BallWeapon struct {
 
 	bodies     []*box2d.B2Body
 	vels       []float64
-	ballBlocks []BallWeaponBlock
+	ballBlocks []*BallWeaponBlock
 }
 
 func (this *BallWeapon) OnAdd(p *Player) {
@@ -139,9 +139,17 @@ func (this *BallWeapon) createBall(dir mgl32.Vec2) *box2d.B2Body {
 	block.anim.SetParent(&spr)
 	block.anim.Start()
 	gohome.UpdateMgr.AddObject(&block.anim)
-	this.ballBlocks = append(this.ballBlocks, block)
+	this.ballBlocks = append(this.ballBlocks, &block)
 
-	body.SetUserData(&this.ballBlocks[len(this.ballBlocks)-1])
+	body.SetUserData(this.ballBlocks[len(this.ballBlocks)-1])
 
 	return body
+}
+
+func (this *BallWeapon) Terminate() {
+	this.NilWeapon.Terminate()
+	gohome.UpdateMgr.RemoveObject(this)
+	for _, block := range this.ballBlocks {
+		block.Terminate()
+	}
 }

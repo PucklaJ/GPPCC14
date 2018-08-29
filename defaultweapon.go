@@ -87,3 +87,8 @@ func (this *DefaultWeapon) createBox(dir mgl32.Vec2) {
 
 	body.SetUserData(&this.blocks[len(this.blocks)-1])
 }
+
+func (this *DefaultWeapon) Terminate() {
+	this.NilWeapon.Terminate()
+	gohome.UpdateMgr.RemoveObject(this)
+}
