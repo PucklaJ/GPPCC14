@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.1.6" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="16" tileheight="16" infinite="0" backgroundcolor="#3465a4" nextobjectid="32">
+<map version="1.0" tiledversion="1.1.6" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="16" tileheight="16" infinite="0" backgroundcolor="#3465a4" nextobjectid="36">
  <tileset firstgid="1" source="GPPCC14_Tileset.tsx"/>
  <layer name="Kachelebene 1" width="100" height="100">
   <data encoding="base64" compression="zlib">
@@ -27,6 +27,18 @@
    <point/>
   </object>
   <object id="30" name="enemy" x="640.167" y="448.333">
+   <point/>
+  </object>
+  <object id="32" name="enemy" x="768.667" y="432">
+   <point/>
+  </object>
+  <object id="33" name="enemy" x="800" y="336.667">
+   <point/>
+  </object>
+  <object id="34" name="enemy" x="480" y="159.333">
+   <point/>
+  </object>
+  <object id="35" name="enemy" x="576" y="431.333">
    <point/>
   </object>
  </objectgroup>

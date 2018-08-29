@@ -1,7 +1,4 @@
 assets
-	weapons
-		ball
-	blocks
 	enemy
 	sounds
 		walk sound

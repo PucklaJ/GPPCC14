@@ -24,19 +24,31 @@ const (
 	ENEMY_BIG_SENSOR_HEIGHT   float32 = 10.0
 	ENEMY_BIG_SENSOR_OFFSET_X float32 = ENEMY_SMALL_SENSOR_OFFSET_X
 	ENEMY_BIG_SENSOR_OFFSET_Y float32 = 0.0
+
+	ENEMY_FRAME_WIDTH  float32 = 23.0
+	ENEMY_FRAME_HEIGHT float32 = 20.0
+	ENEMY_FRAME_TIME   float32 = 1.0 / 5.0
+
+	ENEMY_OFFSET_X         float32 = 1.0
+	ENEMY_OFFSET_Y         float32 = 0.0
+	ENEMY_DESTRUCTION_TIME float32 = 0.5
 )
 
 type Enemy struct {
 	gohome.Sprite2D
-	Body       *box2d.B2Body
-	connector  physics2d.PhysicsConnector2D
-	Player     *Player
-	direction  bool
-	terminated bool
+	Body            *box2d.B2Body
+	connector       physics2d.PhysicsConnector2D
+	Player          *Player
+	direction       bool
+	terminated      bool
+	destructionTime float32
+	destructed      bool
+
+	anim gohome.Tweenset
 }
 
 func (this *Enemy) Init(pos mgl32.Vec2, player *Player) {
-	this.Sprite2D.Init("")
+	this.Sprite2D.Init("Enemy")
 	this.Transform.Position = pos
 	this.Player = player
 	this.direction = RIGHT
@@ -47,7 +59,14 @@ func (this *Enemy) Init(pos mgl32.Vec2, player *Player) {
 	gohome.UpdateMgr.AddObject(this)
 	gohome.RenderMgr.AddObject(this)
 	this.connector.Init(this.Transform, this.Body)
+	this.connector.Offset = [2]float32{ENEMY_OFFSET_X, ENEMY_OFFSET_Y}
 	gohome.UpdateMgr.AddObject(&this.connector)
+
+	this.anim = gohome.SpriteAnimation2D(this.Texture, 3, 4, ENEMY_FRAME_TIME)
+	this.anim.Loop = true
+	this.anim.SetParent(&this.Sprite2D)
+	this.anim.Start()
+	gohome.UpdateMgr.AddObject(&this.anim)
 }
 
 func (this *Enemy) createBody() {
@@ -114,7 +133,7 @@ func (this *Enemy) createBody() {
 	this.Body.CreateFixtureFromDef(&fdef)
 }
 
-func (this *Enemy) updateDirection() {
+func (this *Enemy) checkCollisions() {
 	var sl, sr, bl, br bool = false, false, false, false
 	for ce := this.Body.GetContactList(); ce != nil; ce = ce.Next {
 		c := ce.Contact
@@ -123,15 +142,17 @@ func (this *Enemy) updateDirection() {
 		}
 		fa := c.GetFixtureA()
 		fb := c.GetFixtureB()
-		if fa.GetFilterData().CategoryBits&ENEMY_CATEGORY != 0 ||
-			fb.GetFilterData().CategoryBits&ENEMY_CATEGORY != 0 {
+		if !(fa.GetFilterData().CategoryBits&ENEMY_SENSOR_CATEGORY != 0 ||
+			fb.GetFilterData().CategoryBits&ENEMY_SENSOR_CATEGORY != 0) {
 			continue
 		}
 		if fb.GetFilterData().CategoryBits&ENEMY_SENSOR_CATEGORY != 0 {
 			fa, fb = fb, fa
 		}
+
 		if fb.GetFilterData().CategoryBits != GROUND_CATEGORY &&
-			fb.GetFilterData().CategoryBits != WEAPON_CATEGORY {
+			fb.GetFilterData().CategoryBits != WEAPON_CATEGORY &&
+			fb.GetFilterData().CategoryBits != ENEMY_CATEGORY {
 			continue
 		}
 
@@ -158,6 +179,10 @@ func (this *Enemy) updateDirection() {
 	if br {
 		this.direction = LEFT
 	}
+
+	if bl && br {
+		this.destructed = true
+	}
 }
 
 func (this *Enemy) updateVelocity() {
@@ -170,9 +195,28 @@ func (this *Enemy) updateVelocity() {
 	}
 }
 
+func (this *Enemy) updateAnimation() {
+	x := this.Body.GetLinearVelocity().X
+	if x < 0.0 {
+		this.Flip = gohome.FLIP_HORIZONTAL
+		this.connector.Offset[0] = -ENEMY_OFFSET_X
+	} else {
+		this.Flip = gohome.FLIP_NONE
+		this.connector.Offset[0] = ENEMY_OFFSET_X
+	}
+}
+
 func (this *Enemy) Update(delta_time float32) {
-	this.updateDirection()
+	this.checkCollisions()
 	this.updateVelocity()
+	this.updateAnimation()
+
+	if this.destructed {
+		this.destructionTime += delta_time
+		if this.destructionTime >= ENEMY_DESTRUCTION_TIME {
+			this.Terminate()
+		}
+	}
 }
 
 func (this *Enemy) Terminate() {
@@ -184,6 +228,7 @@ func (this *Enemy) Terminate() {
 	gohome.UpdateMgr.RemoveObject(this)
 	gohome.RenderMgr.RemoveObject(this)
 	gohome.UpdateMgr.RemoveObject(&this.connector)
+	gohome.UpdateMgr.RemoveObject(&this.anim)
 
 	this.terminated = true
 }

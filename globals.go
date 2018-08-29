@@ -69,6 +69,7 @@ func LoadResources() {
 	gohome.ResourceMgr.PreloadTexture("FreezeWeaponBlock", "GPPCC14_FreezeWeaponBlock.png")
 	gohome.ResourceMgr.PreloadTexture("BallWeaponBlock", "GPPCC14_BallWeaponBlock.png")
 	gohome.ResourceMgr.PreloadTexture("MoveWeaponBlock", "GPPCC14_MoveWeaponBlock.png")
+	gohome.ResourceMgr.PreloadTexture("Enemy", "GPPCC14_Enemy.png")
 	gohome.ResourceMgr.LoadPreloadedResources()
 
 	gohome.ResourceMgr.GetTexture("Player").SetFiltering(gohome.FILTERING_NEAREST)
@@ -86,4 +87,5 @@ func LoadResources() {
 	gohome.ResourceMgr.GetTexture("FreezeWeaponBlock").SetFiltering(gohome.FILTERING_NEAREST)
 	gohome.ResourceMgr.GetTexture("BallWeaponBlock").SetFiltering(gohome.FILTERING_NEAREST)
 	gohome.ResourceMgr.GetTexture("MoveWeaponBlock").SetFiltering(gohome.FILTERING_NEAREST)
+	gohome.ResourceMgr.GetTexture("Enemy").SetFiltering(gohome.FILTERING_NEAREST)
 }

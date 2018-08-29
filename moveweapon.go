@@ -132,6 +132,7 @@ func (this *MoveWeapon) createBox(dir mgl32.Vec2) *box2d.B2Body {
 	body.CreateFixtureFromDef(&fdef)
 
 	body.SetLinearVelocity(physics2d.ToBox2DDirection(dir.Mul(MOVE_WEAPON_VELOCITY)))
+	body.SetLinearVelocity(box2d.B2Vec2Add(this.Player.body.GetLinearVelocity(), body.GetLinearVelocity()))
 
 	return body
 }

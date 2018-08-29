@@ -106,6 +106,7 @@ func (this *BallWeapon) createBall(dir mgl32.Vec2) *box2d.B2Body {
 	body.CreateFixtureFromDef(&fdef)
 
 	body.SetLinearVelocity(physics2d.ToBox2DDirection(dir.Mul(BALL_WEAPON_VELOCITY)))
+	body.SetLinearVelocity(box2d.B2Vec2Add(this.Player.body.GetLinearVelocity(), body.GetLinearVelocity()))
 
 	var spr gohome.Sprite2D
 	var con physics2d.PhysicsConnector2D
