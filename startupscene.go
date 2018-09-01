@@ -8,13 +8,15 @@ type StartupScene struct {
 }
 
 func (this *StartupScene) Init() {
+	gohome.Init2DShaders()
 	LoadResources()
 	gohome.RenderMgr.SetCamera2D(&Camera, 0)
 	Camera.Zoom = ZOOM
+	gohome.SceneMgr.SwitchScene(&LevelSelectScene{})
 }
 
 func (this *StartupScene) Update(delta_time float32) {
-	gohome.SceneMgr.SwitchScene(&LevelScene{LevelID: 0})
+
 }
 
 func (this *StartupScene) Terminate() {

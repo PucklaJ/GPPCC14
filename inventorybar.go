@@ -205,6 +205,7 @@ func (this *InventoryBar) renderAmmoTexts() {
 		x := width * float32(i)
 		text := this.ammoTexts[i]
 		text.Text = strconv.FormatUint(uint64(this.weapons[i].GetAmmo()), 10)
+		text.Flip = gohome.FLIP_VERTICAL
 		x += AMMO_TEXT_POS_X
 		y := AMMO_TEXT_POS_Y
 

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" tiledversion="1.1.6" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="16" tileheight="16" infinite="0" backgroundcolor="#3465a4" nextobjectid="8">
+ <tileset firstgid="1" source="GPPCC14_Tileset.tsx"/>
+ <layer name="Kachelebene 1" width="100" height="100">
+  <data encoding="base64" compression="zlib">
+   eJzt1slKA0EYhdEsVFRQnOPCEffq0mmtLhzf/2W8QhqaNonRSidinwMfTRIoiv6pIr3eV+fpIl0O+e0nFtJiWipcp+tu0m26LlxnLW2mreIdddvnPK7SXeE6G2m9Zx6lqvNROg/nYzqq81F6Xzkf03GfHtJj4ToH6TAdFe+o257Sc3pJq2n5F62k1/SW3me7/X9tL+2Mqd94Vu3PY7MdUJ9Hv9G4+ZhHO6p51N9/80wMm8/uPDbbAZPMY1jORzu2e6PnMequMo/21OcxyT3lvmrXd/+vRmUe7ThOJ4POBtU/N7+vnqcz3SUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMDf8wHE4RIZ
+  </data>
+ </layer>
+ <objectgroup name="Settings">
+  <object id="1" name="start" x="144" y="80">
+   <point/>
+  </object>
+  <object id="2" name="enemy" x="256" y="80">
+   <point/>
+  </object>
+  <object id="3" name="enemy" x="352" y="80">
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup name="Collision">
+  <object id="4" x="80" y="0" width="48" height="112"/>
+  <object id="5" x="368" y="0" width="48" height="112"/>
+  <object id="6" x="128" y="96" width="240" height="144"/>
+ </objectgroup>
+</map>

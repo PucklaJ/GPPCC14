@@ -26,7 +26,7 @@
   <object id="47" x="288" y="592" width="48" height="112"/>
  </objectgroup>
  <objectgroup name="Settings">
-  <object id="4" name="start" x="112" y="432">
+  <object id="4" name="start" x="16" y="64">
    <point/>
   </object>
   <object id="30" name="enemy" x="640.167" y="448.333">

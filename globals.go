@@ -8,7 +8,7 @@ const GAME_WIDTH uint32 = 1280.0
 const GAME_HEIGHT uint32 = 720.0
 
 const GRAVITY float32 = 200.0
-const NUM_LEVELS uint32 = 1
+const NUM_LEVELS uint32 = 9
 const ZOOM float32 = 3.0
 
 const DELETE_RAY_DEPTH uint8 = 0
@@ -22,6 +22,16 @@ const PLAYER_FEET_SENSOR_CATEGORY uint16 = (1 << 10) | PLAYER_CATEGORY
 var (
 	LEVELS_TMX_MAPS = [NUM_LEVELS]string{
 		"test_map.tmx",
+		"test_map1.tmx",
+		"test_map2.tmx",
+
+		"test_map.tmx",
+		"test_map1.tmx",
+		"test_map2.tmx",
+
+		"test_map.tmx",
+		"test_map1.tmx",
+		"test_map2.tmx",
 	}
 )
 
@@ -54,6 +64,7 @@ const ENEMY_BIG_RIGHT_SENSOR_CATEGORY uint16 = 1<<9 | ENEMY_SENSOR_CATEGORY
 
 func LoadResources() {
 	gohome.ResourceMgr.PreloadFont("Ammo", "UbuntuMono-R.ttf")
+	gohome.ResourceMgr.PreloadFont("Button", "/usr/share/fonts/truetype/ubuntu/UbuntuMono-R.ttf")
 	gohome.ResourceMgr.PreloadTexture("Player", "GPPCC14_Player.png")
 	gohome.ResourceMgr.PreloadTexture("DefaultWeapon", "GPPCC14_DefaultWeapon.png")
 	gohome.ResourceMgr.PreloadTexture("FreezeWeapon", "GPPCC14_FreezeWeapon.png")
