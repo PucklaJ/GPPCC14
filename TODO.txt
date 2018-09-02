@@ -7,8 +7,16 @@ assets
 		enemy kill sound
 	music
 	ammo font
+	button
+		restart
+		back to menu
+		level select
+	player death animation
 
-Menu when player dies
-Main menu
-level select screen
+pause button
+options button
+	sound options
 
+levels
+polishing
+testing

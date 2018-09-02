@@ -44,6 +44,7 @@ type Enemy struct {
 	terminated      bool
 	destructionTime float32
 	destructed      bool
+	paused          bool
 
 	anim gohome.Tweenset
 }
@@ -250,6 +251,10 @@ func (this *Enemy) updateAnimation() {
 }
 
 func (this *Enemy) Update(delta_time float32) {
+	if this.paused {
+		return
+	}
+
 	this.checkCollisions()
 	this.updateVelocity()
 	this.updateAnimation()

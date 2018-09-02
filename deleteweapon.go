@@ -29,6 +29,20 @@ type DeleteWeapon struct {
 	sparcles []*Sparcles
 }
 
+func (this *DeleteWeapon) Pause() {
+	this.NilWeapon.Pause()
+	for i := 0; i < len(this.sparcles); i++ {
+		this.sparcles[i].paused = true
+	}
+}
+
+func (this *DeleteWeapon) Resume() {
+	this.NilWeapon.Resume()
+	for i := 0; i < len(this.sparcles); i++ {
+		this.sparcles[i].paused = false
+	}
+}
+
 func (this *DeleteWeapon) OnAdd(p *Player) {
 	this.Sprite2D.Init("DeleteWeapon")
 	this.Transform.Origin = [2]float32{0.5, 0.5}
@@ -49,9 +63,14 @@ type Sparcles struct {
 	body   *box2d.B2Body
 	world  *box2d.B2World
 	weapon *DeleteWeapon
+	paused bool
 }
 
 func (this *Sparcles) Update(delta_time float32) {
+	if this.paused {
+		return
+	}
+
 	if this.anim.Done() {
 		t, ok := this.body.GetUserData().(TerminateObject)
 		if ok {

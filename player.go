@@ -59,6 +59,8 @@ type Player struct {
 	walkAnimation  gohome.Tweenset
 	fallAnimation  gohome.Tweenset
 	shootAnimation gohome.Tweenset
+
+	paused bool
 }
 
 func (this *Player) Died() bool {
@@ -347,7 +349,27 @@ func (this *Player) Die() {
 	this.Terminate()
 }
 
+func (this *Player) Pause() {
+	for _, w := range this.weapons {
+		w.Pause()
+	}
+
+	this.paused = true
+}
+
+func (this *Player) Resume() {
+	for _, w := range this.weapons {
+		w.Resume()
+	}
+
+	this.paused = false
+}
+
 func (this *Player) Update(delta_time float32) {
+	if this.paused {
+		return
+	}
+
 	this.updateVelocity(delta_time)
 	this.handleJump()
 	this.handleWeapon()
@@ -424,16 +446,14 @@ func (this *Player) checkEnemy() {
 		}
 	}
 
-	if bc {
-		this.Die()
-	}
-
 	if fc {
 		vel := this.body.GetLinearVelocity()
 		vel.Y = -physics2d.ScalarToBox2D(PLAYER_ENEMY_BOUNCE)
 		this.body.SetLinearVelocity(vel)
 		enemy.Die()
 		enemy.Terminate()
+	} else if bc {
+		this.Die()
 	}
 }
 

@@ -44,6 +44,17 @@ func (this *FreezeWeapon) GetInventoryTexture() gohome.Texture {
 }
 
 func (this *FreezeWeapon) Update(delta_time float32) {
+	off := [2]float32{FREEZE_OFFSET_X, FREEZE_OFFSET_Y}
+	this.Flip = this.Player.Flip
+	if this.Flip == gohome.FLIP_HORIZONTAL {
+		off[0] = -off[0]
+	}
+	this.Transform.Position = this.Player.Transform.Position.Add(this.Player.GetWeaponOffset()).Add(off)
+
+	if this.paused {
+		return
+	}
+
 	for i := 0; i < len(this.times); i++ {
 		if this.times[i] > 0.0 {
 			this.times[i] -= delta_time
@@ -54,12 +65,7 @@ func (this *FreezeWeapon) Update(delta_time float32) {
 			block.Sprite.TextureRegion.Min[0], block.Sprite.TextureRegion.Max[0] = FREEZE_FRAME_WIDTH, FREEZE_FRAME_WIDTH*2
 		}
 	}
-	off := [2]float32{FREEZE_OFFSET_X, FREEZE_OFFSET_Y}
-	this.Flip = this.Player.Flip
-	if this.Flip == gohome.FLIP_HORIZONTAL {
-		off[0] = -off[0]
-	}
-	this.Transform.Position = this.Player.Transform.Position.Add(this.Player.GetWeaponOffset()).Add(off)
+
 }
 
 func (this *FreezeWeapon) Use(target mgl32.Vec2) {

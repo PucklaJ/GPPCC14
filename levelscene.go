@@ -25,6 +25,7 @@ type LevelScene struct {
 	deathText     *gohome.Text2D
 	menuInited    bool
 	menuDirection bool
+	paused        bool
 }
 
 func (this *LevelScene) Init() {
@@ -85,30 +86,74 @@ func (this *LevelScene) Init() {
 	Camera.Position = [2]float32{-CAMERA_BOX_WIDTH, -CAMERA_BOX_HEIGHT}
 }
 
-func (this *LevelScene) initMenu(death bool) {
+func (this *LevelScene) terminateMenu() {
+	for _, btn := range this.deathBtns {
+		if btn != nil {
+			btn.Terminate()
+			btn.Sprite2D.Terminate()
+		}
+	}
+	if this.deathText != nil {
+		gohome.RenderMgr.RemoveObject(this.deathText)
+		this.deathText.Terminate()
+	}
+	this.menuInited = false
+}
+
+func (this *LevelScene) initMenu(death bool, inMid bool) {
 	if this.menuInited {
 		return
+	}
+
+	if this.deathBtns[0] != nil {
+		this.terminateMenu()
 	}
 
 	var restartBtn, backBtn gohome.Button
 
 	width := 2.0*DEATH_BUTTON_SIZE + DEATH_BUTTON_PADDING
 	mid := gohome.Framew.WindowGetSize().Mul(0.5)
+	var restartPos, backPos, deathTextPos mgl32.Vec2
 
-	restartBtn.Init(mid.Add([2]float32{
-		-width/2.0 + DEATH_BUTTON_SIZE/2.0,
-		-mid.Y() - DEATH_BUTTON_SIZE/2.0,
-	}), "")
+	if !inMid {
+		restartPos = mid.Add([2]float32{
+			-width/2.0 + DEATH_BUTTON_SIZE/2.0,
+			-mid.Y() - DEATH_BUTTON_SIZE,
+		})
+		backPos = mid.Add([2]float32{
+			width/2.0 - DEATH_BUTTON_SIZE/2.0,
+			-mid.Y() - DEATH_BUTTON_SIZE,
+		})
+		deathTextPos = mid.Add([2]float32{
+			10.0,
+			-mid.Y() - DEATH_BUTTON_SIZE*1.5 - DEATH_TEXT_PADDING,
+		})
+		this.menuDirection = DOWN
+
+	} else {
+		restartPos = mid.Add([2]float32{
+			-width/2.0 + DEATH_BUTTON_SIZE/2.0,
+			0.0,
+		})
+		backPos = mid.Add([2]float32{
+			width/2.0 - DEATH_BUTTON_SIZE/2.0,
+			0.0,
+		})
+		deathTextPos = mid.Add([2]float32{
+			10.0,
+			-DEATH_BUTTON_SIZE - DEATH_TEXT_PADDING,
+		})
+		this.menuDirection = UP
+	}
+
+	restartBtn.Init(restartPos, "")
 	restartBtn.Transform.Origin = [2]float32{0.5, 0.5}
 	restartBtn.Transform.Size = [2]float32{DEATH_BUTTON_SIZE, DEATH_BUTTON_SIZE}
 	restartBtn.PressCallback = func(btn *gohome.Button) {
 		this.Restart()
 	}
 
-	backBtn.Init(mid.Add([2]float32{
-		width/2.0 - DEATH_BUTTON_SIZE/2.0,
-		-mid.Y() - DEATH_BUTTON_SIZE/2.0,
-	}), "")
+	backBtn.Init(backPos, "")
 	backBtn.Transform.Origin = [2]float32{0.5, 0.5}
 	backBtn.Transform.Size = [2]float32{DEATH_BUTTON_SIZE, DEATH_BUTTON_SIZE}
 	backBtn.PressCallback = func(btn *gohome.Button) {
@@ -123,32 +168,53 @@ func (this *LevelScene) initMenu(death bool) {
 		this.deathText.Init(gohome.ButtonFont, uint32(float32(gohome.ButtonFontSize)*1.5), "Sie sind gestorben")
 		this.deathText.NotRelativeToCamera = 0
 		this.deathText.Transform.Origin = [2]float32{0.5, 0.5}
-		this.deathText.Transform.Position = mid.Add([2]float32{
-			10.0,
-			-mid.Y() - DEATH_BUTTON_SIZE - DEATH_TEXT_PADDING,
-		})
-		// this.deathText.Transform.Position = mid.Add([2]float32{
-		// 	10.0,
-		// 	-DEATH_BUTTON_SIZE - DEATH_TEXT_PADDING,
-		// })
+		this.deathText.Transform.Position = deathTextPos
 		gohome.RenderMgr.AddObject(this.deathText)
 	}
 
-	this.menuDirection = DOWN
 	this.menuInited = true
 }
 
 func (this *LevelScene) Pause() {
+	if this.Player.Died() {
+		return
+	}
 
+	this.initMenu(false, false)
+	this.menuDirection = DOWN
+	this.paused = true
+
+	this.Player.Pause()
+	for _, e := range this.Enemies {
+		e.paused = true
+	}
+	this.PhysicsMgr.Paused = true
+}
+
+func (this *LevelScene) Resume() {
+	this.menuDirection = UP
+	this.paused = false
+
+	this.Player.Resume()
+	for _, e := range this.Enemies {
+		e.paused = false
+	}
+	this.PhysicsMgr.Paused = false
 }
 
 func (this *LevelScene) Restart() {
 	prevCamPos := Camera.Position
-	gohome.SceneMgr.SwitchScene(&LevelScene{LevelID: this.LevelID})
+	died := this.Player.Died()
+	scn := &LevelScene{LevelID: this.LevelID}
+	gohome.SceneMgr.SwitchScene(scn)
+	if died {
+		scn.initMenu(true, true)
+		scn.menuInited = false
+	}
 	Camera.Position = prevCamPos
 }
 
-func (this *LevelScene) updateDeathBtns() {
+func (this *LevelScene) updateMenu() {
 	restartBtn := this.deathBtns[0]
 	backBtn := this.deathBtns[1]
 
@@ -177,23 +243,35 @@ func (this *LevelScene) updateDeathBtns() {
 	} else {
 		restartTarget = mid.Add([2]float32{
 			-width/2.0 + DEATH_BUTTON_SIZE/2.0,
-			-mid.Y() - DEATH_BUTTON_SIZE/2.0,
+			-mid.Y() - DEATH_BUTTON_SIZE,
 		})
 		backTarget = mid.Add([2]float32{
 			width/2.0 - DEATH_BUTTON_SIZE/2.0,
-			-mid.Y() - DEATH_BUTTON_SIZE/2.0,
+			-mid.Y() - DEATH_BUTTON_SIZE,
 		})
 		deathTextTarget = mid.Add([2]float32{
 			10.0,
-			-mid.Y() - DEATH_BUTTON_SIZE - DEATH_TEXT_PADDING,
+			-mid.Y() - DEATH_BUTTON_SIZE*1.5 - DEATH_TEXT_PADDING,
 		})
 	}
 
-	restartBtn.Transform.Position = restartBtn.Transform.Position.Add(restartTarget.Sub(restartBtn.Transform.Position).Mul(0.05))
-	backBtn.Transform.Position = backBtn.Transform.Position.Add(backTarget.Sub(backBtn.Transform.Position).Mul(0.05))
+	var btnSpeed, textSpeed float32
+	if this.menuDirection == DOWN {
+		btnSpeed = 0.05
+		textSpeed = 0.04
+	} else {
+		btnSpeed = 0.1
+		textSpeed = 0.08
+	}
+
+	restartBtn.Transform.Position = restartBtn.Transform.Position.Add(restartTarget.Sub(restartBtn.Transform.Position).Mul(btnSpeed))
+	backBtn.Transform.Position = backBtn.Transform.Position.Add(backTarget.Sub(backBtn.Transform.Position).Mul(btnSpeed))
 	if this.deathText != nil {
 
-		this.deathText.Transform.Position = this.deathText.Transform.Position.Add(deathTextTarget.Sub(this.deathText.Transform.Position).Mul(0.04))
+		this.deathText.Transform.Position = this.deathText.Transform.Position.Add(deathTextTarget.Sub(this.deathText.Transform.Position).Mul(textSpeed))
+	}
+	if this.menuDirection == UP && restartBtn.Transform.Position[1]+DEATH_BUTTON_SIZE/2.0 < 0.0 {
+		this.terminateMenu()
 	}
 }
 
@@ -208,9 +286,16 @@ func (this *LevelScene) Update(delta_time float32) {
 	if gohome.InputMgr.JustPressed(gohome.KeyK) {
 		this.menuDirection = !this.menuDirection
 	}
-	this.updateDeathBtns()
+	if gohome.InputMgr.JustPressed(gohome.KeyP) {
+		if this.paused {
+			this.Resume()
+		} else {
+			this.Pause()
+		}
+	}
+	this.updateMenu()
 	if this.Player.Died() {
-		this.initMenu(true)
+		this.initMenu(true, false)
 	}
 }
 
@@ -221,16 +306,7 @@ func (this *LevelScene) Terminate() {
 
 	gohome.ResourceMgr.DeleteTMXMap("Level")
 
-	for _, btn := range this.deathBtns {
-		if btn != nil {
-			btn.Terminate()
-			btn.Sprite2D.Terminate()
-		}
-	}
-	if this.deathText != nil {
-		gohome.RenderMgr.RemoveObject(this.deathText)
-		this.deathText.Terminate()
-	}
+	this.terminateMenu()
 	for i := 0; i < len(this.Enemies); i++ {
 		this.Enemies[i].Terminate()
 	}

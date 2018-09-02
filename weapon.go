@@ -13,11 +13,14 @@ type Weapon interface {
 	GetInventoryTexture() gohome.Texture
 	Terminate()
 	GetAmmo() uint32
+	Pause()
+	Resume()
 }
 
 type WeaponBlock struct {
 	Sprite    *gohome.Sprite2D
 	Connector *physics2d.PhysicsConnector2D
+	paused    bool
 }
 
 func (this *WeaponBlock) Terminate() {
@@ -32,6 +35,7 @@ type NilWeapon struct {
 	tex    gohome.RenderTexture
 	Ammo   uint32
 	blocks []WeaponBlock
+	paused bool
 }
 
 const (
@@ -88,4 +92,12 @@ func (this *NilWeapon) GetType() gohome.RenderType {
 
 func (this *NilWeapon) GetAmmo() uint32 {
 	return this.Ammo
+}
+
+func (this *NilWeapon) Pause() {
+	this.paused = true
+}
+
+func (this *NilWeapon) Resume() {
+	this.paused = false
 }
