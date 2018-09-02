@@ -38,7 +38,7 @@ func (this *InventoryBar) Init() {
 	gohome.RenderMgr.AddObject(this)
 	gohome.UpdateMgr.AddObject(this)
 
-	this.Depth = 1
+	this.Depth = INVENTORY_DEPTH
 	this.NotRelativeToCamera = 0
 
 	this.Transform.Position = gohome.Framew.WindowGetSize().Mul(0.5)

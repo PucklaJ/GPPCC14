@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/PucklaMotzer09/gohomeengine/src/gohome"
+	"github.com/go-gl/mathgl/mgl32"
 	"strconv"
 )
 
@@ -12,7 +13,9 @@ const (
 )
 
 type LevelSelectScene struct {
-	levelBtns []*gohome.Button
+	levelBtns    []*gohome.Button
+	targetBtnPos []mgl32.Vec2
+	title        *gohome.Text2D
 }
 
 func selectLevel(btn *gohome.Button) {
@@ -21,7 +24,7 @@ func selectLevel(btn *gohome.Button) {
 	gohome.SceneMgr.SwitchScene(&LevelScene{LevelID: uint32(id)})
 }
 
-func (this *LevelSelectScene) Init() {
+func (this *LevelSelectScene) initButtons() {
 	lbr := float32(LEVEL_BUTTON_PER_ROW)
 	lbc := float32(NUM_LEVELS / LEVEL_BUTTON_PER_ROW)
 	start := gohome.Framew.WindowGetSize().Mul(0.5)
@@ -34,17 +37,56 @@ func (this *LevelSelectScene) Init() {
 		btn := this.levelBtns[len(this.levelBtns)-1]
 		x := float32(i%LEVEL_BUTTON_PER_ROW) * (LEVEL_BUTTON_SIZE + LEVEL_BUTTON_PADDING)
 		y := float32(i/LEVEL_BUTTON_PER_ROW) * (LEVEL_BUTTON_SIZE + LEVEL_BUTTON_PADDING)
+		maxy := float32((NUM_LEVELS-1)/LEVEL_BUTTON_PER_ROW) * (LEVEL_BUTTON_SIZE + LEVEL_BUTTON_PADDING)
 
 		btn.Text = strconv.FormatInt(int64(i+1), 10)
+		this.targetBtnPos = append(this.targetBtnPos, start.Add([2]float32{x, y}))
 		btn.Init(start.Add([2]float32{x, y}), "")
+		btn.Transform.Position[1] = -LEVEL_BUTTON_SIZE/2.0 - (maxy - y)
 		btn.Transform.Size = [2]float32{LEVEL_BUTTON_SIZE, LEVEL_BUTTON_SIZE}
 		btn.Transform.Origin = [2]float32{0.5, 0.5}
 		btn.PressCallback = selectLevel
 	}
 }
 
-func (this *LevelSelectScene) Update(delta_time float32) {
+func (this *LevelSelectScene) initTitle() {
+	lbc := float32(NUM_LEVELS / LEVEL_BUTTON_PER_ROW)
+	start := gohome.Framew.WindowGetSize().Mul(0.5)
+	start = start.Sub([2]float32{
+		0.0,
+		(lbc*LEVEL_BUTTON_SIZE+(lbc-1.0)*LEVEL_BUTTON_PADDING)/2.0 - LEVEL_BUTTON_SIZE/2.0,
+	})
+	maxy := float32((NUM_LEVELS-1)/LEVEL_BUTTON_PER_ROW) * (LEVEL_BUTTON_SIZE + LEVEL_BUTTON_PADDING)
 
+	this.title = &gohome.Text2D{}
+	this.title.Init(gohome.ButtonFont, gohome.ButtonFontSize*2, "Wähle einen Level")
+	this.title.Transform.Origin = [2]float32{0.5, 0.5}
+	this.title.Transform.Position = [2]float32{gohome.Framew.WindowGetSize().X()/2.0 + 10.0, -LEVEL_BUTTON_SIZE/2.0 - maxy - (start[1] - 100.0)}
+	this.title.NotRelativeToCamera = 0
+	gohome.RenderMgr.AddObject(this.title)
+}
+
+func (this *LevelSelectScene) updateButtons() {
+	for i := 0; i < len(this.levelBtns); i++ {
+		btn := this.levelBtns[i]
+		tpos := this.targetBtnPos[i]
+		btn.Transform.Position = btn.Transform.Position.Add(tpos.Sub(btn.Transform.Position).Mul(0.1))
+	}
+}
+
+func (this *LevelSelectScene) updateTitle() {
+	titleTarget := mgl32.Vec2{gohome.Framew.WindowGetSize().X()/2.0 + 10.0, 100.0}
+	this.title.Transform.Position = this.title.Transform.Position.Add(titleTarget.Sub(this.title.Transform.Position).Mul(0.08))
+}
+
+func (this *LevelSelectScene) Init() {
+	this.initButtons()
+	this.initTitle()
+}
+
+func (this *LevelSelectScene) Update(delta_time float32) {
+	this.updateButtons()
+	this.updateTitle()
 }
 
 func (this *LevelSelectScene) Terminate() {
@@ -52,4 +94,6 @@ func (this *LevelSelectScene) Terminate() {
 		this.levelBtns[i].Terminate()
 		this.levelBtns[i].Sprite2D.Terminate()
 	}
+	gohome.RenderMgr.RemoveObject(this.title)
+	this.title.Terminate()
 }

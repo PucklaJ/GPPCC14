@@ -51,6 +51,7 @@ type Player struct {
 	weapons       []Weapon
 	currentWeapon uint8
 	terminated    bool
+	dead          bool
 
 	currentAnimation *gohome.Tweenset
 	currentAnim      uint8
@@ -58,6 +59,10 @@ type Player struct {
 	walkAnimation  gohome.Tweenset
 	fallAnimation  gohome.Tweenset
 	shootAnimation gohome.Tweenset
+}
+
+func (this *Player) Died() bool {
+	return this.dead
 }
 
 func (this *Player) Init(pos mgl32.Vec2, pmgr *physics2d.PhysicsManager2D) {
@@ -337,6 +342,11 @@ func (this *Player) changeWeapon(dir bool) {
 	this.Inventory.SetCurrent(dir)
 }
 
+func (this *Player) Die() {
+	this.dead = true
+	this.Terminate()
+}
+
 func (this *Player) Update(delta_time float32) {
 	this.updateVelocity(delta_time)
 	this.handleJump()
@@ -344,6 +354,10 @@ func (this *Player) Update(delta_time float32) {
 	this.updateCamera(delta_time)
 	this.checkEnemy()
 	this.updateAnimation()
+
+	if gohome.InputMgr.JustPressed(gohome.KeyO) {
+		this.Die()
+	}
 }
 
 func (this *Player) updateCamera(delta_time float32) {
@@ -411,8 +425,7 @@ func (this *Player) checkEnemy() {
 	}
 
 	if bc {
-		this.Terminate()
-
+		this.Die()
 	}
 
 	if fc {
