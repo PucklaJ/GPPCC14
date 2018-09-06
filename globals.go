@@ -76,6 +76,8 @@ func LoadResources() {
 	gohome.ResourceMgr.PreloadTexture("Enemy", "GPPCC14_Enemy.png")
 	gohome.ResourceMgr.PreloadTexture("Explosion", "GPPCC14_Explosion.png")
 	gohome.ResourceMgr.PreloadTexture("Disappear", "GPPCC14_Disappear.png")
+	gohome.ResourceMgr.PreloadTexture("Restart", "GPPCC14_Restart.png")
+	gohome.ResourceMgr.PreloadTexture("Back", "GPPCC14_Back.png")
 	gohome.ResourceMgr.LoadPreloadedResources()
 
 	gohome.ResourceMgr.GetTexture("Player").SetFiltering(gohome.FILTERING_NEAREST)
@@ -96,4 +98,6 @@ func LoadResources() {
 	gohome.ResourceMgr.GetTexture("Enemy").SetFiltering(gohome.FILTERING_NEAREST)
 	gohome.ResourceMgr.GetTexture("Explosion").SetFiltering(gohome.FILTERING_NEAREST)
 	gohome.ResourceMgr.GetTexture("Disappear").SetFiltering(gohome.FILTERING_NEAREST)
+	gohome.ResourceMgr.GetTexture("Restart").SetFiltering(gohome.FILTERING_NEAREST)
+	gohome.ResourceMgr.GetTexture("Back").SetFiltering(gohome.FILTERING_NEAREST)
 }

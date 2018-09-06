@@ -90,7 +90,6 @@ func (this *LevelScene) terminateMenu() {
 	for _, btn := range this.deathBtns {
 		if btn != nil {
 			btn.Terminate()
-			btn.Sprite2D.Terminate()
 		}
 	}
 	if this.deathText != nil {
@@ -146,14 +145,14 @@ func (this *LevelScene) initMenu(death bool, inMid bool) {
 		this.menuDirection = UP
 	}
 
-	restartBtn.Init(restartPos, "")
+	restartBtn.Init(restartPos, "Restart")
 	restartBtn.Transform.Origin = [2]float32{0.5, 0.5}
 	restartBtn.Transform.Size = [2]float32{DEATH_BUTTON_SIZE, DEATH_BUTTON_SIZE}
 	restartBtn.PressCallback = func(btn *gohome.Button) {
 		this.Restart()
 	}
 
-	backBtn.Init(backPos, "")
+	backBtn.Init(backPos, "Back")
 	backBtn.Transform.Origin = [2]float32{0.5, 0.5}
 	backBtn.Transform.Size = [2]float32{DEATH_BUTTON_SIZE, DEATH_BUTTON_SIZE}
 	backBtn.PressCallback = func(btn *gohome.Button) {
