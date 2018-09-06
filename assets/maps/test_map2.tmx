@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" tiledversion="1.1.6" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="16" tileheight="16" infinite="0" backgroundcolor="#3465ff" nextobjectid="8">
+ <properties>
+  <property name="win_condition" value="enemy"/>
+ </properties>
  <tileset firstgid="1" source="GPPCC14_Tileset.tsx"/>
  <layer name="Kachelebene 1" width="100" height="100">
   <data encoding="base64" compression="zlib">

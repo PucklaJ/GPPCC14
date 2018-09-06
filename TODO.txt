@@ -1,5 +1,4 @@
 assets
-	enemy
 	sounds
 		walk sound
 		shoot sound

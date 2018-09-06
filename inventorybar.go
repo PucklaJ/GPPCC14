@@ -100,7 +100,6 @@ func (this *InventoryBar) updateValues() {
 func (this *InventoryBar) Update(delta_time float32) {
 	if this.hasChanged() {
 		this.renderInventory()
-		this.renderInventory()
 		this.updateValues()
 	}
 }
@@ -117,7 +116,6 @@ func (this *InventoryBar) setRenderTarget() (gohome.Projection, float32) {
 	this.TextureRegion.Max = this.Transform.Size
 
 	rt.SetAsTarget()
-	gohome.Render.ClearScreen(gohome.Color{0, 0, 0, 0})
 
 	gohome.Filled = true
 
@@ -216,10 +214,14 @@ func (this *InventoryBar) renderAmmoTexts() {
 
 func (this *InventoryBar) renderInventory() {
 	prevProj, _ := this.setRenderTarget()
+	gohome.Render.ClearScreen(colornames.Gray)
 
 	this.renderBar()
 	this.renderTextures()
 	this.renderCurrent()
+	this.renderAmmoTexts()
+	this.unsetRenderTarget(prevProj)
+	prevProj, _ = this.setRenderTarget()
 	this.renderAmmoTexts()
 
 	this.unsetRenderTarget(prevProj)

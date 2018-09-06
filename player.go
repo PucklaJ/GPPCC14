@@ -197,11 +197,6 @@ func (this *Player) updateAnimation() {
 
 func (this *Player) addWeapons() {
 	this.currentWeapon = 0
-	this.addWeapon(&DefaultWeapon{})
-	this.addWeapon(&FreezeWeapon{})
-	this.addWeapon(&BallWeapon{})
-	this.addWeapon(&MoveWeapon{})
-	this.addWeapon(&DeleteWeapon{})
 }
 
 func (this *Player) createBody(pmgr *physics2d.PhysicsManager2D) {
@@ -292,6 +287,10 @@ func (this *Player) handleAngle(mpos mgl32.Vec2) {
 }
 
 func (this *Player) handleWeapon() {
+	if len(this.weapons) == 0 {
+		return
+	}
+
 	scn := gohome.SceneMgr.GetCurrentScene().(*LevelScene)
 	if scn.pauseBtn.Entered {
 		return

@@ -15,6 +15,7 @@ const DELETE_RAY_DEPTH uint8 = 2
 const PLAYER_DEPTH uint8 = 1
 const WEAPON_DEPTH uint8 = 3
 const INVENTORY_DEPTH uint8 = 4
+const MENU_DEPTH uint8 = 5
 
 const PLAYER_CATEGORY uint16 = 1 << 0
 const PLAYER_FEET_CATEGORY uint16 = (1 << 1) | PLAYER_CATEGORY
@@ -54,6 +55,11 @@ const ENEMY_SMALL_LEFT_SENSOR_CATEGORY uint16 = 1<<6 | ENEMY_SENSOR_CATEGORY
 const ENEMY_SMALL_RIGHT_SENSOR_CATEGORY uint16 = 1<<7 | ENEMY_SENSOR_CATEGORY
 const ENEMY_BIG_LEFT_SENSOR_CATEGORY uint16 = 1<<8 | ENEMY_SENSOR_CATEGORY
 const ENEMY_BIG_RIGHT_SENSOR_CATEGORY uint16 = 1<<9 | ENEMY_SENSOR_CATEGORY
+
+const WIN_CONDITION_TARGET bool = true
+const WIN_CONDITION_ENEMY bool = false
+
+var CURRENT_WIN_CONDITION bool
 
 func LoadResources() {
 	gohome.ResourceMgr.PreloadFont("Ammo", "UbuntuMono-R.ttf")

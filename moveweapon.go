@@ -50,6 +50,20 @@ func (this *MoveWeapon) GetInventoryTexture() gohome.Texture {
 	return gohome.ResourceMgr.GetTexture("MoveWeaponInv")
 }
 
+func (this *MoveWeapon) Pause() {
+	this.NilWeapon.Pause()
+	for _, p := range this.platforms {
+		p.paused = true
+	}
+}
+
+func (this *MoveWeapon) Resume() {
+	this.NilWeapon.Resume()
+	for _, p := range this.platforms {
+		p.paused = false
+	}
+}
+
 func (this *MoveWeapon) Use(target mgl32.Vec2) {
 	dir := target.Sub(this.Player.Transform.Position).Normalize()
 	bdir := dir.X() >= 0.0
@@ -67,6 +81,7 @@ func (this *MoveWeapon) Use(target mgl32.Vec2) {
 		this.Player,
 		gohome.Tweenset{},
 		gohome.Tweenset{},
+		false,
 	})
 
 	var spr gohome.Sprite2D
@@ -163,6 +178,7 @@ type MovePlatform struct {
 
 	rightAnim gohome.Tweenset
 	leftAnim  gohome.Tweenset
+	paused    bool
 }
 
 func (this *MovePlatform) HoldRotation() {
@@ -263,6 +279,10 @@ func (this *MovePlatform) startMoving() {
 }
 
 func (this *MovePlatform) Update(delta_time float32) {
+	if this.paused {
+		return
+	}
+
 	if !this.IsMoving {
 		this.Time += delta_time
 		if this.Time > MOVE_WEAPON_TIME {

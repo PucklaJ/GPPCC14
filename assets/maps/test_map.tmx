@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.1.6" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="16" tileheight="16" infinite="0" backgroundcolor="#3465ff" nextobjectid="57">
+<map version="1.0" tiledversion="1.1.6" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="16" tileheight="16" infinite="0" backgroundcolor="#3465ff" nextobjectid="62">
+   <properties>
+    <property name="defaultweapon" type="bool" value="true"/>
+    <property name="freezeweapon" type="bool" value="true"/>
+    <property name="ballweapon" type="bool" value="true"/>
+    <property name="moveweapon" type="bool" value="true"/>
+    <property name="deleteweapon" type="bool" value="true"/>
+   </properties>
  <tileset firstgid="1" source="GPPCC14_Tileset.tsx"/>
  <layer name="Kachelebene 1" width="100" height="100">
   <data encoding="base64" compression="zlib">
@@ -66,6 +73,15 @@
    <point/>
   </object>
   <object id="56" name="enemy" x="320" y="352">
+   <point/>
+  </object>
+  <object id="57" name="target" x="272" y="32">
+   <point/>
+  </object>
+  <object id="60" name="target" x="304" y="160">
+   <point/>
+  </object>
+  <object id="61" name="target" x="1056" y="432">
    <point/>
   </object>
  </objectgroup>

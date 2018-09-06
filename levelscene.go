@@ -1,9 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"github.com/PucklaMotzer09/gohomeengine/src/gohome"
 	"github.com/PucklaMotzer09/gohomeengine/src/physics2d"
 	"github.com/go-gl/mathgl/mgl32"
+	"strings"
 )
 
 const (
@@ -16,12 +18,17 @@ const (
 	PAUSE_BUTTON_Y    float32 = PAUSE_BUTTON_SIZE/2.0 + PAUSE_BUTTON_SIZE/5.0
 )
 
+type Target struct {
+	gohome.Sprite2D
+}
+
 type LevelScene struct {
 	PhysicsMgr physics2d.PhysicsManager2D
 	LevelID    uint32
 	Map        gohome.TiledMap
 	Player     Player
 	Enemies    []*Enemy
+	Targets    []*Target
 
 	debugDraw physics2d.PhysicsDebugDraw2D
 
@@ -78,6 +85,17 @@ func (this *LevelScene) Init() {
 					enemy.Sprite2D.Init("")
 					enemy.Transform.Position = [2]float32{float32(o.X), float32(o.Y)}
 					this.Enemies = append(this.Enemies, enemy)
+				} else if o.Name == "target" {
+					var target Target
+					rt := gohome.Render.CreateRenderTexture("Target", 32, 32, 1, false, false, false, false)
+					rt.SetAsTarget()
+					gohome.Render.ClearScreen(gohome.Color{255, 0, 0, 255})
+					rt.UnsetAsTarget()
+					target.InitTexture(rt)
+					target.Transform.Origin = [2]float32{0.5, 0.5}
+					target.Transform.Position = [2]float32{float32(o.X), float32(o.Y)}
+					gohome.RenderMgr.AddObject(&target)
+					this.Targets = append(this.Targets, &target)
 				}
 			}
 		}
@@ -88,16 +106,48 @@ func (this *LevelScene) Init() {
 		this.Enemies[i].Init(this.Enemies[i].Transform.Position, &this.Player)
 	}
 
+	CURRENT_WIN_CONDITION = WIN_CONDITION_TARGET
+	mapprops := this.Map.Properties
+	if mapprops != nil {
+		props := mapprops.Properties
+		for i := 0; i < len(props); i++ {
+			p := props[i]
+			fmt.Println("Property:", p.Name)
+			if p.Name == "win_condition" {
+				if p.Value == "enemy" {
+					CURRENT_WIN_CONDITION = WIN_CONDITION_ENEMY
+				} else if p.Value == "target" {
+					CURRENT_WIN_CONDITION = WIN_CONDITION_TARGET
+				}
+			} else if strings.Contains(p.Name, "weapon") {
+				if p.Name == "defaultweapon" && p.Value == "true" {
+					this.Player.addWeapon(&DefaultWeapon{})
+				} else if p.Name == "freezeweapon" && p.Value == "true" {
+					this.Player.addWeapon(&FreezeWeapon{})
+				} else if p.Name == "ballweapon" && p.Value == "true" {
+					this.Player.addWeapon(&BallWeapon{})
+				} else if p.Name == "moveweapon" && p.Value == "true" {
+					this.Player.addWeapon(&MoveWeapon{})
+				} else if p.Name == "deleteweapon" && p.Value == "true" {
+					this.Player.addWeapon(&DeleteWeapon{})
+				}
+			}
+		}
+	}
+
+	if len(this.Player.weapons) == 0 {
+		this.Player.addWeapon(&DefaultWeapon{})
+	}
+
 	this.pauseBtn = &gohome.Button{}
 	this.pauseBtn.Init([2]float32{PAUSE_BUTTON_X, PAUSE_BUTTON_Y}, "Pause")
 	this.pauseBtn.Transform.Origin = [2]float32{0.5, 0.5}
 	this.pauseBtn.Transform.Size = [2]float32{PAUSE_BUTTON_SIZE, PAUSE_BUTTON_SIZE}
+	this.pauseBtn.Depth = MENU_DEPTH
 	this.pauseBtn.PressCallback = func(btn *gohome.Button) {
 		if this.paused {
-			btn.Texture = gohome.ResourceMgr.GetTexture("Pause")
 			this.Resume()
 		} else {
-			btn.Texture = gohome.ResourceMgr.GetTexture("Resume")
 			this.Pause()
 		}
 	}
@@ -167,6 +217,7 @@ func (this *LevelScene) initMenu(death bool, inMid bool) {
 	restartBtn.Init(restartPos, "Restart")
 	restartBtn.Transform.Origin = [2]float32{0.5, 0.5}
 	restartBtn.Transform.Size = [2]float32{DEATH_BUTTON_SIZE, DEATH_BUTTON_SIZE}
+	restartBtn.Depth = MENU_DEPTH
 	restartBtn.PressCallback = func(btn *gohome.Button) {
 		this.Restart()
 	}
@@ -174,6 +225,7 @@ func (this *LevelScene) initMenu(death bool, inMid bool) {
 	backBtn.Init(backPos, "Back")
 	backBtn.Transform.Origin = [2]float32{0.5, 0.5}
 	backBtn.Transform.Size = [2]float32{DEATH_BUTTON_SIZE, DEATH_BUTTON_SIZE}
+	backBtn.Depth = MENU_DEPTH
 	backBtn.PressCallback = func(btn *gohome.Button) {
 		gohome.SceneMgr.SwitchScene(&LevelSelectScene{})
 	}
@@ -207,6 +259,7 @@ func (this *LevelScene) Pause() {
 		e.paused = true
 	}
 	this.PhysicsMgr.Paused = true
+	this.pauseBtn.Texture = gohome.ResourceMgr.GetTexture("Resume")
 }
 
 func (this *LevelScene) Resume() {
@@ -218,6 +271,7 @@ func (this *LevelScene) Resume() {
 		e.paused = false
 	}
 	this.PhysicsMgr.Paused = false
+	this.pauseBtn.Texture = gohome.ResourceMgr.GetTexture("Pause")
 }
 
 func (this *LevelScene) Restart() {
@@ -293,6 +347,46 @@ func (this *LevelScene) updateMenu() {
 	}
 }
 
+func (this *LevelScene) updateWinCondition() {
+	if CURRENT_WIN_CONDITION == WIN_CONDITION_ENEMY {
+		for i := 0; i < len(this.Enemies); i++ {
+			if !this.Enemies[i].terminated {
+				return
+			}
+		}
+		fmt.Println("Win")
+		gohome.SceneMgr.SwitchScene(&LevelSelectScene{})
+	} else if CURRENT_WIN_CONDITION == WIN_CONDITION_TARGET {
+		if len(this.Targets) > 0 {
+			for i, t := range this.Targets {
+				pos := t.Transform.Position
+				size := t.Transform.Size
+				scale := t.Transform.Scale
+				size[0], size[1] = size[0]*scale[0], size[1]*scale[1]
+				pos = pos.Sub(size.Mul(0.5))
+
+				ppos := this.Player.Transform.Position
+				psize := this.Player.Transform.Size
+				pscale := this.Player.Transform.Scale
+				psize[0], psize[1] = psize[0]*pscale[0], psize[1]*pscale[1]
+				ppos = ppos.Sub(psize.Mul(0.5))
+
+				if ppos[0] < pos[0]+size[0] &&
+					ppos[0]+psize[0] > pos[0] &&
+					ppos[1] < pos[1]+size[1] &&
+					ppos[1]+psize[1] > pos[1] {
+
+					gohome.RenderMgr.RemoveObject(t)
+					this.Targets = append(this.Targets[:i], this.Targets[i+1:]...)
+				}
+			}
+		} else {
+			fmt.Println("Win")
+			gohome.SceneMgr.SwitchScene(&LevelSelectScene{})
+		}
+	}
+}
+
 func (this *LevelScene) Update(delta_time float32) {
 	if gohome.InputMgr.JustPressed(gohome.KeyF3) {
 		this.debugDraw.Visible = !this.debugDraw.Visible
@@ -315,6 +409,8 @@ func (this *LevelScene) Update(delta_time float32) {
 	if this.Player.Died() {
 		this.initMenu(true, false)
 	}
+
+	this.updateWinCondition()
 }
 
 func (this *LevelScene) Terminate() {
@@ -328,6 +424,10 @@ func (this *LevelScene) Terminate() {
 	this.pauseBtn.Terminate()
 	for i := 0; i < len(this.Enemies); i++ {
 		this.Enemies[i].Terminate()
+	}
+	for _, t := range this.Targets {
+		gohome.RenderMgr.RemoveObject(t)
+		t.Terminate()
 	}
 	this.Player.Terminate()
 	this.Map.Terminate()
