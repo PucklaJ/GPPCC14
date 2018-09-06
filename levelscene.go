@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/PucklaMotzer09/gohomeengine/src/gohome"
 	"github.com/PucklaMotzer09/gohomeengine/src/physics2d"
 	"github.com/go-gl/mathgl/mgl32"
@@ -38,6 +37,7 @@ type LevelScene struct {
 	menuInited    bool
 	menuDirection bool
 	paused        bool
+	restarting    bool
 }
 
 func (this *LevelScene) Init() {
@@ -112,7 +112,6 @@ func (this *LevelScene) Init() {
 		props := mapprops.Properties
 		for i := 0; i < len(props); i++ {
 			p := props[i]
-			fmt.Println("Property:", p.Name)
 			if p.Name == "win_condition" {
 				if p.Value == "enemy" {
 					CURRENT_WIN_CONDITION = WIN_CONDITION_ENEMY
@@ -284,6 +283,7 @@ func (this *LevelScene) Restart() {
 		scn.menuInited = false
 	}
 	Camera.Position = prevCamPos
+	this.restarting = true
 }
 
 func (this *LevelScene) updateMenu() {
@@ -354,7 +354,6 @@ func (this *LevelScene) updateWinCondition() {
 				return
 			}
 		}
-		fmt.Println("Win")
 		gohome.SceneMgr.SwitchScene(&LevelSelectScene{})
 	} else if CURRENT_WIN_CONDITION == WIN_CONDITION_TARGET {
 		if len(this.Targets) > 0 {
@@ -381,7 +380,6 @@ func (this *LevelScene) updateWinCondition() {
 				}
 			}
 		} else {
-			fmt.Println("Win")
 			gohome.SceneMgr.SwitchScene(&LevelSelectScene{})
 		}
 	}
@@ -397,6 +395,9 @@ func (this *LevelScene) Update(delta_time float32) {
 	}
 	if gohome.InputMgr.JustPressed(gohome.KeyK) {
 		this.menuDirection = !this.menuDirection
+	}
+	if this.restarting {
+		return
 	}
 	if gohome.InputMgr.JustPressed(gohome.KeyP) {
 		if this.paused {

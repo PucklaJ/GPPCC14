@@ -1,12 +1,22 @@
+fix that weapon blocks are shown in the top left
+fix that weapon blocks don't disappear when the player dies (their bodies remain)
 assets
+	target
+		animation
+			collection
+			and normal
+	background
+	background in levelselection
 	sounds
 		walk sound
 		shoot sound
 		jump sound
 		enemy kill sound
+		button sound
 	music
 	player death animation
 
+win menu
 options button
 	sound options
 

@@ -62,7 +62,6 @@ const WIN_CONDITION_ENEMY bool = false
 var CURRENT_WIN_CONDITION bool
 
 func LoadResources() {
-	gohome.ResourceMgr.PreloadFont("Ammo", "UbuntuMono-R.ttf")
 	gohome.ResourceMgr.PreloadFont("Button", "/usr/share/fonts/truetype/ubuntu/UbuntuMono-R.ttf")
 	gohome.ResourceMgr.PreloadTexture("Player", "GPPCC14_Player.png")
 	gohome.ResourceMgr.PreloadTexture("DefaultWeapon", "GPPCC14_DefaultWeapon.png")
