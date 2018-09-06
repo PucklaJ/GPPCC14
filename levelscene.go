@@ -10,6 +10,10 @@ const (
 	DEATH_BUTTON_SIZE    float32 = 100.0
 	DEATH_BUTTON_PADDING float32 = 100.0
 	DEATH_TEXT_PADDING   float32 = 25.0
+
+	PAUSE_BUTTON_SIZE float32 = 25.0
+	PAUSE_BUTTON_X    float32 = GAME_WIDTH - PAUSE_BUTTON_SIZE/2.0 - PAUSE_BUTTON_SIZE/5.0
+	PAUSE_BUTTON_Y    float32 = PAUSE_BUTTON_SIZE/2.0 + PAUSE_BUTTON_SIZE/5.0
 )
 
 type LevelScene struct {
@@ -22,6 +26,7 @@ type LevelScene struct {
 	debugDraw physics2d.PhysicsDebugDraw2D
 
 	deathBtns     [2]*gohome.Button
+	pauseBtn      *gohome.Button
 	deathText     *gohome.Text2D
 	menuInited    bool
 	menuDirection bool
@@ -81,6 +86,18 @@ func (this *LevelScene) Init() {
 	this.Player.Init(playerStart, &this.PhysicsMgr)
 	for i := 0; i < len(this.Enemies); i++ {
 		this.Enemies[i].Init(this.Enemies[i].Transform.Position, &this.Player)
+	}
+
+	this.pauseBtn = &gohome.Button{}
+	this.pauseBtn.Init([2]float32{PAUSE_BUTTON_X, PAUSE_BUTTON_Y}, "")
+	this.pauseBtn.Transform.Origin = [2]float32{0.5, 0.5}
+	this.pauseBtn.Transform.Size = [2]float32{PAUSE_BUTTON_SIZE, PAUSE_BUTTON_SIZE}
+	this.pauseBtn.PressCallback = func(btn *gohome.Button) {
+		if this.paused {
+			this.Resume()
+		} else {
+			this.Pause()
+		}
 	}
 
 	Camera.Position = [2]float32{-CAMERA_BOX_WIDTH, -CAMERA_BOX_HEIGHT}
@@ -306,6 +323,7 @@ func (this *LevelScene) Terminate() {
 	gohome.ResourceMgr.DeleteTMXMap("Level")
 
 	this.terminateMenu()
+	this.pauseBtn.Terminate()
 	for i := 0; i < len(this.Enemies); i++ {
 		this.Enemies[i].Terminate()
 	}
