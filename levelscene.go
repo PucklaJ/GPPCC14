@@ -12,7 +12,7 @@ const (
 	DEATH_TEXT_PADDING   float32 = 25.0
 
 	PAUSE_BUTTON_SIZE float32 = 25.0
-	PAUSE_BUTTON_X    float32 = GAME_WIDTH - PAUSE_BUTTON_SIZE/2.0 - PAUSE_BUTTON_SIZE/5.0
+	PAUSE_BUTTON_X    float32 = float32(GAME_WIDTH) - PAUSE_BUTTON_SIZE/2.0 - PAUSE_BUTTON_SIZE/5.0
 	PAUSE_BUTTON_Y    float32 = PAUSE_BUTTON_SIZE/2.0 + PAUSE_BUTTON_SIZE/5.0
 )
 
@@ -89,13 +89,15 @@ func (this *LevelScene) Init() {
 	}
 
 	this.pauseBtn = &gohome.Button{}
-	this.pauseBtn.Init([2]float32{PAUSE_BUTTON_X, PAUSE_BUTTON_Y}, "")
+	this.pauseBtn.Init([2]float32{PAUSE_BUTTON_X, PAUSE_BUTTON_Y}, "Pause")
 	this.pauseBtn.Transform.Origin = [2]float32{0.5, 0.5}
 	this.pauseBtn.Transform.Size = [2]float32{PAUSE_BUTTON_SIZE, PAUSE_BUTTON_SIZE}
 	this.pauseBtn.PressCallback = func(btn *gohome.Button) {
 		if this.paused {
+			btn.Texture = gohome.ResourceMgr.GetTexture("Pause")
 			this.Resume()
 		} else {
+			btn.Texture = gohome.ResourceMgr.GetTexture("Resume")
 			this.Pause()
 		}
 	}

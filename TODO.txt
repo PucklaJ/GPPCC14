@@ -6,14 +6,8 @@ assets
 		jump sound
 		enemy kill sound
 	music
-	ammo font
-	button
-		restart
-		back to menu
-		level select
 	player death animation
 
-pause button
 options button
 	sound options
 

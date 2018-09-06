@@ -4,7 +4,6 @@ import (
 	"github.com/PucklaMotzer09/gohomeengine/src/gohome"
 	"golang.org/x/image/colornames"
 	"image/color"
-	"strconv"
 )
 
 const (
@@ -13,9 +12,9 @@ const (
 	AMMO_TEXT_FONT_SIZE    uint32  = 20
 	AMMO_TEXT_OFFSET_X     float32 = INVENTORY_PADDING + 8
 	AMMO_TEXT_OFFSET_Y     float32 = 2
-	AMMO_TEXT_POS_X        float32 = INVENTORY_TEXTURE_SIZE - AMMO_TEXT_OFFSET_X
-	AMMO_TEXT_POS_Y        float32 = INVENTORY_PADDING - AMMO_TEXT_OFFSET_Y
-	AMMO_TEXT_ORIGIN_X     float32 = 0.0
+	AMMO_TEXT_POS_X        float32 = INVENTORY_TEXTURE_SIZE + INVENTORY_PADDING
+	AMMO_TEXT_POS_Y        float32 = INVENTORY_PADDING
+	AMMO_TEXT_ORIGIN_X     float32 = 1.0
 	AMMO_TEXT_ORIGIN_Y     float32 = 0.0
 )
 
@@ -23,7 +22,7 @@ type InventoryBar struct {
 	gohome.Sprite2D
 
 	weapons   []Weapon
-	ammoTexts []*gohome.Text2D
+	ammoTexts []*AmmoText
 	current   uint8
 
 	prevNumWeapons int
@@ -52,8 +51,8 @@ func (this *InventoryBar) Init() {
 
 func (this *InventoryBar) AddWeapon(w Weapon) {
 	this.weapons = append(this.weapons, w)
-	text := &gohome.Text2D{}
-	text.Init("Ammo", AMMO_TEXT_FONT_SIZE, strconv.FormatUint(uint64(w.GetAmmo()), 10))
+	text := &AmmoText{}
+	text.Init(w.GetAmmo())
 	text.Transform.Origin[0] = AMMO_TEXT_ORIGIN_X
 	text.Transform.Origin[1] = AMMO_TEXT_ORIGIN_Y
 	this.ammoTexts = append(this.ammoTexts, text)
@@ -100,6 +99,7 @@ func (this *InventoryBar) updateValues() {
 
 func (this *InventoryBar) Update(delta_time float32) {
 	if this.hasChanged() {
+		this.renderInventory()
 		this.renderInventory()
 		this.updateValues()
 	}
@@ -204,8 +204,8 @@ func (this *InventoryBar) renderAmmoTexts() {
 	for i := 0; i < len(this.weapons); i++ {
 		x := width * float32(i)
 		text := this.ammoTexts[i]
-		text.Text = strconv.FormatUint(uint64(this.weapons[i].GetAmmo()), 10)
-		text.Flip = gohome.FLIP_VERTICAL
+		text.Number = this.weapons[i].GetAmmo()
+		text.Flip = gohome.FLIP_NONE
 		x += AMMO_TEXT_POS_X
 		y := AMMO_TEXT_POS_Y
 
@@ -223,6 +223,8 @@ func (this *InventoryBar) renderInventory() {
 	this.renderAmmoTexts()
 
 	this.unsetRenderTarget(prevProj)
+
+	this.Texture.SetFiltering(gohome.FILTERING_NEAREST)
 }
 
 func (this *InventoryBar) Terminate() {

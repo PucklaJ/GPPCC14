@@ -292,6 +292,10 @@ func (this *Player) handleAngle(mpos mgl32.Vec2) {
 }
 
 func (this *Player) handleWeapon() {
+	scn := gohome.SceneMgr.GetCurrentScene().(*LevelScene)
+	if scn.pauseBtn.Entered {
+		return
+	}
 	mpos := gohome.InputMgr.Mouse.ToWorldPosition2D()
 	this.handleAngle(mpos)
 	w := this.weapons[this.currentWeapon]

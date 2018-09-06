@@ -78,6 +78,11 @@ func LoadResources() {
 	gohome.ResourceMgr.PreloadTexture("Disappear", "GPPCC14_Disappear.png")
 	gohome.ResourceMgr.PreloadTexture("Restart", "GPPCC14_Restart.png")
 	gohome.ResourceMgr.PreloadTexture("Back", "GPPCC14_Back.png")
+	gohome.ResourceMgr.PreloadTexture("Pause", "GPPCC14_Pause.png")
+	gohome.ResourceMgr.PreloadTexture("Resume", "GPPCC14_Resume.png")
+	gohome.ResourceMgr.PreloadTexture("LevelButton1", "GPPCC14_LevelButton1.png")
+	gohome.ResourceMgr.PreloadTexture("LevelButtonPressed", "GPPCC14_LevelButtonPressed.png")
+	gohome.ResourceMgr.PreloadTexture("AmmoFont", "GPPCC14_AmmoFont.png")
 	gohome.ResourceMgr.LoadPreloadedResources()
 
 	gohome.ResourceMgr.GetTexture("Player").SetFiltering(gohome.FILTERING_NEAREST)
@@ -100,4 +105,9 @@ func LoadResources() {
 	gohome.ResourceMgr.GetTexture("Disappear").SetFiltering(gohome.FILTERING_NEAREST)
 	gohome.ResourceMgr.GetTexture("Restart").SetFiltering(gohome.FILTERING_NEAREST)
 	gohome.ResourceMgr.GetTexture("Back").SetFiltering(gohome.FILTERING_NEAREST)
+	gohome.ResourceMgr.GetTexture("Pause").SetFiltering(gohome.FILTERING_NEAREST)
+	gohome.ResourceMgr.GetTexture("Resume").SetFiltering(gohome.FILTERING_NEAREST)
+	gohome.ResourceMgr.GetTexture("LevelButton1").SetFiltering(gohome.FILTERING_NEAREST)
+	gohome.ResourceMgr.GetTexture("LevelButtonPressed").SetFiltering(gohome.FILTERING_NEAREST)
+	gohome.ResourceMgr.GetTexture("AmmoFont").SetFiltering(gohome.FILTERING_NEAREST)
 }

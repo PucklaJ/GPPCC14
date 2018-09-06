@@ -41,11 +41,19 @@ func (this *LevelSelectScene) initButtons() {
 
 		btn.Text = strconv.FormatInt(int64(i+1), 10)
 		this.targetBtnPos = append(this.targetBtnPos, start.Add([2]float32{x, y}))
-		btn.Init(start.Add([2]float32{x, y}), "")
+		btn.Init(start.Add([2]float32{x, y}), "LevelButton1")
 		btn.Transform.Position[1] = -LEVEL_BUTTON_SIZE/2.0 - (maxy - y)
 		btn.Transform.Size = [2]float32{LEVEL_BUTTON_SIZE, LEVEL_BUTTON_SIZE}
 		btn.Transform.Origin = [2]float32{0.5, 0.5}
 		btn.PressCallback = selectLevel
+		btn.EnterCallback = func(button *gohome.Button) {
+			button.Texture = gohome.ResourceMgr.GetTexture("LevelButtonPressed")
+		}
+		btn.LeaveCallback = func(button *gohome.Button) {
+			button.Texture = gohome.ResourceMgr.GetTexture("LevelButton1")
+		}
+		btn.EnterModColor = nil
+		btn.PressModColor = nil
 	}
 }
 
@@ -92,7 +100,6 @@ func (this *LevelSelectScene) Update(delta_time float32) {
 func (this *LevelSelectScene) Terminate() {
 	for i := 0; i < len(this.levelBtns); i++ {
 		this.levelBtns[i].Terminate()
-		this.levelBtns[i].Sprite2D.Terminate()
 	}
 	gohome.RenderMgr.RemoveObject(this.title)
 	this.title.Terminate()
