@@ -81,7 +81,7 @@ type WinMenu struct {
 }
 
 func (this *WinMenu) Init() {
-	start := gohome.Framew.WindowGetSize().Mul(0.5)
+	start := gohome.Render.GetNativeResolution().Mul(0.5)
 	this.backBtn.Init([2]float32{
 		start.X() - (DEATH_BUTTON_SIZE*2+DEATH_BUTTON_PADDING)/2.0 + DEATH_BUTTON_SIZE/2.0,
 		-DEATH_BUTTON_SIZE - DEATH_BUTTON_SIZE/2.0,
@@ -122,9 +122,9 @@ func (this *WinMenu) Init() {
 func (this *WinMenu) Update(delta_time float32) {
 	var target mgl32.Vec2
 	if this.direction == DOWN {
-		target = gohome.Framew.WindowGetSize().Mul(0.5)
+		target = gohome.Render.GetNativeResolution().Mul(0.5)
 	} else {
-		target = gohome.Framew.WindowGetSize().Mul(0.5)
+		target = gohome.Render.GetNativeResolution().Mul(0.5)
 		target[1] = -DEATH_BUTTON_SIZE - DEATH_BUTTON_SIZE/2.0
 	}
 
@@ -314,7 +314,7 @@ func (this *LevelScene) initMenu(death bool, inMid bool) {
 	var restartBtn, backBtn gohome.Button
 
 	width := 2.0*DEATH_BUTTON_SIZE + DEATH_BUTTON_PADDING
-	mid := gohome.Framew.WindowGetSize().Mul(0.5)
+	mid := gohome.Render.GetNativeResolution().Mul(0.5)
 	var restartPos, backPos, deathTextPos mgl32.Vec2
 
 	if !inMid {
@@ -447,7 +447,7 @@ func (this *LevelScene) updateMenu() {
 	}
 
 	width := 2.0*DEATH_BUTTON_SIZE + DEATH_BUTTON_PADDING
-	mid := gohome.Framew.WindowGetSize().Mul(0.5)
+	mid := gohome.Render.GetNativeResolution().Mul(0.5)
 
 	var restartTarget, backTarget, deathTextTarget mgl32.Vec2
 
@@ -511,15 +511,11 @@ func (this *LevelScene) updateWinCondition() {
 		if len(this.Targets) > 0 {
 			for i, t := range this.Targets {
 				pos := t.Transform.Position
-				size := t.Transform.Size
-				scale := t.Transform.Scale
-				size[0], size[1] = size[0]*scale[0], size[1]*scale[1]
+				size := t.Transform.Size.MulVec(t.Transform.Scale)
 				pos = pos.Sub(size.Mul(0.5))
 
 				ppos := this.Player.Transform.Position
-				psize := this.Player.Transform.Size
-				pscale := this.Player.Transform.Scale
-				psize[0], psize[1] = psize[0]*pscale[0], psize[1]*pscale[1]
+				psize := this.Player.Transform.Size.MulVec(this.Player.Transform.Scale)
 				ppos = ppos.Sub(psize.Mul(0.5))
 
 				if ppos[0] < pos[0]+size[0] &&

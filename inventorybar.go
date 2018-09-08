@@ -40,8 +40,8 @@ func (this *InventoryBar) Init() {
 	this.Depth = INVENTORY_DEPTH
 	this.NotRelativeToCamera = 0
 
-	this.Transform.Position = gohome.Framew.WindowGetSize().Mul(0.5)
-	this.Transform.Position[1] = gohome.Framew.WindowGetSize()[1] - (INVENTORY_PADDING*2.0+INVENTORY_TEXTURE_SIZE)/2.0 - INVENTORY_PADDING
+	this.Transform.Position = gohome.Render.GetNativeResolution().Mul(0.5)
+	this.Transform.Position[1] = gohome.Render.GetNativeResolution()[1] - (INVENTORY_PADDING*2.0+INVENTORY_TEXTURE_SIZE)/2.0 - INVENTORY_PADDING
 	this.Transform.Origin = [2]float32{0.5, 0.5}
 	this.prevNumWeapons = -1
 

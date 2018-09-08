@@ -27,7 +27,7 @@ func selectLevel(btn *gohome.Button) {
 func (this *LevelSelectScene) initButtons() {
 	lbr := float32(LEVEL_BUTTON_PER_ROW)
 	lbc := float32(NUM_LEVELS / LEVEL_BUTTON_PER_ROW)
-	start := gohome.Framew.WindowGetSize().Mul(0.5)
+	start := gohome.Render.GetNativeResolution().Mul(0.5)
 	start = start.Sub([2]float32{
 		(lbr*LEVEL_BUTTON_SIZE+(lbr-1.0)*LEVEL_BUTTON_PADDING)/2.0 - LEVEL_BUTTON_SIZE/2.0,
 		(lbc*LEVEL_BUTTON_SIZE+(lbc-1.0)*LEVEL_BUTTON_PADDING)/2.0 - LEVEL_BUTTON_SIZE/2.0,
@@ -59,7 +59,7 @@ func (this *LevelSelectScene) initButtons() {
 
 func (this *LevelSelectScene) initTitle() {
 	lbc := float32(NUM_LEVELS / LEVEL_BUTTON_PER_ROW)
-	start := gohome.Framew.WindowGetSize().Mul(0.5)
+	start := gohome.Render.GetNativeResolution().Mul(0.5)
 	start = start.Sub([2]float32{
 		0.0,
 		(lbc*LEVEL_BUTTON_SIZE+(lbc-1.0)*LEVEL_BUTTON_PADDING)/2.0 - LEVEL_BUTTON_SIZE/2.0,
@@ -69,7 +69,7 @@ func (this *LevelSelectScene) initTitle() {
 	this.title = &gohome.Text2D{}
 	this.title.Init(gohome.ButtonFont, gohome.ButtonFontSize*2, "Wähle einen Level")
 	this.title.Transform.Origin = [2]float32{0.5, 0.5}
-	this.title.Transform.Position = [2]float32{gohome.Framew.WindowGetSize().X()/2.0 + 10.0, -LEVEL_BUTTON_SIZE/2.0 - maxy - (start[1] - 100.0)}
+	this.title.Transform.Position = [2]float32{gohome.Render.GetNativeResolution().X()/2.0 + 10.0, -LEVEL_BUTTON_SIZE/2.0 - maxy - (start[1] - 100.0)}
 	this.title.NotRelativeToCamera = 0
 	gohome.RenderMgr.AddObject(this.title)
 }
@@ -83,7 +83,7 @@ func (this *LevelSelectScene) updateButtons() {
 }
 
 func (this *LevelSelectScene) updateTitle() {
-	titleTarget := mgl32.Vec2{gohome.Framew.WindowGetSize().X()/2.0 + 10.0, 100.0}
+	titleTarget := mgl32.Vec2{gohome.Render.GetNativeResolution().X()/2.0 + 10.0, 100.0}
 	this.title.Transform.Position = this.title.Transform.Position.Add(titleTarget.Sub(this.title.Transform.Position).Mul(0.08))
 }
 
