@@ -481,7 +481,9 @@ func (this *Player) Terminate() {
 		w.Terminate()
 	}
 	this.Inventory.Terminate()
-	this.PhysicsMgr.World.DestroyBody(this.body)
+	if this.body != nil {
+		this.PhysicsMgr.World.DestroyBody(this.body)
+	}
 	this.terminated = true
 }
 

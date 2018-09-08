@@ -15,23 +15,151 @@ const (
 	PAUSE_BUTTON_SIZE float32 = 25.0
 	PAUSE_BUTTON_X    float32 = float32(GAME_WIDTH) - PAUSE_BUTTON_SIZE/2.0 - PAUSE_BUTTON_SIZE/5.0
 	PAUSE_BUTTON_Y    float32 = PAUSE_BUTTON_SIZE/2.0 + PAUSE_BUTTON_SIZE/5.0
+
+	TARGET_FRAME_TIME         float32 = 1.0 / 7.0
+	TARGET_COLLECT_FRAME_TIME float32 = 1.0 / 8.0
 )
 
 type Target struct {
 	gohome.Sprite2D
+	anim gohome.Tweenset
+}
+
+type TargetCollect struct {
+	gohome.Sprite2D
+	anim gohome.Tweenset
+}
+
+func (this *TargetCollect) Init() {
+	this.Sprite2D.Init("TargetCollect")
+	this.anim = gohome.SpriteAnimation2D(this.Texture, 4, 1, TARGET_COLLECT_FRAME_TIME)
+	this.anim.SetParent(&this.Sprite2D)
+	this.anim.Start()
+
+	this.TextureRegion.Max[0] = 32.0
+	this.Transform.Size = [2]float32{32.0, 32.0}
+	this.Transform.Origin = [2]float32{0.5, 0.5}
+
+	gohome.UpdateMgr.AddObject(this)
+	gohome.UpdateMgr.AddObject(&this.anim)
+	gohome.RenderMgr.AddObject(this)
+}
+
+func (this *TargetCollect) Update(delta_time float32) {
+	if this.anim.Done() {
+		this.Terminate()
+	}
+}
+
+func (this *TargetCollect) Terminate() {
+	gohome.UpdateMgr.RemoveObject(this)
+	gohome.UpdateMgr.RemoveObject(&this.anim)
+	gohome.RenderMgr.RemoveObject(this)
+}
+
+func (this *Target) Init(texName string) {
+	this.Sprite2D.Init(texName)
+
+	this.anim = gohome.SpriteAnimation2D(this.Texture, 3, 1, TARGET_FRAME_TIME)
+	this.anim.Loop = true
+	this.anim.SetParent(&this.Sprite2D)
+	this.anim.Start()
+	gohome.UpdateMgr.AddObject(&this.anim)
+}
+
+func (this *Target) Terminate() {
+	gohome.RenderMgr.RemoveObject(this)
+	gohome.UpdateMgr.RemoveObject(&this.anim)
+}
+
+type WinMenu struct {
+	backBtn     gohome.Button
+	continueBtn gohome.Button
+	winText     gohome.Text2D
+
+	direction bool
+}
+
+func (this *WinMenu) Init() {
+	start := gohome.Framew.WindowGetSize().Mul(0.5)
+	this.backBtn.Init([2]float32{
+		start.X() - (DEATH_BUTTON_SIZE*2+DEATH_BUTTON_PADDING)/2.0 + DEATH_BUTTON_SIZE/2.0,
+		-DEATH_BUTTON_SIZE - DEATH_BUTTON_SIZE/2.0,
+	}, "Back")
+	this.backBtn.Transform.Size = [2]float32{DEATH_BUTTON_SIZE, DEATH_BUTTON_SIZE}
+	this.backBtn.Transform.Origin = [2]float32{0.5, 0.5}
+	this.backBtn.PressCallback = func(btn *gohome.Button) {
+		gohome.SceneMgr.SwitchScene(&LevelSelectScene{})
+	}
+	this.backBtn.Depth = MENU_DEPTH
+
+	this.continueBtn.Init([2]float32{
+		start.X() + (DEATH_BUTTON_SIZE*2+DEATH_BUTTON_PADDING)/2.0 - DEATH_BUTTON_SIZE/2.0,
+		-DEATH_BUTTON_SIZE - DEATH_BUTTON_SIZE/2.0,
+	}, "Continue")
+	this.continueBtn.Transform.Size = [2]float32{DEATH_BUTTON_SIZE, DEATH_BUTTON_SIZE}
+	this.continueBtn.Transform.Origin = [2]float32{0.5, 0.5}
+	this.continueBtn.PressCallback = func(btn *gohome.Button) {
+		gohome.SceneMgr.SwitchScene(&LevelScene{LevelID: gohome.SceneMgr.GetCurrentScene().(*LevelScene).LevelID + 1})
+	}
+	this.continueBtn.Depth = MENU_DEPTH
+
+	this.winText.Init(gohome.ButtonFont, gohome.ButtonFontSize*2, "Level Abgeschlossen")
+	this.winText.Transform.Origin = [2]float32{0.5, 0.5}
+	this.winText.Transform.Position = [2]float32{
+		start.X(),
+		-DEATH_BUTTON_SIZE - DEATH_BUTTON_SIZE/2.0 - DEATH_BUTTON_SIZE*1.5,
+	}
+	this.winText.NotRelativeToCamera = 0
+	this.winText.Depth = MENU_DEPTH
+
+	gohome.RenderMgr.AddObject(&this.winText)
+	gohome.UpdateMgr.AddObject(this)
+
+	this.direction = UP
+}
+
+func (this *WinMenu) Update(delta_time float32) {
+	var target mgl32.Vec2
+	if this.direction == DOWN {
+		target = gohome.Framew.WindowGetSize().Mul(0.5)
+	} else {
+		target = gohome.Framew.WindowGetSize().Mul(0.5)
+		target[1] = -DEATH_BUTTON_SIZE - DEATH_BUTTON_SIZE/2.0
+	}
+
+	backTarget := target
+	backTarget[0] = backTarget[0] - (DEATH_BUTTON_SIZE*2+DEATH_BUTTON_PADDING)/2.0 + DEATH_BUTTON_SIZE/2.0
+	continueTarget := target
+	continueTarget[0] = continueTarget[0] + (DEATH_BUTTON_SIZE*2+DEATH_BUTTON_PADDING)/2.0 - DEATH_BUTTON_SIZE/2.0
+	winTextTarget := target
+	winTextTarget[1] = winTextTarget[1] - DEATH_BUTTON_SIZE*1.5
+
+	this.backBtn.Transform.Position = this.backBtn.Transform.Position.Add(backTarget.Sub(this.backBtn.Transform.Position).Mul(0.2))
+	this.continueBtn.Transform.Position = this.continueBtn.Transform.Position.Add(continueTarget.Sub(this.continueBtn.Transform.Position).Mul(0.2))
+	this.winText.Transform.Position = this.winText.Transform.Position.Add(winTextTarget.Sub(this.winText.Transform.Position).Mul(0.15))
+}
+
+func (this *WinMenu) Terminate() {
+	this.backBtn.Terminate()
+	this.continueBtn.Terminate()
+	gohome.RenderMgr.RemoveObject(&this.winText)
+	gohome.UpdateMgr.RemoveObject(this)
 }
 
 type LevelScene struct {
-	PhysicsMgr physics2d.PhysicsManager2D
-	LevelID    uint32
-	Map        gohome.TiledMap
-	Player     Player
-	Enemies    []*Enemy
-	Targets    []*Target
+	PhysicsMgr     physics2d.PhysicsManager2D
+	LevelID        uint32
+	Map            gohome.TiledMap
+	Player         Player
+	Enemies        []*Enemy
+	Targets        []*Target
+	targetCollects []*TargetCollect
 
 	debugDraw physics2d.PhysicsDebugDraw2D
 
 	deathBtns     [2]*gohome.Button
+	winMenu       WinMenu
 	pauseBtn      *gohome.Button
 	deathText     *gohome.Text2D
 	menuInited    bool
@@ -41,6 +169,11 @@ type LevelScene struct {
 }
 
 func (this *LevelScene) Init() {
+	if this.LevelID > NUM_LEVELS-1 {
+		gohome.SceneMgr.SwitchScene(&LevelSelectScene{})
+		return
+	}
+
 	physics2d.PIXEL_PER_METER = 10.0
 	gohome.ResourceMgr.LoadTMXMap("Level", LEVELS_TMX_MAPS[this.LevelID])
 
@@ -87,11 +220,7 @@ func (this *LevelScene) Init() {
 					this.Enemies = append(this.Enemies, enemy)
 				} else if o.Name == "target" {
 					var target Target
-					rt := gohome.Render.CreateRenderTexture("Target", 32, 32, 1, false, false, false, false)
-					rt.SetAsTarget()
-					gohome.Render.ClearScreen(gohome.Color{255, 0, 0, 255})
-					rt.UnsetAsTarget()
-					target.InitTexture(rt)
+					target.Init("Target")
 					target.Transform.Origin = [2]float32{0.5, 0.5}
 					target.Transform.Position = [2]float32{float32(o.X), float32(o.Y)}
 					gohome.RenderMgr.AddObject(&target)
@@ -144,12 +273,18 @@ func (this *LevelScene) Init() {
 	this.pauseBtn.Transform.Size = [2]float32{PAUSE_BUTTON_SIZE, PAUSE_BUTTON_SIZE}
 	this.pauseBtn.Depth = MENU_DEPTH
 	this.pauseBtn.PressCallback = func(btn *gohome.Button) {
+		if this.winMenu.direction == DOWN {
+			return
+		}
+
 		if this.paused {
 			this.Resume()
 		} else {
 			this.Pause()
 		}
 	}
+
+	this.winMenu.Init()
 
 	Camera.Position = [2]float32{-CAMERA_BOX_WIDTH, -CAMERA_BOX_HEIGHT}
 }
@@ -244,13 +379,7 @@ func (this *LevelScene) initMenu(death bool, inMid bool) {
 	this.menuInited = true
 }
 
-func (this *LevelScene) Pause() {
-	if this.Player.Died() {
-		return
-	}
-
-	this.initMenu(false, false)
-	this.menuDirection = DOWN
+func (this *LevelScene) PauseGame() {
 	this.paused = true
 
 	this.Player.Pause()
@@ -259,6 +388,16 @@ func (this *LevelScene) Pause() {
 	}
 	this.PhysicsMgr.Paused = true
 	this.pauseBtn.Texture = gohome.ResourceMgr.GetTexture("Resume")
+}
+
+func (this *LevelScene) Pause() {
+	if this.Player.Died() || this.paused {
+		return
+	}
+
+	this.initMenu(false, false)
+	this.menuDirection = DOWN
+	this.PauseGame()
 }
 
 func (this *LevelScene) Resume() {
@@ -284,6 +423,19 @@ func (this *LevelScene) Restart() {
 	}
 	Camera.Position = prevCamPos
 	this.restarting = true
+}
+
+func (this *LevelScene) ShowWinMenu() {
+	if this.paused {
+		this.Resume()
+	}
+	this.winMenu.direction = DOWN
+	this.PauseGame()
+}
+
+func (this *LevelScene) HideWinMenu() {
+	this.winMenu.direction = UP
+	this.Resume()
 }
 
 func (this *LevelScene) updateMenu() {
@@ -354,7 +506,7 @@ func (this *LevelScene) updateWinCondition() {
 				return
 			}
 		}
-		gohome.SceneMgr.SwitchScene(&LevelSelectScene{})
+		this.ShowWinMenu()
 	} else if CURRENT_WIN_CONDITION == WIN_CONDITION_TARGET {
 		if len(this.Targets) > 0 {
 			for i, t := range this.Targets {
@@ -375,12 +527,16 @@ func (this *LevelScene) updateWinCondition() {
 					ppos[1] < pos[1]+size[1] &&
 					ppos[1]+psize[1] > pos[1] {
 
-					gohome.RenderMgr.RemoveObject(t)
+					t.Terminate()
 					this.Targets = append(this.Targets[:i], this.Targets[i+1:]...)
+					var tc TargetCollect
+					tc.Init()
+					tc.Transform.Position = t.Transform.Position
+					this.targetCollects = append(this.targetCollects, &tc)
 				}
 			}
 		} else {
-			gohome.SceneMgr.SwitchScene(&LevelSelectScene{})
+			this.ShowWinMenu()
 		}
 	}
 }
@@ -392,9 +548,14 @@ func (this *LevelScene) Update(delta_time float32) {
 		this.Restart()
 	} else if gohome.InputMgr.JustPressed(gohome.KeyU) {
 		gohome.SceneMgr.SwitchScene(&gohome.NilScene{})
-	}
-	if gohome.InputMgr.JustPressed(gohome.KeyK) {
+	} else if gohome.InputMgr.JustPressed(gohome.KeyK) {
 		this.menuDirection = !this.menuDirection
+	} else if gohome.InputMgr.JustPressed(gohome.KeyI) {
+		if this.winMenu.direction == UP {
+			this.ShowWinMenu()
+		} else {
+			this.HideWinMenu()
+		}
 	}
 	if this.restarting {
 		return
@@ -422,13 +583,18 @@ func (this *LevelScene) Terminate() {
 	gohome.ResourceMgr.DeleteTMXMap("Level")
 
 	this.terminateMenu()
-	this.pauseBtn.Terminate()
+	this.winMenu.Terminate()
+	if this.pauseBtn != nil {
+		this.pauseBtn.Terminate()
+	}
 	for i := 0; i < len(this.Enemies); i++ {
 		this.Enemies[i].Terminate()
 	}
 	for _, t := range this.Targets {
-		gohome.RenderMgr.RemoveObject(t)
 		t.Terminate()
+	}
+	for _, tc := range this.targetCollects {
+		tc.Terminate()
 	}
 	this.Player.Terminate()
 	this.Map.Terminate()
