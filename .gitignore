@@ -4,3 +4,5 @@ GPPCC14
 !.gitignore
 *.exe
 *.dll
+*.tar
+*.zip
