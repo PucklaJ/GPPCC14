@@ -68,15 +68,15 @@ func (this *FreezeWeapon) Update(delta_time float32) {
 
 }
 
-func (this *FreezeWeapon) Use(target mgl32.Vec2) {
+func (this *FreezeWeapon) Use(target mgl32.Vec2, energy float32) {
 	dir := target.Sub(this.Player.Transform.Position).Normalize()
-	body := this.createBox(dir)
+	body := this.createBox(dir, energy)
 	this.bodies = append(this.bodies, body)
 	this.times = append(this.times, FREEZE_TIME)
 	this.Ammo--
 }
 
-func (this *FreezeWeapon) createBox(dir mgl32.Vec2) *box2d.B2Body {
+func (this *FreezeWeapon) createBox(dir mgl32.Vec2, energy float32) *box2d.B2Body {
 	pos := this.Player.Transform.Position.Add(dir.Mul(PLAYER_WIDTH * 2.0))
 	size := [2]float32{FREEZE_WIDTH, FREEZE_HEIGHT}
 
@@ -95,7 +95,7 @@ func (this *FreezeWeapon) createBox(dir mgl32.Vec2) *box2d.B2Body {
 	body := this.Player.PhysicsMgr.World.CreateBody(&bodyDef)
 	body.CreateFixtureFromDef(&fdef)
 
-	body.SetLinearVelocity(physics2d.ToBox2DDirection(dir.Mul(FREEZE_VELOCITY)))
+	body.SetLinearVelocity(physics2d.ToBox2DDirection(dir.Mul(FREEZE_VELOCITY * energy)))
 	body.SetLinearVelocity(box2d.B2Vec2Add(this.Player.body.GetLinearVelocity(), body.GetLinearVelocity()))
 
 	var spr gohome.Sprite2D

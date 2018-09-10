@@ -56,9 +56,9 @@ func (this *BallWeapon) GetInventoryTexture() gohome.Texture {
 	return gohome.ResourceMgr.GetTexture("BallWeaponInv")
 }
 
-func (this *BallWeapon) Use(target mgl32.Vec2) {
+func (this *BallWeapon) Use(target mgl32.Vec2, energy float32) {
 	dir := target.Sub(this.Player.Transform.Position).Normalize()
-	this.bodies = append(this.bodies, this.createBall(dir))
+	this.bodies = append(this.bodies, this.createBall(dir, energy))
 	var vel float64
 	if dir.X() > 0.0 {
 		vel = -float64(mgl32.DegToRad(BALL_WEAPON_ANGLE_VELOCITY))
@@ -87,7 +87,7 @@ func (this *BallWeapon) Update(delta_time float32) {
 	this.Transform.Position = this.Player.Transform.Position.Add(this.Player.GetWeaponOffset()).Add(off)
 }
 
-func (this *BallWeapon) createBall(dir mgl32.Vec2) *box2d.B2Body {
+func (this *BallWeapon) createBall(dir mgl32.Vec2, energy float32) *box2d.B2Body {
 	pos := this.Player.Transform.Position.Add(dir.Mul(PLAYER_WIDTH * 2.0))
 
 	bodyDef := box2d.MakeB2BodyDef()
@@ -105,7 +105,7 @@ func (this *BallWeapon) createBall(dir mgl32.Vec2) *box2d.B2Body {
 	body := this.Player.PhysicsMgr.World.CreateBody(&bodyDef)
 	body.CreateFixtureFromDef(&fdef)
 
-	body.SetLinearVelocity(physics2d.ToBox2DDirection(dir.Mul(BALL_WEAPON_VELOCITY)))
+	body.SetLinearVelocity(physics2d.ToBox2DDirection(dir.Mul(BALL_WEAPON_VELOCITY * energy)))
 	body.SetLinearVelocity(box2d.B2Vec2Add(this.Player.body.GetLinearVelocity(), body.GetLinearVelocity()))
 
 	var spr gohome.Sprite2D

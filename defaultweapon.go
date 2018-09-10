@@ -38,9 +38,9 @@ func (this *DefaultWeapon) GetInventoryTexture() gohome.Texture {
 	return gohome.ResourceMgr.GetTexture("DefaultWeaponInv")
 }
 
-func (this *DefaultWeapon) Use(target mgl32.Vec2) {
+func (this *DefaultWeapon) Use(target mgl32.Vec2, energy float32) {
 	dir := target.Sub(this.Player.Transform.Position).Normalize()
-	this.createBox(dir)
+	this.createBox(dir, energy)
 	this.Ammo--
 }
 
@@ -49,7 +49,7 @@ func (this *DefaultWeapon) Update(delta_time float32) {
 	this.Flip = this.Player.Flip
 }
 
-func (this *DefaultWeapon) createBox(dir mgl32.Vec2) {
+func (this *DefaultWeapon) createBox(dir mgl32.Vec2, energy float32) {
 	pos := this.Player.Transform.Position.Add(dir.Mul(PLAYER_WIDTH * 2.0))
 	size := [2]float32{DEFAULT_WEAPON_WIDTH, DEFAULT_WEAPON_HEIGHT}
 
@@ -68,7 +68,7 @@ func (this *DefaultWeapon) createBox(dir mgl32.Vec2) {
 	body := this.Player.PhysicsMgr.World.CreateBody(&bodyDef)
 	body.CreateFixtureFromDef(&fdef)
 
-	body.SetLinearVelocity(physics2d.ToBox2DDirection(dir.Mul(DEFAULT_WEAPON_VELOCITY)))
+	body.SetLinearVelocity(physics2d.ToBox2DDirection(dir.Mul(DEFAULT_WEAPON_VELOCITY * energy)))
 	body.SetLinearVelocity(box2d.B2Vec2Add(this.Player.body.GetLinearVelocity(), body.GetLinearVelocity()))
 
 	var spr gohome.Sprite2D

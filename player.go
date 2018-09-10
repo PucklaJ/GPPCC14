@@ -38,6 +38,9 @@ const (
 	PLAYER_STAND_THRESHOLD float32 = 10.0
 	PLAYER_PREVX_THRESHOLD float32 = 2.0
 	PLAYER_JUMP_THRESHOLD  float32 = 10.0
+
+	PLAYER_MIN_DISTANCE float32 = 10.0
+	PLAYER_MAX_DISTANCE float32 = 180.0
 )
 
 type Player struct {
@@ -47,6 +50,7 @@ type Player struct {
 	targetCameraPos mgl32.Vec2
 	PhysicsMgr      *physics2d.PhysicsManager2D
 	Inventory       InventoryBar
+	scope           gohome.Sprite2D
 
 	weapons       []Weapon
 	currentWeapon uint8
@@ -87,6 +91,10 @@ func (this *Player) Init(pos mgl32.Vec2, pmgr *physics2d.PhysicsManager2D) {
 
 	this.Depth = PLAYER_DEPTH
 	this.terminated = false
+
+	this.scope.Init("Back")
+	this.scope.Transform.Origin = [2]float32{0.5, 0.5}
+	gohome.RenderMgr.AddObject(&this.scope)
 }
 
 func (this *Player) setupAnimations() {
@@ -286,6 +294,14 @@ func (this *Player) handleAngle(mpos mgl32.Vec2) {
 	}
 }
 
+func (this *Player) calculateEnergy(mpos mgl32.Vec2) float32 {
+	pos := this.Transform.Position
+
+	dist := mpos.Sub(pos).Len()
+
+	return mgl32.Clamp((dist-PLAYER_MIN_DISTANCE)/(PLAYER_MAX_DISTANCE-PLAYER_MIN_DISTANCE), 0.0, 1.0)
+}
+
 func (this *Player) handleWeapon() {
 	if len(this.weapons) == 0 {
 		return
@@ -299,7 +315,8 @@ func (this *Player) handleWeapon() {
 	this.handleAngle(mpos)
 	w := this.weapons[this.currentWeapon]
 	if gohome.InputMgr.JustPressed(KEY_SHOOT) && w.GetAmmo() > 0 {
-		w.Use(mpos)
+		w.Use(mpos, this.calculateEnergy(mpos))
+
 		if this.currentAnim == NO_ANIM {
 			this.SetAnimation(ANIM_SHOOT)
 		}
@@ -382,10 +399,22 @@ func (this *Player) Update(delta_time float32) {
 	this.updateCamera(delta_time)
 	this.checkEnemy()
 	this.updateAnimation()
+	this.updateScope()
 
 	if gohome.InputMgr.JustPressed(gohome.KeyO) {
 		this.Die()
 	}
+}
+
+func (this *Player) updateScope() {
+	mpos := gohome.InputMgr.Mouse.ToWorldPosition2D()
+	rel := mpos.Sub(this.Transform.Position).Normalize()
+
+	energy := this.calculateEnergy(mpos)
+
+	energy = energy*(PLAYER_MAX_DISTANCE-PLAYER_MIN_DISTANCE) + PLAYER_MIN_DISTANCE
+
+	this.scope.Transform.Position = this.Transform.Position.Add(rel.Mul(energy))
 }
 
 func (this *Player) updateCamera(delta_time float32) {
@@ -510,6 +539,7 @@ func (this *Player) terminateSprite() {
 	gohome.UpdateMgr.RemoveObject(&this.fallAnimation)
 	gohome.UpdateMgr.RemoveObject(&this.shootAnimation)
 	gohome.RenderMgr.RemoveObject(this)
+	gohome.RenderMgr.RemoveObject(&this.scope)
 
 	this.Inventory.Terminate()
 	if this.body != nil {

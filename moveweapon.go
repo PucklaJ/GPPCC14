@@ -64,10 +64,10 @@ func (this *MoveWeapon) Resume() {
 	}
 }
 
-func (this *MoveWeapon) Use(target mgl32.Vec2) {
+func (this *MoveWeapon) Use(target mgl32.Vec2, energy float32) {
 	dir := target.Sub(this.Player.Transform.Position).Normalize()
 	bdir := dir.X() >= 0.0
-	body := this.createBox(dir)
+	body := this.createBox(dir, energy)
 
 	this.platforms = append(this.platforms, &MovePlatform{
 		WeaponBlock{},
@@ -129,7 +129,7 @@ func (this *MoveWeapon) Update(delta_time float32) {
 	this.Transform.Position = this.Player.Transform.Position.Add(this.Player.GetWeaponOffset()).Add(off)
 }
 
-func (this *MoveWeapon) createBox(dir mgl32.Vec2) *box2d.B2Body {
+func (this *MoveWeapon) createBox(dir mgl32.Vec2, energy float32) *box2d.B2Body {
 	pos := this.Player.Transform.Position.Add(dir.Mul(PLAYER_WIDTH * 2.0))
 	size := [2]float32{MOVE_WEAPON_WIDTH, MOVE_WEAPON_HEIGHT}
 
@@ -148,7 +148,7 @@ func (this *MoveWeapon) createBox(dir mgl32.Vec2) *box2d.B2Body {
 	body := this.Player.PhysicsMgr.World.CreateBody(&bodyDef)
 	body.CreateFixtureFromDef(&fdef)
 
-	body.SetLinearVelocity(physics2d.ToBox2DDirection(dir.Mul(MOVE_WEAPON_VELOCITY)))
+	body.SetLinearVelocity(physics2d.ToBox2DDirection(dir.Mul(MOVE_WEAPON_VELOCITY * energy)))
 	body.SetLinearVelocity(box2d.B2Vec2Add(this.Player.body.GetLinearVelocity(), body.GetLinearVelocity()))
 
 	return body

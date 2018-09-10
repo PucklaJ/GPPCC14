@@ -162,7 +162,7 @@ func (this *DeleteWeapon) Update(delta_time float32) {
 	this.Transform.Position = this.Player.Transform.Position.Add(this.Player.GetWeaponOffset()).Add(off)
 }
 
-func (this *DeleteWeapon) Use(target mgl32.Vec2) {
+func (this *DeleteWeapon) Use(target mgl32.Vec2, energy float32) {
 	dir := target.Sub(this.Player.Transform.Position).Normalize()
 
 	var ray DeleteRay
