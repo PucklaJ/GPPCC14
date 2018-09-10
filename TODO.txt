@@ -1,4 +1,3 @@
-fix player dies when falling
 assets
 	target
 		animation

@@ -539,6 +539,18 @@ func (this *LevelScene) updateWinCondition() {
 	}
 }
 
+func (this *LevelScene) handlePlayer() {
+	y := this.Player.Transform.Position.Sub(this.Player.Transform.Size.MulVec(this.Player.Transform.Scale)).Y()
+	my := float32(this.Map.Height * this.Map.TileHeight)
+	if y > my {
+		this.Player.Die()
+	}
+
+	if this.Player.Died() {
+		this.initMenu(true, false)
+	}
+}
+
 func (this *LevelScene) Update(delta_time float32) {
 	if gohome.InputMgr.JustPressed(gohome.KeyF3) {
 		this.debugDraw.Visible = !this.debugDraw.Visible
@@ -572,10 +584,7 @@ func (this *LevelScene) Update(delta_time float32) {
 		}
 	}
 	this.updateMenu()
-	if this.Player.Died() {
-		this.initMenu(true, false)
-	}
-
+	this.handlePlayer()
 	this.updateWinCondition()
 
 	this.debugInfo.Visible = this.debugDraw.Visible
