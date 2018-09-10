@@ -323,11 +323,11 @@ func (this *Player) handleWeapon() {
 		}
 	}
 
-	if gohome.InputMgr.Mouse.Wheel[1] > 0 {
+	if gohome.InputMgr.Mouse.Wheel[1] < 0 {
 		for i := 0; i < int(mgl32.Abs(float32(gohome.InputMgr.Mouse.Wheel[1]))); i++ {
 			this.changeWeapon(UP)
 		}
-	} else if gohome.InputMgr.Mouse.Wheel[1] < 0 {
+	} else if gohome.InputMgr.Mouse.Wheel[1] > 0 {
 		for i := 0; i < int(mgl32.Abs(float32(gohome.InputMgr.Mouse.Wheel[1]))); i++ {
 			this.changeWeapon(DOWN)
 		}
