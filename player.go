@@ -65,6 +65,9 @@ type Player struct {
 	shootAnimation gohome.Tweenset
 
 	paused bool
+
+	jumpSound  gohome.Sound
+	shootSound gohome.Sound
 }
 
 func (this *Player) Died() bool {
@@ -88,6 +91,7 @@ func (this *Player) Init(pos mgl32.Vec2, pmgr *physics2d.PhysicsManager2D) {
 	this.Inventory.Init()
 	this.addWeapons()
 	this.setupAnimations()
+	this.initSounds()
 
 	this.Depth = PLAYER_DEPTH
 	this.terminated = false
@@ -96,6 +100,11 @@ func (this *Player) Init(pos mgl32.Vec2, pmgr *physics2d.PhysicsManager2D) {
 	this.scope.Transform.Origin = [2]float32{0.5, 0.5}
 	this.scope.Depth = SCOPE_DEPTH
 	gohome.RenderMgr.AddObject(&this.scope)
+}
+
+func (this *Player) initSounds() {
+	this.jumpSound = gohome.ResourceMgr.GetSound("Jump")
+	this.shootSound = gohome.ResourceMgr.GetSound("Shoot")
 }
 
 func (this *Player) setupAnimations() {
@@ -280,6 +289,7 @@ func (this *Player) updateVelocity(delta_time float32) {
 func (this *Player) handleJump() {
 	if (gohome.InputMgr.JustPressed(KEY_JUMP) || gohome.InputMgr.JustPressed(KEY_JUMP1)) && this.IsGrounded() {
 		this.body.ApplyLinearImpulseToCenter(physics2d.ToBox2DDirection([2]float32{0.0, -PLAYER_JUMP_FORCE}), true)
+		this.jumpSound.Play(false)
 	}
 }
 
@@ -317,7 +327,7 @@ func (this *Player) handleWeapon() {
 	w := this.weapons[this.currentWeapon]
 	if gohome.InputMgr.JustPressed(KEY_SHOOT) && w.GetAmmo() > 0 {
 		w.Use(mpos, this.calculateEnergy(mpos))
-
+		this.shootSound.Play(false)
 		if this.currentAnim == NO_ANIM {
 			this.SetAnimation(ANIM_SHOOT)
 		}
@@ -413,6 +423,7 @@ func (this *Player) Resume() {
 
 func (this *Player) Update(delta_time float32) {
 	if this.paused {
+		this.updateScope()
 		return
 	}
 

@@ -93,6 +93,12 @@ func LoadResources() {
 	gohome.ResourceMgr.PreloadTexture("TargetCollect", "GPPCC14_TargetCollect.png")
 	gohome.ResourceMgr.PreloadTexture("Continue", "GPPCC14_Continue.png")
 	gohome.ResourceMgr.PreloadTexture("Scope", "GPPCC14_Scope.png")
+	gohome.ResourceMgr.PreloadSound("Jump", "GPPCC14_Jump.wav")
+	gohome.ResourceMgr.PreloadSound("Shoot", "GPPCC14_Shoot.wav")
+	gohome.ResourceMgr.PreloadSound("Explosion", "GPPCC14_Explosion.wav")
+	gohome.ResourceMgr.PreloadSound("TargetCollect", "GPPCC14_TargetCollect.wav")
+	gohome.ResourceMgr.PreloadSound("Button", "GPPCC14_Button.wav")
+	gohome.ResourceMgr.PreloadSound("ButtonPressed", "GPPCC14_ButtonPressed.wav")
 	gohome.ResourceMgr.LoadPreloadedResources()
 
 	gohome.ResourceMgr.GetTexture("Player").SetFiltering(gohome.FILTERING_NEAREST)

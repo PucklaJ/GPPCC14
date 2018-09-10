@@ -141,6 +141,11 @@ type Explosion struct {
 	anim gohome.Tweenset
 }
 
+func (this *Explosion) Init(texName string) {
+	this.Sprite2D.Init(texName)
+	gohome.ResourceMgr.GetSound("Explosion").Play(false)
+}
+
 func (this *Explosion) Update(delta_time float32) {
 	if this.anim.Done() {
 		gohome.RenderMgr.RemoveObject(this)

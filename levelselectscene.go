@@ -21,6 +21,7 @@ type LevelSelectScene struct {
 func selectLevel(btn *gohome.Button) {
 	id, _ := strconv.ParseInt(btn.Text, 10, 32)
 	id -= 1
+	gohome.ResourceMgr.GetSound("ButtonPressed").Play(false)
 	gohome.SceneMgr.SwitchScene(&LevelScene{LevelID: uint32(id)})
 }
 
@@ -48,6 +49,7 @@ func (this *LevelSelectScene) initButtons() {
 		btn.PressCallback = selectLevel
 		btn.EnterCallback = func(button *gohome.Button) {
 			button.Texture = gohome.ResourceMgr.GetTexture("LevelButtonPressed")
+			gohome.ResourceMgr.GetSound("Button").Play(false)
 		}
 		btn.LeaveCallback = func(button *gohome.Button) {
 			button.Texture = gohome.ResourceMgr.GetTexture("LevelButton1")

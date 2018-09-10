@@ -43,6 +43,8 @@ func (this *TargetCollect) Init() {
 	gohome.UpdateMgr.AddObject(this)
 	gohome.UpdateMgr.AddObject(&this.anim)
 	gohome.RenderMgr.AddObject(this)
+
+	gohome.ResourceMgr.GetSound("TargetCollect").Play(false)
 }
 
 func (this *TargetCollect) Update(delta_time float32) {
@@ -89,7 +91,11 @@ func (this *WinMenu) Init() {
 	this.backBtn.Transform.Size = [2]float32{DEATH_BUTTON_SIZE, DEATH_BUTTON_SIZE}
 	this.backBtn.Transform.Origin = [2]float32{0.5, 0.5}
 	this.backBtn.PressCallback = func(btn *gohome.Button) {
+		gohome.ResourceMgr.GetSound("ButtonPressed").Play(false)
 		gohome.SceneMgr.SwitchScene(&LevelSelectScene{})
+	}
+	this.backBtn.EnterCallback = func(btn *gohome.Button) {
+		gohome.ResourceMgr.GetSound("Button").Play(false)
 	}
 	this.backBtn.Depth = MENU_DEPTH
 
@@ -100,7 +106,11 @@ func (this *WinMenu) Init() {
 	this.continueBtn.Transform.Size = [2]float32{DEATH_BUTTON_SIZE, DEATH_BUTTON_SIZE}
 	this.continueBtn.Transform.Origin = [2]float32{0.5, 0.5}
 	this.continueBtn.PressCallback = func(btn *gohome.Button) {
+		gohome.ResourceMgr.GetSound("ButtonPressed").Play(false)
 		gohome.SceneMgr.SwitchScene(&LevelScene{LevelID: gohome.SceneMgr.GetCurrentScene().(*LevelScene).LevelID + 1})
+	}
+	this.continueBtn.EnterCallback = func(btn *gohome.Button) {
+		gohome.ResourceMgr.GetSound("Button").Play(false)
 	}
 	this.continueBtn.Depth = MENU_DEPTH
 
@@ -355,7 +365,11 @@ func (this *LevelScene) initMenu(death bool, inMid bool) {
 	restartBtn.Transform.Size = [2]float32{DEATH_BUTTON_SIZE, DEATH_BUTTON_SIZE}
 	restartBtn.Depth = MENU_DEPTH
 	restartBtn.PressCallback = func(btn *gohome.Button) {
+		gohome.ResourceMgr.GetSound("ButtonPressed").Play(false)
 		this.Restart()
+	}
+	restartBtn.EnterCallback = func(btn *gohome.Button) {
+		gohome.ResourceMgr.GetSound("Button").Play(false)
 	}
 
 	backBtn.Init(backPos, "Back")
@@ -363,7 +377,11 @@ func (this *LevelScene) initMenu(death bool, inMid bool) {
 	backBtn.Transform.Size = [2]float32{DEATH_BUTTON_SIZE, DEATH_BUTTON_SIZE}
 	backBtn.Depth = MENU_DEPTH
 	backBtn.PressCallback = func(btn *gohome.Button) {
+		gohome.ResourceMgr.GetSound("ButtonPressed").Play(false)
 		gohome.SceneMgr.SwitchScene(&LevelSelectScene{})
+	}
+	backBtn.EnterCallback = func(btn *gohome.Button) {
+		gohome.ResourceMgr.GetSound("Button").Play(false)
 	}
 
 	this.deathBtns[0] = &restartBtn
