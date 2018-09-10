@@ -16,6 +16,10 @@ const (
 	PAUSE_BUTTON_X    float32 = float32(GAME_WIDTH) - PAUSE_BUTTON_SIZE/2.0 - PAUSE_BUTTON_SIZE/5.0
 	PAUSE_BUTTON_Y    float32 = PAUSE_BUTTON_SIZE/2.0 + PAUSE_BUTTON_SIZE/5.0
 
+	OPTIONS_BUTTON_SIZE float32 = PAUSE_BUTTON_SIZE
+	OPTIONS_BUTTON_X    float32 = PAUSE_BUTTON_X - PAUSE_BUTTON_SIZE/2.0 - OPTIONS_BUTTON_SIZE
+	OPTIONS_BUTTON_Y    float32 = PAUSE_BUTTON_Y
+
 	TARGET_FRAME_TIME         float32 = 1.0 / 7.0
 	TARGET_COLLECT_FRAME_TIME float32 = 1.0 / 8.0
 )
@@ -172,6 +176,7 @@ type LevelScene struct {
 	deathBtns     [2]*gohome.Button
 	winMenu       WinMenu
 	pauseBtn      *gohome.Button
+	optionsBtn    *gohome.Button
 	deathText     *gohome.Text2D
 	menuInited    bool
 	menuDirection bool
@@ -293,6 +298,15 @@ func (this *LevelScene) Init() {
 		} else {
 			this.Pause()
 		}
+	}
+
+	this.optionsBtn = &gohome.Button{}
+	this.optionsBtn.Init([2]float32{OPTIONS_BUTTON_X, OPTIONS_BUTTON_Y}, "Options")
+	this.optionsBtn.Transform.Origin = [2]float32{0.5, 0.5}
+	this.optionsBtn.Transform.Size = [2]float32{OPTIONS_BUTTON_SIZE, OPTIONS_BUTTON_SIZE}
+	this.optionsBtn.Depth = MENU_DEPTH
+	this.optionsBtn.PressCallback = func(btn *gohome.Button) {
+
 	}
 
 	this.winMenu.Init()
@@ -620,6 +634,9 @@ func (this *LevelScene) Terminate() {
 	this.debugInfo.Terminate()
 	if this.pauseBtn != nil {
 		this.pauseBtn.Terminate()
+	}
+	if this.optionsBtn != nil {
+		this.optionsBtn.Terminate()
 	}
 	for i := 0; i < len(this.Enemies); i++ {
 		this.Enemies[i].Terminate()

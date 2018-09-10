@@ -319,7 +319,7 @@ func (this *Player) handleWeapon() {
 	}
 
 	scn := gohome.SceneMgr.GetCurrentScene().(*LevelScene)
-	if scn.pauseBtn.Entered {
+	if scn.pauseBtn.Entered || scn.optionsBtn.Entered {
 		return
 	}
 	mpos := gohome.InputMgr.Mouse.ToWorldPosition2D()
