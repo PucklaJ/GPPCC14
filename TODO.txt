@@ -1,3 +1,5 @@
+fix player dies when falling
+fix mouse wheel
 assets
 	target
 		animation
@@ -12,7 +14,6 @@ assets
 		enemy kill sound
 		button sound
 	music
-	scope
 	player death animation
 
 win menu

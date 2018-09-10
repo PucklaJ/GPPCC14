@@ -92,8 +92,9 @@ func (this *Player) Init(pos mgl32.Vec2, pmgr *physics2d.PhysicsManager2D) {
 	this.Depth = PLAYER_DEPTH
 	this.terminated = false
 
-	this.scope.Init("Back")
+	this.scope.Init("Scope")
 	this.scope.Transform.Origin = [2]float32{0.5, 0.5}
+	this.scope.Depth = SCOPE_DEPTH
 	gohome.RenderMgr.AddObject(&this.scope)
 }
 

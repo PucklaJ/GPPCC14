@@ -15,7 +15,8 @@ const DELETE_RAY_DEPTH uint8 = 2
 const PLAYER_DEPTH uint8 = 1
 const WEAPON_DEPTH uint8 = 3
 const INVENTORY_DEPTH uint8 = 4
-const MENU_DEPTH uint8 = 5
+const SCOPE_DEPTH uint8 = 5
+const MENU_DEPTH uint8 = 6
 
 const PLAYER_CATEGORY uint16 = 1 << 0
 const PLAYER_FEET_CATEGORY uint16 = (1 << 1) | PLAYER_CATEGORY
@@ -91,6 +92,7 @@ func LoadResources() {
 	gohome.ResourceMgr.PreloadTexture("Target", "GPPCC14_Target.png")
 	gohome.ResourceMgr.PreloadTexture("TargetCollect", "GPPCC14_TargetCollect.png")
 	gohome.ResourceMgr.PreloadTexture("Continue", "GPPCC14_Continue.png")
+	gohome.ResourceMgr.PreloadTexture("Scope", "GPPCC14_Scope.png")
 	gohome.ResourceMgr.LoadPreloadedResources()
 
 	gohome.ResourceMgr.GetTexture("Player").SetFiltering(gohome.FILTERING_NEAREST)
@@ -121,4 +123,5 @@ func LoadResources() {
 	gohome.ResourceMgr.GetTexture("Target").SetFiltering(gohome.FILTERING_NEAREST)
 	gohome.ResourceMgr.GetTexture("TargetCollect").SetFiltering(gohome.FILTERING_NEAREST)
 	gohome.ResourceMgr.GetTexture("Continue").SetFiltering(gohome.FILTERING_NEAREST)
+	gohome.ResourceMgr.GetTexture("Scope").SetFiltering(gohome.FILTERING_NEAREST)
 }

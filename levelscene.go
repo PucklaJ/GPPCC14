@@ -554,6 +554,12 @@ func (this *LevelScene) Update(delta_time float32) {
 		} else {
 			this.HideWinMenu()
 		}
+	} else if gohome.InputMgr.JustPressed(gohome.KeyT) {
+		if gohome.Framew.CursorShown() {
+			gohome.Framew.CursorDisable()
+		} else {
+			gohome.Framew.CurserShow()
+		}
 	}
 	if this.restarting {
 		return
