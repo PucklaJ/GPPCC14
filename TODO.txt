@@ -1,5 +1,4 @@
-fix that weapon blocks are shown in the top left
-fix that weapon blocks don't disappear when the player dies (their bodies remain)
+add energy to the shoot
 assets
 	target
 		animation
@@ -14,6 +13,7 @@ assets
 		enemy kill sound
 		button sound
 	music
+	scope
 	player death animation
 
 win menu

@@ -155,6 +155,7 @@ type LevelScene struct {
 	Enemies        []*Enemy
 	Targets        []*Target
 	targetCollects []*TargetCollect
+	debugInfo      DebugInfo
 
 	debugDraw physics2d.PhysicsDebugDraw2D
 
@@ -285,6 +286,7 @@ func (this *LevelScene) Init() {
 	}
 
 	this.winMenu.Init()
+	this.debugInfo.Init()
 
 	Camera.Position = [2]float32{-CAMERA_BOX_WIDTH, -CAMERA_BOX_HEIGHT}
 }
@@ -569,6 +571,8 @@ func (this *LevelScene) Update(delta_time float32) {
 	}
 
 	this.updateWinCondition()
+
+	this.debugInfo.Visible = this.debugDraw.Visible
 }
 
 func (this *LevelScene) Terminate() {
@@ -580,6 +584,7 @@ func (this *LevelScene) Terminate() {
 
 	this.terminateMenu()
 	this.winMenu.Terminate()
+	this.debugInfo.Terminate()
 	if this.pauseBtn != nil {
 		this.pauseBtn.Terminate()
 	}

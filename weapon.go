@@ -9,6 +9,7 @@ import (
 type Weapon interface {
 	OnChange(dir bool)
 	OnAdd(p *Player)
+	OnDie()
 	Use(target mgl32.Vec2)
 	GetInventoryTexture() gohome.Texture
 	Terminate()
@@ -59,6 +60,10 @@ func (this *NilWeapon) OnChange(dir bool) {
 	} else {
 		gohome.RenderMgr.RemoveObject(this)
 	}
+}
+
+func (this *NilWeapon) OnDie() {
+	this.Terminate()
 }
 
 func (this *NilWeapon) Use(target mgl32.Vec2) {

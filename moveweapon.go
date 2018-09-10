@@ -115,7 +115,9 @@ func (this *MoveWeapon) Use(target mgl32.Vec2) {
 
 	body.SetUserData(p)
 
-	// this.Ammo--
+	con.Update(0.0)
+
+	this.Ammo--
 }
 
 func (this *MoveWeapon) Update(delta_time float32) {
@@ -150,6 +152,11 @@ func (this *MoveWeapon) createBox(dir mgl32.Vec2) *box2d.B2Body {
 	body.SetLinearVelocity(box2d.B2Vec2Add(this.Player.body.GetLinearVelocity(), body.GetLinearVelocity()))
 
 	return body
+}
+
+func (this *MoveWeapon) OnDie() {
+	gohome.UpdateMgr.RemoveObject(this)
+	gohome.RenderMgr.RemoveObject(&this.NilWeapon)
 }
 
 func (this *MoveWeapon) Terminate() {

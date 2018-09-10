@@ -117,7 +117,14 @@ func (this *FreezeWeapon) createBox(dir mgl32.Vec2) *box2d.B2Body {
 
 	body.SetUserData(&this.blocks[len(this.blocks)-1])
 
+	con.Update(0.0)
+
 	return body
+}
+
+func (this *FreezeWeapon) OnDie() {
+	gohome.UpdateMgr.RemoveObject(this)
+	gohome.RenderMgr.RemoveObject(&this.NilWeapon)
 }
 
 func (this *FreezeWeapon) Terminate() {

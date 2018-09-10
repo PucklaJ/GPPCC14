@@ -349,7 +349,10 @@ func (this *Player) changeWeapon(dir bool) {
 
 func (this *Player) Die() {
 	this.dead = true
-	this.Terminate()
+	this.terminateSprite()
+	for _, w := range this.weapons {
+		w.OnDie()
+	}
 }
 
 func (this *Player) Pause() {
@@ -465,28 +468,6 @@ func (this *Player) IsMoving() bool {
 		gohome.InputMgr.JustPressed(KEY_JUMP) || gohome.InputMgr.JustPressed(KEY_JUMP1)
 }
 
-func (this *Player) Terminate() {
-	if this.terminated {
-		return
-	}
-
-	gohome.UpdateMgr.RemoveObject(this)
-	gohome.UpdateMgr.RemoveObject(&this.connector)
-	gohome.UpdateMgr.RemoveObject(&this.walkAnimation)
-	gohome.UpdateMgr.RemoveObject(&this.fallAnimation)
-	gohome.UpdateMgr.RemoveObject(&this.shootAnimation)
-	gohome.RenderMgr.RemoveObject(this)
-
-	for _, w := range this.weapons {
-		w.Terminate()
-	}
-	this.Inventory.Terminate()
-	if this.body != nil {
-		this.PhysicsMgr.World.DestroyBody(this.body)
-	}
-	this.terminated = true
-}
-
 func (this *Player) GetWeaponOffset() (off mgl32.Vec2) {
 	tx := this.TextureRegion.Min[0]
 	ty := this.TextureRegion.Min[1]
@@ -516,4 +497,30 @@ func (this *Player) GetWeaponOffset() (off mgl32.Vec2) {
 	}
 
 	return
+}
+
+func (this *Player) terminateSprite() {
+	if this.terminated {
+		return
+	}
+
+	gohome.UpdateMgr.RemoveObject(this)
+	gohome.UpdateMgr.RemoveObject(&this.connector)
+	gohome.UpdateMgr.RemoveObject(&this.walkAnimation)
+	gohome.UpdateMgr.RemoveObject(&this.fallAnimation)
+	gohome.UpdateMgr.RemoveObject(&this.shootAnimation)
+	gohome.RenderMgr.RemoveObject(this)
+
+	this.Inventory.Terminate()
+	if this.body != nil {
+		this.PhysicsMgr.World.DestroyBody(this.body)
+	}
+	this.terminated = true
+}
+
+func (this *Player) Terminate() {
+	this.terminateSprite()
+	for _, w := range this.weapons {
+		w.Terminate()
+	}
 }

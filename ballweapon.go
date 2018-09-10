@@ -143,7 +143,14 @@ func (this *BallWeapon) createBall(dir mgl32.Vec2) *box2d.B2Body {
 
 	body.SetUserData(this.ballBlocks[len(this.ballBlocks)-1])
 
+	con.Update(0.0)
+
 	return body
+}
+
+func (this *BallWeapon) OnDie() {
+	gohome.UpdateMgr.RemoveObject(this)
+	gohome.RenderMgr.RemoveObject(&this.NilWeapon)
 }
 
 func (this *BallWeapon) Terminate() {
