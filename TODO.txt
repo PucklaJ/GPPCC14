@@ -1,5 +1,4 @@
 fix player dies when falling
-fix mouse wheel
 assets
 	target
 		animation

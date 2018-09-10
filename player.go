@@ -323,15 +323,37 @@ func (this *Player) handleWeapon() {
 		}
 	}
 
-	if gohome.InputMgr.Mouse.Wheel[1] < 0 {
-		for i := 0; i < int(mgl32.Abs(float32(gohome.InputMgr.Mouse.Wheel[1]))); i++ {
-			this.changeWeapon(UP)
-		}
-	} else if gohome.InputMgr.Mouse.Wheel[1] > 0 {
-		for i := 0; i < int(mgl32.Abs(float32(gohome.InputMgr.Mouse.Wheel[1]))); i++ {
-			this.changeWeapon(DOWN)
+	var pressed bool
+	for i := 0; i < len(this.weapons); i++ {
+		key := gohome.Key1 + gohome.Key(i)
+		if gohome.InputMgr.JustPressed(key) {
+			change := int(i) - int(this.currentWeapon)
+			if change > 0 {
+				for j := 0; j < int(change); j++ {
+					this.changeWeapon(UP)
+				}
+			} else if change < 0 {
+				for j := 0; j < int(-change); j++ {
+					this.changeWeapon(DOWN)
+				}
+			}
+			pressed = true
+			break
 		}
 	}
+
+	if !pressed {
+		if gohome.InputMgr.Mouse.Wheel[1] < 0 {
+			for i := 0; i < int(mgl32.Abs(float32(gohome.InputMgr.Mouse.Wheel[1]))); i++ {
+				this.changeWeapon(UP)
+			}
+		} else if gohome.InputMgr.Mouse.Wheel[1] > 0 {
+			for i := 0; i < int(mgl32.Abs(float32(gohome.InputMgr.Mouse.Wheel[1]))); i++ {
+				this.changeWeapon(DOWN)
+			}
+		}
+	}
+
 }
 
 func (this *Player) addWeapon(w Weapon) {
