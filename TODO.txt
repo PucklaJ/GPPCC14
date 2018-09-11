@@ -4,9 +4,6 @@ assets
 	music
 	player death animation
 
-options button
-	sound options
-
 levels
 polishing
 testing

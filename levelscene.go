@@ -20,6 +20,11 @@ const (
 	OPTIONS_BUTTON_X    float32 = PAUSE_BUTTON_X - PAUSE_BUTTON_SIZE/2.0 - OPTIONS_BUTTON_SIZE
 	OPTIONS_BUTTON_Y    float32 = PAUSE_BUTTON_Y
 
+	VOLUME_SLIDER_CIRCLE_SIZE float32 = 50.0
+	VOLUME_SLIDER_LONG_WIDTH  float32 = 300.0
+	VOLUME_SLIDER_LONG_HEIGHT float32 = 25.0
+	VOLUME_SLIDER_STEP_SIZE   float32 = 0.1
+
 	TARGET_FRAME_TIME         float32 = 1.0 / 7.0
 	TARGET_COLLECT_FRAME_TIME float32 = 1.0 / 8.0
 )
@@ -161,6 +166,67 @@ func (this *WinMenu) Terminate() {
 	gohome.UpdateMgr.RemoveObject(this)
 }
 
+type OptionsMenu struct {
+	text         gohome.Text2D
+	volumeSlider gohome.Slider
+	direction    bool
+}
+
+func (this *OptionsMenu) Init() {
+	mid := gohome.Render.GetNativeResolution().Div(2.0)
+
+	gohome.UpdateMgr.AddObject(this)
+
+	this.volumeSlider.Init(mid.Sub([2]float32{VOLUME_SLIDER_LONG_WIDTH / 2.0, mid.Y() + VOLUME_SLIDER_LONG_HEIGHT + (VOLUME_SLIDER_CIRCLE_SIZE/2.0 - VOLUME_SLIDER_LONG_HEIGHT/2.0) + VOLUME_SLIDER_CIRCLE_SIZE}), "", "")
+	this.volumeSlider.Circle.Transform.Size = [2]float32{VOLUME_SLIDER_CIRCLE_SIZE, VOLUME_SLIDER_CIRCLE_SIZE}
+	this.volumeSlider.Long.Transform.Size = [2]float32{VOLUME_SLIDER_LONG_WIDTH, VOLUME_SLIDER_LONG_HEIGHT}
+	this.volumeSlider.Circle.Depth = MENU_DEPTH
+	this.volumeSlider.Long.Depth = MENU_DEPTH
+	this.volumeSlider.ValueChangedCallback = func(sld *gohome.Slider) {
+		audio := gohome.Framew.GetAudioManager()
+		audio.SetVolume(sld.Value)
+
+	}
+	this.volumeSlider.Value = gohome.Framew.GetAudioManager().GetVolume()
+	this.volumeSlider.StepSize = VOLUME_SLIDER_STEP_SIZE
+
+	this.text.Init(gohome.ButtonFont, gohome.ButtonFontSize*2.0, "Lautstärke")
+	this.text.NotRelativeToCamera = 0
+	this.text.Transform.Origin = [2]float32{0.5, 0.5}
+	this.text.Transform.Position = mid.Sub([2]float32{0.0, mid.Y() + VOLUME_SLIDER_LONG_HEIGHT + this.text.Transform.Size[1]*this.text.Transform.Scale[1]})
+
+	gohome.RenderMgr.AddObject(&this.text)
+
+	this.direction = UP
+
+}
+
+func (this *OptionsMenu) Update(delta_time float32) {
+	var target mgl32.Vec2
+	mid := gohome.Render.GetNativeResolution().Div(2.0)
+
+	if this.direction == UP {
+		target = mid.Sub([2]float32{VOLUME_SLIDER_LONG_WIDTH / 2.0, mid.Y() + VOLUME_SLIDER_LONG_HEIGHT + (VOLUME_SLIDER_CIRCLE_SIZE/2.0 - VOLUME_SLIDER_LONG_HEIGHT/2.0) + VOLUME_SLIDER_CIRCLE_SIZE})
+	} else {
+		target = mid.Sub([2]float32{VOLUME_SLIDER_LONG_WIDTH / 2.0, -VOLUME_SLIDER_LONG_HEIGHT / 2.0})
+	}
+
+	this.volumeSlider.Long.Transform.Position = this.volumeSlider.Long.Transform.Position.Add(target.Sub(this.volumeSlider.Long.Transform.Position).Mul(0.07))
+
+	target1 := target.Sub([2]float32{-165.0, VOLUME_SLIDER_LONG_HEIGHT + this.text.Transform.Size[1]*this.text.Transform.Scale[1]})
+
+	this.text.Transform.Position = this.text.Transform.Position.Add(target1.Sub(this.text.Transform.Position).Mul(0.06))
+}
+
+func (this *OptionsMenu) Terminate() {
+	this.volumeSlider.Terminate()
+	this.volumeSlider.Long.Terminate()
+	this.volumeSlider.Circle.Terminate()
+	gohome.UpdateMgr.RemoveObject(this)
+	this.text.Terminate()
+	gohome.RenderMgr.RemoveObject(&this.text)
+}
+
 type LevelScene struct {
 	PhysicsMgr     physics2d.PhysicsManager2D
 	LevelID        uint32
@@ -175,6 +241,7 @@ type LevelScene struct {
 
 	deathBtns     [2]*gohome.Button
 	winMenu       WinMenu
+	optionsMenu   OptionsMenu
 	pauseBtn      *gohome.Button
 	optionsBtn    *gohome.Button
 	deathText     *gohome.Text2D
@@ -294,6 +361,7 @@ func (this *LevelScene) Init() {
 		}
 
 		if this.paused {
+			this.optionsMenu.direction = UP
 			this.Resume()
 		} else {
 			this.Pause()
@@ -306,10 +374,23 @@ func (this *LevelScene) Init() {
 	this.optionsBtn.Transform.Size = [2]float32{OPTIONS_BUTTON_SIZE, OPTIONS_BUTTON_SIZE}
 	this.optionsBtn.Depth = MENU_DEPTH
 	this.optionsBtn.PressCallback = func(btn *gohome.Button) {
+		if this.winMenu.direction == DOWN {
+			return
+		}
 
+		this.optionsMenu.direction = !this.optionsMenu.direction
+		if this.menuDirection == DOWN {
+			this.menuDirection = UP
+		}
+		if this.optionsMenu.direction == DOWN {
+			this.PauseGame()
+		} else {
+			this.Resume()
+		}
 	}
 
 	this.winMenu.Init()
+	this.optionsMenu.Init()
 	this.debugInfo.Init()
 
 	Camera.Position = [2]float32{-CAMERA_BOX_WIDTH, -CAMERA_BOX_HEIGHT}
@@ -631,6 +712,7 @@ func (this *LevelScene) Terminate() {
 
 	this.terminateMenu()
 	this.winMenu.Terminate()
+	this.optionsMenu.Terminate()
 	this.debugInfo.Terminate()
 	if this.pauseBtn != nil {
 		this.pauseBtn.Terminate()
