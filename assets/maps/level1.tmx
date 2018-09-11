@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" tiledversion="1.1.6" orientation="orthogonal" renderorder="right-down" width="60" height="20" tilewidth="16" tileheight="16" infinite="0" backgroundcolor="#3465ff" nextobjectid="7">
+ <tileset firstgid="1" source="GPPCC14_Tileset.tsx"/>
+ <layer name="Kachelebene 1" width="60" height="20">
+  <data encoding="base64" compression="zlib">
+   eJztlMEKgzAMhjOd3qbT2+bc+2y+//sswQqhtAfToiv8H3wk5JIWkhABAAAAZXJlG2flbLxaLG55e/ir7dzZIdHx8FfbuVH6f/uE/h/2a3Ax9nuxM/t0MZbrqJXa29g7lQuF9y+0cxLrc56ZDZnNjtYZ61Q+eHmOOfwH9O3R/w1FsaQ7E+JB8V2bPaU2Ze6/5/ZY7w0AAJTID1AAD4c=
+  </data>
+ </layer>
+ <objectgroup name="Settings">
+  <object id="1" name="target" x="784" y="128">
+   <point/>
+  </object>
+  <object id="2" name="start" x="32" y="160">
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup name="Collision">
+  <object id="3" x="0" y="176" width="208" height="64"/>
+  <object id="4" x="208" y="112" width="288" height="64"/>
+  <object id="5" x="512" y="224" width="192" height="16"/>
+  <object id="6" x="720" y="144" width="240" height="16"/>
+ </objectgroup>
+</map>

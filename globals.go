@@ -8,7 +8,7 @@ const GAME_WIDTH uint32 = 1280.0
 const GAME_HEIGHT uint32 = 720.0
 
 const GRAVITY float32 = 200.0
-const NUM_LEVELS uint32 = 3
+const NUM_LEVELS uint32 = 1
 const ZOOM float32 = 3.0
 
 const DELETE_RAY_DEPTH uint8 = 2
@@ -24,9 +24,7 @@ const PLAYER_FEET_SENSOR_CATEGORY uint16 = (1 << 10) | PLAYER_CATEGORY
 
 var (
 	LEVELS_TMX_MAPS = [NUM_LEVELS]string{
-		"test_map.tmx",
-		"test_map1.tmx",
-		"test_map2.tmx",
+		"level1.tmx",
 	}
 )
 
@@ -99,6 +97,7 @@ func LoadResources() {
 	gohome.ResourceMgr.PreloadSound("TargetCollect", "GPPCC14_TargetCollect.wav")
 	gohome.ResourceMgr.PreloadSound("Button", "GPPCC14_Button.wav")
 	gohome.ResourceMgr.PreloadSound("ButtonPressed", "GPPCC14_ButtonPressed.wav")
+	gohome.ResourceMgr.PreloadTexture("Options", "GPPCC14_Options.png")
 	gohome.ResourceMgr.LoadPreloadedResources()
 
 	gohome.ResourceMgr.GetTexture("Player").SetFiltering(gohome.FILTERING_NEAREST)
@@ -130,4 +129,5 @@ func LoadResources() {
 	gohome.ResourceMgr.GetTexture("TargetCollect").SetFiltering(gohome.FILTERING_NEAREST)
 	gohome.ResourceMgr.GetTexture("Continue").SetFiltering(gohome.FILTERING_NEAREST)
 	gohome.ResourceMgr.GetTexture("Scope").SetFiltering(gohome.FILTERING_NEAREST)
+	gohome.ResourceMgr.GetTexture("Options").SetFiltering(gohome.FILTERING_NEAREST)
 }
