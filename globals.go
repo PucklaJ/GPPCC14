@@ -8,7 +8,7 @@ const GAME_WIDTH uint32 = 1280.0
 const GAME_HEIGHT uint32 = 720.0
 
 const GRAVITY float32 = 200.0
-const NUM_LEVELS uint32 = 1
+const NUM_LEVELS uint32 = 2
 const ZOOM float32 = 3.0
 
 const DELETE_RAY_DEPTH uint8 = 2
@@ -25,6 +25,7 @@ const PLAYER_FEET_SENSOR_CATEGORY uint16 = (1 << 10) | PLAYER_CATEGORY
 var (
 	LEVELS_TMX_MAPS = [NUM_LEVELS]string{
 		"level1.tmx",
+		"level2.tmx",
 	}
 )
 
