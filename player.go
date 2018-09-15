@@ -422,8 +422,15 @@ func (this *Player) Resume() {
 }
 
 func (this *Player) Update(delta_time float32) {
+	this.updateScope()
+
 	if this.paused {
-		this.updateScope()
+		return
+	}
+
+	this.checkEnemy()
+	this.checkSpikes()
+	if this.Died() {
 		return
 	}
 
@@ -431,9 +438,7 @@ func (this *Player) Update(delta_time float32) {
 	this.handleJump()
 	this.handleWeapon()
 	this.updateCamera(delta_time)
-	this.checkEnemy()
 	this.updateAnimation()
-	this.updateScope()
 
 	if gohome.InputMgr.JustPressed(gohome.KeyO) {
 		this.Die()
@@ -523,6 +528,28 @@ func (this *Player) checkEnemy() {
 		enemy.Terminate()
 	} else if bc {
 		this.Die()
+	}
+}
+
+func (this *Player) checkSpikes() {
+	for ce := this.body.GetContactList(); ce != nil; ce = ce.Next {
+		c := ce.Contact
+		if !c.IsTouching() {
+			continue
+		}
+		fa, fb := c.GetFixtureA(), c.GetFixtureB()
+		if fb.GetFilterData().CategoryBits&PLAYER_CATEGORY != 0 {
+			fa, fb = fb, fa
+		}
+
+		if fa.GetFilterData().CategoryBits == PLAYER_FEET_SENSOR_CATEGORY {
+			continue
+		}
+
+		if fb.GetFilterData().CategoryBits == SPIKE_CATEGORY {
+			this.Die()
+			break
+		}
 	}
 }
 

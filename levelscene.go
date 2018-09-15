@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/ByteArena/box2d"
 	"github.com/PucklaMotzer09/gohomeengine/src/gohome"
 	"github.com/PucklaMotzer09/gohomeengine/src/physics2d"
 	"github.com/PucklaMotzer09/mathgl/mgl32"
@@ -260,15 +261,21 @@ func (this *LevelScene) Init() {
 	physics2d.PIXEL_PER_METER = 10.0
 	gohome.ResourceMgr.LoadTMXMap("Level", LEVELS_TMX_MAPS[this.LevelID])
 
-	this.Map.Init("Level")
-	gohome.RenderMgr.AddObject(&this.Map)
-
 	this.PhysicsMgr.Init([2]float32{0.0, GRAVITY})
 	gohome.UpdateMgr.AddObject(&this.PhysicsMgr)
 	this.debugDraw = this.PhysicsMgr.GetDebugDraw()
 	this.debugDraw.Visible = false
 	gohome.RenderMgr.AddObject(&this.debugDraw)
 
+	this.initMap()
+	this.initMenus()
+
+	Camera.Position = [2]float32{-CAMERA_BOX_WIDTH, -CAMERA_BOX_HEIGHT}
+}
+
+func (this *LevelScene) initMap() {
+	this.Map.Init("Level")
+	gohome.RenderMgr.AddObject(&this.Map)
 	groundBodies := this.PhysicsMgr.LayerToCollision(&this.Map, "Collision")
 	for i := 0; i < len(groundBodies); i++ {
 		b := groundBodies[i]
@@ -350,6 +357,53 @@ func (this *LevelScene) Init() {
 		this.Player.addWeapon(&DefaultWeapon{})
 	}
 
+	for _, l := range this.Map.Layers {
+		if l.Data != nil {
+			data := l.Data
+			iter, err := data.Iter()
+			if err != nil {
+				gohome.ErrorMgr.Error("Level", "Spikes", "Couldn't get Iterator")
+				break
+			}
+			for iter.Next() {
+				tile := iter.Get()
+				if tile.GID() >= 85 && tile.GID() <= 87 {
+					counter := iter.GetIndex()
+					pos := mgl32.Vec2{
+						float32((counter % this.Map.Width) * this.Map.TileWidth),
+						float32(((counter - (counter % this.Map.Width)) / this.Map.Width) * this.Map.TileHeight),
+					}
+
+					this.createSpike(pos)
+				}
+			}
+		}
+	}
+}
+
+func (this *LevelScene) createSpike(pos mgl32.Vec2) {
+	w, h := float32(this.Map.TileWidth), float32(this.Map.TileHeight)
+
+	bdef := box2d.MakeB2BodyDef()
+	bdef.Type = box2d.B2BodyType.B2_staticBody
+	bdef.Position = physics2d.ToBox2DCoordinates([2]float32{
+		pos[0] + w/2.0,
+		pos[1] + h/2.0,
+	})
+
+	body := this.PhysicsMgr.World.CreateBody(&bdef)
+
+	fdef := box2d.MakeB2FixtureDef()
+	fdef.Friction = GROUND_FRICTION
+	fdef.Filter.CategoryBits = SPIKE_CATEGORY
+	shape := box2d.MakeB2PolygonShape()
+	shape.SetAsBox(physics2d.ScalarToBox2D(w/2.0), physics2d.ScalarToBox2D(h/2.0))
+	fdef.Shape = &shape
+
+	body.CreateFixtureFromDef(&fdef)
+}
+
+func (this *LevelScene) initMenus() {
 	this.pauseBtn = &gohome.Button{}
 	this.pauseBtn.Init([2]float32{PAUSE_BUTTON_X, PAUSE_BUTTON_Y}, "Pause")
 	this.pauseBtn.Transform.Origin = [2]float32{0.5, 0.5}
@@ -392,8 +446,6 @@ func (this *LevelScene) Init() {
 	this.winMenu.Init()
 	this.optionsMenu.Init()
 	this.debugInfo.Init()
-
-	Camera.Position = [2]float32{-CAMERA_BOX_WIDTH, -CAMERA_BOX_HEIGHT}
 }
 
 func (this *LevelScene) terminateMenu() {

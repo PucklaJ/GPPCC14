@@ -8,7 +8,7 @@ const GAME_WIDTH uint32 = 1280.0
 const GAME_HEIGHT uint32 = 720.0
 
 const GRAVITY float32 = 200.0
-const NUM_LEVELS uint32 = 2
+const NUM_LEVELS uint32 = 3
 const ZOOM float32 = 3.0
 
 const DELETE_RAY_DEPTH uint8 = 2
@@ -18,14 +18,11 @@ const INVENTORY_DEPTH uint8 = 4
 const SCOPE_DEPTH uint8 = 5
 const MENU_DEPTH uint8 = 6
 
-const PLAYER_CATEGORY uint16 = 1 << 0
-const PLAYER_FEET_CATEGORY uint16 = (1 << 1) | PLAYER_CATEGORY
-const PLAYER_FEET_SENSOR_CATEGORY uint16 = (1 << 10) | PLAYER_CATEGORY
-
 var (
 	LEVELS_TMX_MAPS = [NUM_LEVELS]string{
 		"level1.tmx",
 		"level2.tmx",
+		"test_map.tmx",
 	}
 )
 
@@ -44,17 +41,19 @@ const CAMERA_SPEED float32 = 0.1
 
 var CAMERA_OFFSET = [2]float32{0.0, 0.0}
 
-const GROUND_CATEGORY uint16 = 1 << 2
 const GROUND_FRICTION float64 = 1.8
-
+const PLAYER_CATEGORY uint16 = 1 << 0
+const PLAYER_FEET_CATEGORY uint16 = (1 << 1) | PLAYER_CATEGORY
+const GROUND_CATEGORY uint16 = 1 << 2
 const WEAPON_CATEGORY uint16 = 1 << 3
-
 const ENEMY_CATEGORY uint16 = 1 << 4
 const ENEMY_SENSOR_CATEGORY uint16 = 1 << 5
 const ENEMY_SMALL_LEFT_SENSOR_CATEGORY uint16 = 1<<6 | ENEMY_SENSOR_CATEGORY
 const ENEMY_SMALL_RIGHT_SENSOR_CATEGORY uint16 = 1<<7 | ENEMY_SENSOR_CATEGORY
 const ENEMY_BIG_LEFT_SENSOR_CATEGORY uint16 = 1<<8 | ENEMY_SENSOR_CATEGORY
 const ENEMY_BIG_RIGHT_SENSOR_CATEGORY uint16 = 1<<9 | ENEMY_SENSOR_CATEGORY
+const PLAYER_FEET_SENSOR_CATEGORY uint16 = (1 << 10) | PLAYER_CATEGORY
+const SPIKE_CATEGORY uint16 = 1 << 11
 
 const WIN_CONDITION_TARGET bool = true
 const WIN_CONDITION_ENEMY bool = false
