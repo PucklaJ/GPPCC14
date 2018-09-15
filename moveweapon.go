@@ -11,7 +11,7 @@ import (
 const (
 	MOVE_WEAPON_AMMO           uint32  = 2
 	MOVE_WEAPON_SPEED          float32 = 50.0
-	MOVE_WEAPON_DISTANCE       float32 = 100.0
+	MOVE_WEAPON_DISTANCE       float32 = 200.0
 	MOVE_WEAPON_WIDTH          float32 = 48.0
 	MOVE_WEAPON_HEIGHT         float32 = 6.0
 	MOVE_WEAPON_WEIGHT         float64 = 1.0

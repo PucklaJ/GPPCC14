@@ -9,7 +9,7 @@ import (
 
 const (
 	FREEZE_TIME float32 = 0.5
-	FREEZE_AMMO uint32  = 10
+	FREEZE_AMMO uint32  = 5
 
 	FREEZE_WIDTH    float32 = 32.0
 	FREEZE_HEIGHT   float32 = 10.0

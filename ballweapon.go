@@ -14,7 +14,7 @@ const (
 	BALL_WEAPON_WEIGHT         float64 = 0.5
 	BALL_WEAPON_RESTITUTION    float64 = 0.0
 	BALL_WEAPON_VELOCITY       float32 = 100.0
-	BALL_WEAPON_AMMO           uint32  = 10
+	BALL_WEAPON_AMMO           uint32  = 3
 	BALL_WEAPON_ANGLE_VELOCITY float32 = 120.0
 
 	BALL_WEAPON_OFFSET_X float32 = 2.0

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" tiledversion="1.1.6" orientation="orthogonal" renderorder="right-down" width="135" height="45" tilewidth="16" tileheight="16" infinite="0" backgroundcolor="#3465ff" nextobjectid="41">
+ <properties>
+  <property name="ballweapon" type="bool" value="true"/>
+  <property name="defaultweapon" type="bool" value="true"/>
+  <property name="deleteweapon" type="bool" value="true"/>
+  <property name="freezeweapon" type="bool" value="true"/>
+  <property name="moveweapon" type="bool" value="true"/>
+  <property name="win_condition" value="enemy"/>
+ </properties>
+ <tileset firstgid="1" source="GPPCC14_Tileset.tsx"/>
+ <layer name="Kachelebene 1" width="135" height="45">
+  <data encoding="base64" compression="zlib">
+   eJzt2LENwgAUxNAMwWrsvwotRQoKYsjTWbrakvWrfxwdj7lu5SpRG6quErWh6ipRG6quErWh6ipRG6quErWh6ipRG6quErWh6ipRG6quErWh6ipRGz4v3ju7jbn+wVWiNlRdJWpD2bVtZyspfXPdC7Wh6ipRG6quErWh6ipRG6qukl83/NZv8hPXVew25voHV4naUHWVqA1VV4naUHWVqA1VV4naUHWVqA1VV4naUHZt29lKSt9c90JtqLpK1Iaqq0RtqLpK1Iaqq0RtqLpK1Iaqq0RtqLpK1Iaqq0RtqLpK1Iaqq0RtqLpK1Iaqq0RtqLpe38EvaA==
+  </data>
+ </layer>
+ <objectgroup name="Collision">
+  <object id="1" x="48" y="304" width="48" height="16"/>
+  <object id="2" x="128" y="336" width="48" height="16"/>
+  <object id="3" x="224" y="352" width="48" height="16"/>
+  <object id="4" x="288" y="384" width="224" height="32"/>
+  <object id="5" x="688" y="368" width="80" height="16"/>
+  <object id="7" x="816" y="320" width="128" height="32"/>
+  <object id="9" x="944" y="352" width="240" height="16"/>
+  <object id="10" x="1184" y="320" width="112" height="32"/>
+  <object id="11" x="1248" y="96" width="48" height="224"/>
+  <object id="14" x="1328" y="96" width="112" height="32"/>
+  <object id="16" x="1664" y="80" width="160" height="32"/>
+  <object id="19" x="1792" y="464" width="352" height="16"/>
+  <object id="21" x="1648" y="448" width="144" height="16"/>
+  <object id="24" x="2144" y="0" width="16" height="368"/>
+  <object id="25" x="1936" y="448" width="64" height="16"/>
+  <object id="26" x="1344" y="384" width="64" height="96"/>
+  <object id="27" x="1456" y="384" width="144" height="96"/>
+  <object id="31" x="1392" y="608" width="80" height="16"/>
+  <object id="33" x="1616" y="672" width="112" height="48"/>
+  <object id="37" x="1296" y="192" width="384" height="16"/>
+  <object id="40" x="1680" y="112" width="32" height="96"/>
+ </objectgroup>
+ <objectgroup name="Settings">
+  <object id="6" name="enemy" x="720" y="352">
+   <point/>
+  </object>
+  <object id="12" name="enemy" x="1264" y="80">
+   <point/>
+  </object>
+  <object id="17" name="enemy" x="1712" y="64">
+   <point/>
+  </object>
+  <object id="28" name="enemy" x="1536" y="368">
+   <point/>
+  </object>
+  <object id="29" name="enemy" x="1376" y="368">
+   <point/>
+  </object>
+  <object id="35" name="enemy" x="1664" y="656">
+   <point/>
+  </object>
+  <object id="36" name="start" x="64" y="288">
+   <point/>
+  </object>
+ </objectgroup>
+</map>

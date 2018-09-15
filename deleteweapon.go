@@ -10,7 +10,7 @@ import (
 
 const (
 	DELETE_WEAPON_DISTANCE float32 = 400.0
-	DELETE_WEAPON_AMMO     uint32  = 10
+	DELETE_WEAPON_AMMO     uint32  = 1
 
 	DELETE_RAYS_SPEED float32 = 0.3
 	DELETE_RAYS_WIDTH float32 = 5.0
