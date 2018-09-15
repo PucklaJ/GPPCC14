@@ -11,7 +11,7 @@
  <tileset firstgid="1" source="GPPCC14_Tileset.tsx"/>
  <layer name="Kachelebene 1" width="135" height="45">
   <data encoding="base64" compression="zlib">
-   eJzt2LENwgAUxNAMwWrsvwotRQoKYsjTWbrakvWrfxwdj7lu5SpRG6quErWh6ipRG6quErWh6ipRG6quErWh6ipRG6quErWh6ipRG6quErWh6ipRGz4v3ju7jbn+wVWiNlRdJWpD2bVtZyspfXPdC7Wh6ipRG6quErWh6ipRG6qukl83/NZv8hPXVew25voHV4naUHWVqA1VV4naUHWVqA1VV4naUHWVqA1VV4naUHZt29lKSt9c90JtqLpK1Iaqq0RtqLpK1Iaqq0RtqLpK1Iaqq0RtqLpK1Iaqq0RtqLpK1Iaqq0RtqLpK1Iaqq0RtqLpe38EvaA==
+   eJztm2tPwjAUhhujKB9Q9KPxxheiohJNVARjwGu8X8H//088jWty6C7MbrTdfJ/kTUfXraU9edvCJgQAYQ5cNwB4y6nrBgBv6bpuAPAW+AaIA77hP/OkhQmqTqFe+IY5s6Q5UiUib0ZLK6Gr07NJ2pqgRob7xwHfMKdGWiQtsbw10mqgdZZuZKxLxlyW+DIBvmFOnbRMWrFQV81SPRz4hjlRvjEtZBzajg34hjk2Y6NmqR4OfMMcOV5yTpFjNiSNgvQ7SIdavn4cVy4qvy7sxwZ8wxw5XtI3pNffkx6mpEfxu8bNup79K4gNc7hvlBHMKeaUPTbgG+bwOaWMwDfMUb5R1tiAb5gD3wBx/DffeCW9kd4dtKVoqP9ObO8tbVG2OWWbtENqBik/3s353s1AWe/rK2nmlCJ5SZ80IF2wVB1fiuTfKfnvlVFl+uxeA+2+ZSSLbxQpZhRPpGcDvbhorGOKthbVx/Y/jpkt8oyNFmmP1NZSrraWv59j/b7A+0H/fi0R7h/eJz71R55r0SvSNdNdwrH6fJNj/b4g+7RD6pHOtHPdIL/D0k5CeZcUbU4pAnz89bFWcaPHhDo+t9fMiZRtD+sD3Df0se6KcDz0Esq7BL6RP0m+wc9FSS+v9oJxkntEvs+O25/z9xiqMdeMmOTn22zdACJQ6y65ptLXU/xc1NrMZP31QfpM0JcYf4+hkfIaAAAAAAAAAAAAAACSwDMFAAAAAPAV+Uw7f55dpWV9ph2k55B0FOiYpScuGwW8oC/G36NQ7z3Yft/hB7imW6Y=
   </data>
  </layer>
  <objectgroup name="Collision">
@@ -28,7 +28,7 @@
   <object id="16" x="1664" y="80" width="160" height="32"/>
   <object id="19" x="1792" y="464" width="352" height="16"/>
   <object id="21" x="1648" y="448" width="144" height="16"/>
-  <object id="24" x="2144" y="0" width="16" height="368"/>
+  <object id="24" x="2144" y="0" width="16" height="464"/>
   <object id="25" x="1936" y="448" width="64" height="16"/>
   <object id="26" x="1344" y="384" width="64" height="96"/>
   <object id="27" x="1456" y="384" width="144" height="96"/>

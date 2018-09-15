@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" tiledversion="1.1.6" orientation="orthogonal" renderorder="right-down" width="114" height="45" tilewidth="16" tileheight="16" infinite="0" backgroundcolor="#3465ff" nextobjectid="57">
+ <properties>
+  <property name="ballweapon" type="bool" value="true"/>
+  <property name="defaultweapon" type="bool" value="true"/>
+  <property name="deleteweapon" type="bool" value="true"/>
+  <property name="freezeweapon" type="bool" value="true"/>
+  <property name="moveweapon" type="bool" value="true"/>
+  <property name="win_condition" value="target"/>
+ </properties>
+ <tileset firstgid="1" source="GPPCC14_Tileset.tsx"/>
+ <layer name="Kachelebene 1" width="114" height="45">
+  <data encoding="base64" compression="zlib">
+   eJztmUlPw0AMhUcIuLGUIwKOiB1ulIIQ+77v//+XYKux4hpPh1QhTej7pKeZTJN0Gud53CQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPg9d6T7TA+kd6V10kam7azdHM40QUEeSU+kZ9IuaZ/UzsT9veFNDRhWQtdva4n9OiGPn8TyIHHMVsi9a1vps3YGnDvIOSIdk04S+7EfbRxTfhQPW7VNP3U//IYX0qvSWwnn/I9IHLX4+ut1066Znoe9WDYpP3MNIbXDR6Z31UqN4e0j23IOD8mPy6ZdNa2Mp/KohWOir7/4UXvOerQTfC+2zViT4ijomrCIYvETjkI3Px6aNjaWyqOWmB87ZmzPHBOLn97m8/C99Rl+3t/S/3T6XwV/A+itVz0/ejWs9XBMfIzUxkX0/Ee/VXNNuiHdVvBdVWD9KNffjnt+jK2L2o+gGmz+lJjZWia1PnrrJeJYHV6O5Otv/1twHLmG3Qx+Lvb+fzSxzmkqp6Qz0qVqz9W4SMa4vTD7X5pzSP+qwt8RQ9ZB0X9ZDwEAYBTo9zynDoyTJhxNDnNSJTFK6+cUaZrUMu3MMCc1QnjPCvv5nn3neYzj2Ao/4zhX5mRBacyGbmz0c9CPbLzlCH6sJ+w7jo1eDydD7kfxogh+rCfiR70ezoReP06bzyTmYyGPve7HPhvrc4z0y6yjqqpn9HvMMjRIDSx+lLjJGhjLq/zZAmkx03yir8f67S9aKjj/OjHoe8wi7zRjxPyIvNosOF7Wf3ZbxxJ1Tj3hHLkUenOl3W5K3vsGli5yag==
+  </data>
+ </layer>
+ <objectgroup name="Collision">
+  <object id="2" x="64" y="656" width="80" height="16"/>
+  <object id="3" x="160" y="576" width="80" height="16"/>
+  <object id="4" x="32" y="512" width="80" height="16"/>
+  <object id="5" x="128" y="448" width="48" height="16"/>
+  <object id="7" x="192" y="400" width="32" height="16"/>
+  <object id="8" x="320" y="400" width="48" height="16"/>
+  <object id="9" x="224" y="416" width="240" height="16"/>
+  <object id="10" x="464" y="400" width="32" height="16"/>
+  <object id="15" x="576" y="400" width="16" height="16"/>
+  <object id="16" x="608" y="400" width="16" height="16"/>
+  <object id="17" x="640" y="400" width="16" height="16"/>
+  <object id="18" x="672" y="400" width="16" height="16"/>
+  <object id="19" x="704" y="400" width="16" height="16"/>
+  <object id="20" x="736" y="400" width="16" height="16"/>
+  <object id="21" x="768" y="400" width="16" height="16"/>
+  <object id="22" x="800" y="352" width="16" height="16"/>
+  <object id="23" x="832" y="352" width="16" height="16"/>
+  <object id="24" x="848" y="320" width="64" height="16"/>
+  <object id="25" x="960" y="320" width="96" height="192"/>
+  <object id="26" x="912" y="336" width="48" height="16"/>
+  <object id="28" x="576" y="416" width="208" height="16"/>
+  <object id="29" x="800" y="368" width="48" height="16"/>
+  <object id="33" x="1056" y="384" width="80" height="128"/>
+  <object id="34" x="1136" y="480" width="32" height="31.9394"/>
+  <object id="35" x="1168" y="352" width="176" height="160"/>
+  <object id="39" x="1600" y="368" width="80" height="16"/>
+  <object id="40" x="1344" y="432" width="224" height="16"/>
+  <object id="41" x="1216" y="640" width="384" height="32"/>
+  <object id="43" x="1104" y="560" width="112" height="160"/>
+  <object id="47" x="1040" y="624" width="64" height="96"/>
+  <object id="48" x="816" y="592" width="96" height="16"/>
+  <object id="49" x="1008" y="592" width="32" height="128"/>
+  <object id="51" x="512" y="672" width="288" height="16"/>
+  <object id="52" x="464" y="560" width="32" height="16"/>
+  <object id="54" x="480" y="656" width="32" height="16"/>
+  <object id="55" x="800" y="656" width="32" height="16"/>
+ </objectgroup>
+ <objectgroup name="Settings">
+  <object id="11" name="target" x="480" y="384">
+   <point/>
+  </object>
+  <object id="12" name="start" x="80" y="640">
+   <point/>
+  </object>
+  <object id="13" name="enemy" x="336" y="384">
+   <point/>
+  </object>
+  <object id="30" name="target" x="1008" y="304">
+   <point/>
+  </object>
+  <object id="36" name="target" x="1152" y="464">
+   <point/>
+  </object>
+  <object id="37" name="enemy" x="1088" y="368">
+   <point/>
+  </object>
+  <object id="38" name="enemy" x="1232" y="336">
+   <point/>
+  </object>
+  <object id="44" name="enemy" x="1152" y="544">
+   <point/>
+  </object>
+  <object id="45" name="target" x="1104" y="544">
+   <point/>
+  </object>
+  <object id="50" name="target" x="832" y="576">
+   <point/>
+  </object>
+  <object id="53" name="target" x="480" y="544">
+   <point/>
+  </object>
+  <object id="56" name="enemy" x="1328" y="624">
+   <point/>
+  </object>
+ </objectgroup>
+</map>

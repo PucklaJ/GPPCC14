@@ -17,16 +17,19 @@ const INVENTORY_DEPTH uint8 = 4
 const SCOPE_DEPTH uint8 = 5
 const MENU_DEPTH uint8 = 6
 
-const NUM_LEVELS uint32 = 6
+const NUM_LEVELS uint32 = 9
 
 var (
 	LEVELS_TMX_MAPS = [NUM_LEVELS]string{
-		"test_map.tmx",
 		"level1.tmx",
 		"level2.tmx",
 		"level3.tmx",
 		"level4.tmx",
 		"level5.tmx",
+		"level6.tmx",
+		"level7.tmx",
+		"level8.tmx",
+		"level9.tmx",
 	}
 )
 

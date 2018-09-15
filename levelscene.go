@@ -367,7 +367,7 @@ func (this *LevelScene) initMap() {
 			}
 			for iter.Next() {
 				tile := iter.Get()
-				if tile.GID() >= 85 && tile.GID() <= 87 {
+				if tile.GID() >= 85 && tile.GID() <= 89 {
 					counter := iter.GetIndex()
 					pos := mgl32.Vec2{
 						float32((counter % this.Map.Width) * this.Map.TileWidth),

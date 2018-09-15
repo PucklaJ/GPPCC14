@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" tiledversion="1.1.6" orientation="orthogonal" renderorder="right-down" width="135" height="45" tilewidth="16" tileheight="16" infinite="0" backgroundcolor="#3465ff" nextobjectid="1">
+ <properties>
+  <property name="ballweapon" type="bool" value="true"/>
+  <property name="defaultweapon" type="bool" value="true"/>
+  <property name="deleteweapon" type="bool" value="true"/>
+  <property name="freezeweapon" type="bool" value="true"/>
+  <property name="moveweapon" type="bool" value="true"/>
+  <property name="win_condition" value="target"/>
+ </properties>
+ <tileset firstgid="1" source="GPPCC14_Tileset.tsx"/>
+ <layer name="Kachelebene 1" width="135" height="45">
+  <data encoding="base64" compression="zlib">
+   eJzt0MEJADEAhMAUcf3Xeg3kLWRYwbfgOR3fWk+1StSHaqtEfai2StSHaqtEfai2StSHaqtEfai2StSHaqtEfai2StSHaqtEfai2StSHaqtEfai2StSHaqtEfSi35rxZUvbWegv1odoqUR+qrRL1odoqUR+qrRL1odoqUR+qrRL1odoqUR+qrRL1odoqUR+qrRL1odoqUR+qrRL1odya82ZJ2VvrLdSHaqtEfai2StSHaqtEfai2StSHaqtEfai2StSHaqtEfai2StSHaqtEfai2StSHaqtEfai2StSHausHNAoiiQ==
+  </data>
+ </layer>
+ <objectgroup name="Collision"/>
+ <objectgroup name="Settings"/>
+</map>
