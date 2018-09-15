@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.1.6" orientation="orthogonal" renderorder="right-down" width="90" height="50" tilewidth="16" tileheight="16" infinite="0" backgroundcolor="#3465ff" nextobjectid="31">
+<map version="1.0" tiledversion="1.1.6" orientation="orthogonal" renderorder="right-down" width="90" height="50" tilewidth="16" tileheight="16" infinite="0" backgroundcolor="#3465ff" nextobjectid="33">
  <properties>
   <property name="freezeweapon" type="bool" value="true"/>
  </properties>
  <tileset firstgid="1" source="GPPCC14_Tileset.tsx"/>
  <layer name="Kachelebene 1" width="90" height="50">
   <data encoding="base64" compression="zlib">
-   eJzt2TsPgjAUhuHO6qzO6iaKmxfcvG5e//9v8RghllJMSQhN5X2SLwVyQpoOByhKAQAAAAAAAAAAAADQXlNJJInTMTLObddj7fqs+SkHaSfZS07G6Hrt0PyUUaOL5KrlVuM967iXT3OV7zN674nV71608DDfUB3Vp5+U9RlbH8rOzx7mC7RN1gvNHmh7J8tGemB1G8lKklQYt15mGral+q6hnkTl11avYZ2ry57trt8TPNMBAIAv+v6zbZ+H/eV6vN/Dze8Z/Xjtb2p/xdznN9+52ccH/ov5b6csof+nARCujqTnWNd1rEVRXzJ0rBs41qKIdW7GSDKR3CWPkjzTunFaG7oXeGQrwg==
+   eJzt2UkPgjAQhuGe1bN6Vm+uNxe8icvN9f//FocEYilDUtyq5H2SL0UZJ00PWMAYAAAAAAAAAAAAAAAA4POOkpOV84u/f6bHu0wkU8nIGe1o57LjmdKvrJf9/Ug57/aqk51kL4mVMTveO+fszwelX6z003q7/dxeAN4nu6aWXTO1sc7Xvk9ZSRaSqMK4DjLT/zY3jzW0E5n82to1rHN1PnsEd+S/HAB+29Dk73nd+99xuKnVSrJXsfd87v5vGW5qtbIx5c8ZknEbbmoAAHjT3sloCfWeBgAakpZnXdOzFkVtSdezruNZiyLW+Tt6koHkIrmW5JbW9dPaf3cH53Is0A==
   </data>
  </layer>
  <objectgroup name="Settings">
@@ -32,11 +32,11 @@
  <objectgroup name="Collision">
   <object id="1" x="16" y="688" width="176" height="16"/>
   <object id="5" x="0" y="464" width="224" height="64"/>
-  <object id="9" x="288" y="608" width="144" height="48"/>
-  <object id="18" x="896" y="384" width="80" height="16"/>
-  <object id="19" x="1232" y="384" width="48" height="16"/>
-  <object id="22" x="592" y="400" width="256" height="32"/>
-  <object id="24" x="288" y="352" width="272" height="32"/>
+  <object id="9" x="240" y="576" width="144" height="48"/>
+  <object id="18" x="928" y="384" width="80" height="16"/>
+  <object id="19" x="1184.06" y="384" width="95.9375" height="16"/>
+  <object id="22" x="624" y="400" width="256" height="32"/>
+  <object id="24" x="304" y="400" width="272" height="32"/>
   <object id="27" x="464" y="736" width="32" height="64"/>
   <object id="28" x="464" y="784" width="208" height="16"/>
   <object id="29" x="624" y="736" width="48" height="64"/>
