@@ -70,6 +70,12 @@ func (this *Enemy) Init(pos mgl32.Vec2, player *Player) {
 	this.anim.SetParent(&this.Sprite2D)
 	this.anim.Start()
 	gohome.UpdateMgr.AddObject(&this.anim)
+
+	this.TextureRegion.Max = [2]float32{
+		ENEMY_FRAME_WIDTH,
+		ENEMY_FRAME_HEIGHT,
+	}
+	this.Transform.Size = this.TextureRegion.Max
 }
 
 func (this *Enemy) createBody() {

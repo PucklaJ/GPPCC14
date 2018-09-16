@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/PucklaMotzer09/gohomeengine/src/gohome"
 	"github.com/PucklaMotzer09/mathgl/mgl32"
+	"strconv"
 )
 
 const (
@@ -154,4 +155,72 @@ func (this *OptionsMenu) Terminate() {
 	gohome.UpdateMgr.RemoveObject(this)
 	this.text.Terminate()
 	gohome.RenderMgr.RemoveObject(&this.text)
+}
+
+type LevelTitle struct {
+	gohome.Text2D
+
+	Level        uint8
+	WinCondition bool
+
+	direction bool
+}
+
+func (this *LevelTitle) Init() {
+	this.Text2D.Init(gohome.ButtonFont, 2*gohome.ButtonFontSize, this.WCS()+"Level "+strconv.FormatUint(uint64(this.Level), 10)+this.WCS()+"\n"+this.winConditionToString())
+	this.Transform.Origin = [2]float32{0.5, 0.5}
+	this.NotRelativeToCamera = 0
+
+	gohome.RenderMgr.AddObject(this)
+	gohome.UpdateMgr.AddObject(this)
+
+	this.direction = DOWN
+	mid := gohome.Render.GetNativeResolution().Div(2.0)
+	this.Transform.Position = mid.Sub([2]float32{0.0, mid.Y() + this.Text2D.Transform.Size[1]/2.0 + 20.0})
+}
+
+func (this *LevelTitle) Update(delta_time float32) {
+	mid := gohome.Render.GetNativeResolution().Div(2.0)
+	target := mid
+	if this.direction == DOWN {
+		target[1] -= mid.Y() / 2.0
+	} else {
+		target[1] -= mid.Y() + this.Text2D.Transform.Size[1]/2.0 + 20.0
+	}
+
+	this.Transform.Position = this.Transform.Position.Add(target.Sub(this.Transform.Position).Mul(0.03))
+
+	if this.direction == DOWN {
+		if this.Transform.Position.Sub(target).Len() < 3.0 {
+			this.direction = !this.direction
+		}
+	}
+}
+
+func (this *LevelTitle) Terminate() {
+	gohome.RenderMgr.RemoveObject(this)
+	gohome.UpdateMgr.RemoveObject(this)
+	this.Text2D.Terminate()
+}
+
+func (this *LevelTitle) winConditionToString() string {
+	switch this.WinCondition {
+	case WIN_CONDITION_TARGET:
+		return "Sammle alle Flaggen"
+	case WIN_CONDITION_ENEMY:
+		return "Besiege alle Gegner"
+	default:
+		return "Schließe den Level ab"
+	}
+}
+
+func (this *LevelTitle) WCS() string {
+	switch this.WinCondition {
+	case WIN_CONDITION_TARGET:
+		return "      "
+	case WIN_CONDITION_ENEMY:
+		return "      "
+	default:
+		return "       "
+	}
 }

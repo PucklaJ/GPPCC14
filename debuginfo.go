@@ -16,6 +16,7 @@ func (this *DebugInfo) Init() {
 	gohome.RenderMgr.AddObject(this)
 
 	this.Depth = 255
+	this.Visible = false
 }
 
 func (this *DebugInfo) Update(delta_time float32) {

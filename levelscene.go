@@ -34,12 +34,14 @@ type LevelScene struct {
 
 	debugDraw physics2d.PhysicsDebugDraw2D
 
-	deathBtns     [2]*gohome.Button
-	winMenu       WinMenu
-	optionsMenu   OptionsMenu
-	pauseBtn      *gohome.Button
-	optionsBtn    *gohome.Button
-	deathText     *gohome.Text2D
+	deathBtns   [2]*gohome.Button
+	winMenu     WinMenu
+	optionsMenu OptionsMenu
+	pauseBtn    *gohome.Button
+	optionsBtn  *gohome.Button
+	deathText   *gohome.Text2D
+	levelTitle  LevelTitle
+
 	menuInited    bool
 	menuDirection bool
 	paused        bool
@@ -240,6 +242,9 @@ func (this *LevelScene) initMenus() {
 	this.winMenu.Init()
 	this.optionsMenu.Init()
 	this.debugInfo.Init()
+	this.levelTitle.Level = uint8(this.LevelID + 1)
+	this.levelTitle.WinCondition = CURRENT_WIN_CONDITION
+	this.levelTitle.Init()
 }
 
 func (this *LevelScene) terminateMenu() {
@@ -560,6 +565,7 @@ func (this *LevelScene) Terminate() {
 	this.winMenu.Terminate()
 	this.optionsMenu.Terminate()
 	this.debugInfo.Terminate()
+	this.levelTitle.Terminate()
 	if this.pauseBtn != nil {
 		this.pauseBtn.Terminate()
 	}
