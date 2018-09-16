@@ -482,9 +482,21 @@ func (this *Player) IsGrounded() (grounded bool) {
 			fa, fb = fb, fa
 		}
 
-		if fa.GetFilterData().CategoryBits&PLAYER_FEET_CATEGORY != 0 {
+		if fa.GetFilterData().CategoryBits == PLAYER_FEET_CATEGORY || fa.GetFilterData().CategoryBits == PLAYER_FEET_SENSOR_CATEGORY {
 			grounded = true
 			return
+		} else if fa.GetFilterData().CategoryBits == PLAYER_CATEGORY && fb.GetFilterData().CategoryBits&BALL_CATEGORY != 0 {
+			ballP := fb.GetBody().GetPosition()
+			var mani box2d.B2WorldManifold
+			c.GetWorldManifold(&mani)
+			for _, p := range mani.Points {
+				rel := box2d.B2Vec2Sub(p, ballP)
+				angle := math.Atan2(rel.Y, rel.X) / math.Pi * 180.0
+				if angle >= 90-30 && angle <= 90+30 {
+					grounded = true
+					return
+				}
+			}
 		}
 	}
 	grounded = false
