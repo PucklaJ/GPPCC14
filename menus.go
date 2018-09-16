@@ -170,6 +170,7 @@ func (this *LevelTitle) Init() {
 	this.Text2D.Init(gohome.ButtonFont, 2*gohome.ButtonFontSize, this.WCS()+"Level "+strconv.FormatUint(uint64(this.Level), 10)+this.WCS()+"\n"+this.winConditionToString())
 	this.Transform.Origin = [2]float32{0.5, 0.5}
 	this.NotRelativeToCamera = 0
+	this.Depth = MENU_DEPTH
 
 	gohome.RenderMgr.AddObject(this)
 	gohome.UpdateMgr.AddObject(this)

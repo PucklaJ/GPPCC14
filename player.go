@@ -478,11 +478,11 @@ func (this *Player) IsGrounded() (grounded bool) {
 		}
 		fa := c.GetFixtureA()
 		fb := c.GetFixtureB()
-		if fb.GetFilterData().CategoryBits&PLAYER_CATEGORY == PLAYER_CATEGORY {
+		if fb.GetFilterData().CategoryBits&PLAYER_CATEGORY != 0 {
 			fa, fb = fb, fa
 		}
 
-		if fa.GetFilterData().CategoryBits&PLAYER_FEET_CATEGORY == PLAYER_FEET_CATEGORY {
+		if fa.GetFilterData().CategoryBits&PLAYER_FEET_CATEGORY != 0 {
 			grounded = true
 			return
 		}

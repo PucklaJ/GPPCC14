@@ -10,12 +10,13 @@ const GAME_HEIGHT uint32 = 720.0
 const GRAVITY float32 = 200.0
 const ZOOM float32 = 3.0
 
-const DELETE_RAY_DEPTH uint8 = 2
 const PLAYER_DEPTH uint8 = 1
+const DELETE_RAY_DEPTH uint8 = 2
 const WEAPON_DEPTH uint8 = 3
-const INVENTORY_DEPTH uint8 = 4
-const SCOPE_DEPTH uint8 = 5
-const MENU_DEPTH uint8 = 6
+const SPECIAL_DEPTH uint8 = 4
+const INVENTORY_DEPTH uint8 = 5
+const SCOPE_DEPTH uint8 = 6
+const MENU_DEPTH uint8 = 7
 
 const NUM_LEVELS uint32 = 9
 
@@ -61,6 +62,7 @@ const ENEMY_BIG_LEFT_SENSOR_CATEGORY uint16 = 1<<8 | ENEMY_SENSOR_CATEGORY
 const ENEMY_BIG_RIGHT_SENSOR_CATEGORY uint16 = 1<<9 | ENEMY_SENSOR_CATEGORY
 const PLAYER_FEET_SENSOR_CATEGORY uint16 = (1 << 10) | PLAYER_CATEGORY
 const SPIKE_CATEGORY uint16 = 1 << 11
+const BALL_CATEGORY uint16 = 1 << 12
 
 const WIN_CONDITION_TARGET bool = true
 const WIN_CONDITION_ENEMY bool = false

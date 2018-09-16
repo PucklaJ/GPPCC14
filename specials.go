@@ -30,6 +30,7 @@ func (this *TargetCollect) Init() {
 	this.TextureRegion.Max[0] = 32.0
 	this.Transform.Size = [2]float32{32.0, 32.0}
 	this.Transform.Origin = [2]float32{0.5, 0.5}
+	this.Depth = SPECIAL_DEPTH
 
 	gohome.UpdateMgr.AddObject(this)
 	gohome.UpdateMgr.AddObject(&this.anim)
@@ -52,6 +53,7 @@ func (this *TargetCollect) Terminate() {
 
 func (this *Target) Init(texName string) {
 	this.Sprite2D.Init(texName)
+	this.Depth = SPECIAL_DEPTH
 
 	this.anim = gohome.SpriteAnimation2D(this.Texture, 3, 1, TARGET_FRAME_TIME)
 	this.anim.Loop = true
@@ -111,6 +113,7 @@ func disappear(body *box2d.B2Body, world *box2d.B2World, wp *DeleteWeapon) *Spar
 
 	var sp Sparcles
 	sp.Init("Disappear")
+	sp.Depth = SPECIAL_DEPTH
 	sp.Transform.Position = physics2d.ToPixelCoordinates(body.GetPosition())
 	sp.Transform.Origin = [2]float32{0.5, 0.5}
 	sp.world = world
@@ -134,6 +137,7 @@ type Explosion struct {
 
 func (this *Explosion) Init(texName string) {
 	this.Sprite2D.Init(texName)
+	this.Depth = SPECIAL_DEPTH
 	gohome.ResourceMgr.GetSound("Explosion").Play(false)
 }
 

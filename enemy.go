@@ -181,9 +181,9 @@ func (this *Enemy) checkCollisions() {
 			continue
 		}
 
-		if fb.GetFilterData().CategoryBits != GROUND_CATEGORY &&
-			fb.GetFilterData().CategoryBits != WEAPON_CATEGORY &&
-			fb.GetFilterData().CategoryBits != ENEMY_CATEGORY {
+		if fb.GetFilterData().CategoryBits&GROUND_CATEGORY == 0 &&
+			fb.GetFilterData().CategoryBits&WEAPON_CATEGORY == 0 &&
+			fb.GetFilterData().CategoryBits&ENEMY_CATEGORY == 0 {
 			continue
 		}
 
