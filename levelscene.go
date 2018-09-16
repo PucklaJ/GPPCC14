@@ -224,7 +224,7 @@ func (this *LevelScene) initMenus() {
 	this.optionsBtn.Transform.Size = [2]float32{OPTIONS_BUTTON_SIZE, OPTIONS_BUTTON_SIZE}
 	this.optionsBtn.Depth = MENU_DEPTH
 	this.optionsBtn.PressCallback = func(btn *gohome.Button) {
-		if this.winMenu.direction == DOWN {
+		if this.winMenu.direction == DOWN || this.Player.Died() {
 			return
 		}
 
