@@ -57,68 +57,6 @@ func (this *DeleteWeapon) GetInventoryTexture() gohome.Texture {
 	return gohome.ResourceMgr.GetTexture("DeleteWeaponInv")
 }
 
-type Sparcles struct {
-	gohome.Sprite2D
-	anim   gohome.Tweenset
-	body   *box2d.B2Body
-	world  *box2d.B2World
-	weapon *DeleteWeapon
-	paused bool
-}
-
-func (this *Sparcles) Update(delta_time float32) {
-	if this.paused {
-		return
-	}
-
-	if this.anim.Done() {
-		t, ok := this.body.GetUserData().(TerminateObject)
-		if ok {
-			t.Terminate()
-		}
-		this.world.DestroyBody(this.body)
-		this.Terminate()
-	} else {
-		this.Transform.Position = physics2d.ToPixelCoordinates(this.body.GetPosition())
-	}
-}
-
-func (this *Sparcles) Terminate() {
-	gohome.RenderMgr.RemoveObject(this)
-	gohome.UpdateMgr.RemoveObject(this)
-	gohome.UpdateMgr.RemoveObject(&this.anim)
-	for i := 0; i < len(this.weapon.sparcles); i++ {
-		if this.weapon.sparcles[i] == this {
-			this.weapon.sparcles = append(this.weapon.sparcles[:i], this.weapon.sparcles[i+1:]...)
-			return
-		}
-	}
-}
-
-func disappear(body *box2d.B2Body, world *box2d.B2World, wp *DeleteWeapon) *Sparcles {
-	for f := body.GetFixtureList(); f != nil; f = f.GetNext() {
-		var i int = 1
-		f.SetUserData(&i)
-	}
-
-	var sp Sparcles
-	sp.Init("Disappear")
-	sp.Transform.Position = physics2d.ToPixelCoordinates(body.GetPosition())
-	sp.Transform.Origin = [2]float32{0.5, 0.5}
-	sp.world = world
-	sp.body = body
-	sp.weapon = wp
-	sp.anim = gohome.SpriteAnimation2D(sp.Texture, 3, 2, 1.0/8.0)
-	sp.anim.SetParent(&sp.Sprite2D)
-	sp.anim.Start()
-	sp.anim.Update(0.0)
-	gohome.RenderMgr.AddObject(&sp)
-	gohome.UpdateMgr.AddObject(&sp.anim)
-	gohome.UpdateMgr.AddObject(&sp)
-
-	return &sp
-}
-
 func (this *DeleteWeapon) castRay(dir mgl32.Vec2) {
 	pmgr := this.Player.PhysicsMgr
 	w := &pmgr.World
@@ -168,8 +106,6 @@ func (this *DeleteWeapon) Use(target mgl32.Vec2, energy float32) {
 	var ray DeleteRay
 	ray.Init()
 	ray.Transform.Position = this.Player.Transform.Position.Add(dir.Mul(DELETE_WEAPON_DISTANCE / 2.0)).Add(this.Player.GetWeaponOffset()).Sub([2]float32{0.0, DELETE_RAYS_WIDTH / 2.0})
-
-	// this.Ammo--
 
 	ray.Transform.Rotation = mgl32.RadToDeg(-dir.Angle())
 	this.castRay(dir)
