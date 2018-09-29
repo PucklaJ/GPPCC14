@@ -1,0 +1,6 @@
+Schieße den Weg ist ein Platformer in dem man Platformen schießen kann.
+Es gibt vier verschiedene Waffen. Eine davon schießt normale Blöcke.
+Eine andere ist ein Block, der in der Luft einfriert, so dass man auf ihn springen kann.
+Die dritte Waffe schießt eine Kugel, die in eine Richtung rollt und man kann auf ihr stehen.
+Dann gibt es noch eine Waffe, die Blöcke schießt, die sich von links nach rechts bewegen.
+Jetzt zeige ich noch ein paar Ausschitte aus den neun Level. Viel Spaß.
