@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/PucklaMotzer09/gohomeengine/src/gohome"
 	"time"
 )
@@ -13,7 +12,6 @@ func (this *GlobalUpdate) Update(delta_time float32) {
 	if gohome.InputMgr.JustPressed(gohome.KeyF11) {
 		if !gohome.Framew.WindowIsFullscreen() {
 			ms := gohome.Framew.MonitorGetSize()
-			fmt.Println("Monitor:", ms)
 			gohome.Framew.WindowSetSize(ms)
 			time.Sleep(time.Millisecond * 100)
 			gohome.Framew.WindowSetFullscreen(true)
