@@ -38,7 +38,7 @@ func (this *StartupScene) Init() {
 
 	LoadResources()
 
-	gohome.RenderMgr.BackBuffer.SetFiltering(gohome.FILTERING_NEAREST)
+	gohome.RenderMgr.BackBufferMS.SetFiltering(gohome.FILTERING_NEAREST)
 	gohome.UpdateMgr.AddObject(&GlobalUpdate{})
 
 	gohome.Render.SetBackgroundColor(gohome.Color{52, 101, 255, 255})
