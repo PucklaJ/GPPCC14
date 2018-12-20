@@ -30,6 +30,10 @@ type StartupScene struct {
 }
 
 func (this *StartupScene) Init() {
+	gohome.Render.SetNativeResolution(GAME_WIDTH, GAME_HEIGHT)
+	gohome.RenderMgr.GetBackBuffer().SetFiltering(gohome.FILTERING_NEAREST)
+	gohome.RenderMgr.UpdateProjectionWithViewport = true
+
 	gohome.Init2DShaders()
 
 	audio := gohome.Framew.GetAudioManager()
@@ -38,7 +42,6 @@ func (this *StartupScene) Init() {
 
 	LoadResources()
 
-	gohome.RenderMgr.GetBackBuffer().SetFiltering(gohome.FILTERING_NEAREST)
 	gohome.UpdateMgr.AddObject(&GlobalUpdate{})
 
 	gohome.Render.SetBackgroundColor(gohome.Color{52, 101, 255, 255})
