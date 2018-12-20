@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/PucklaMotzer09/gohomeengine/src/gohome"
+	"github.com/PucklaMotzer09/GoHomeEngine/src/gohome"
 	"time"
 )
 
@@ -38,7 +38,7 @@ func (this *StartupScene) Init() {
 
 	LoadResources()
 
-	gohome.RenderMgr.BackBuffer.SetFiltering(gohome.FILTERING_NEAREST)
+	gohome.RenderMgr.GetBackBuffer().SetFiltering(gohome.FILTERING_NEAREST)
 	gohome.UpdateMgr.AddObject(&GlobalUpdate{})
 
 	gohome.Render.SetBackgroundColor(gohome.Color{52, 101, 255, 255})

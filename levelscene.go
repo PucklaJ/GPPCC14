@@ -2,8 +2,8 @@ package main
 
 import (
 	"github.com/ByteArena/box2d"
-	"github.com/PucklaMotzer09/gohomeengine/src/gohome"
-	"github.com/PucklaMotzer09/gohomeengine/src/physics2d"
+	"github.com/PucklaMotzer09/GoHomeEngine/src/gohome"
+	"github.com/PucklaMotzer09/GoHomeEngine/src/physics2d"
 	"github.com/PucklaMotzer09/mathgl/mgl32"
 	"strings"
 )
@@ -49,6 +49,7 @@ type LevelScene struct {
 }
 
 func (this *LevelScene) Init() {
+	gohome.ErrorMgr.ShowMessageBoxes = false
 	if this.LevelID > NUM_LEVELS-1 {
 		gohome.SceneMgr.SwitchScene(&LevelSelectScene{})
 		return
@@ -540,7 +541,7 @@ func (this *LevelScene) Update(delta_time float32) {
 	if this.restarting {
 		return
 	}
-	if gohome.InputMgr.JustPressed(gohome.KeyP) {
+	if gohome.InputMgr.JustPressed(gohome.KeyP) || gohome.InputMgr.JustPressed(gohome.KeyBack) {
 		if this.paused {
 			this.Resume()
 		} else {
