@@ -92,10 +92,9 @@ func (this *MoveWeapon) Use(target mgl32.Vec2, energy float32) {
 	spr.TextureRegion.Min[1] = (float32(spr.Texture.GetHeight()) / 3.0) * 2.0
 	spr.Transform.Size[0], spr.Transform.Size[1] = float32(spr.Texture.GetWidth())/3.0, float32(spr.Texture.GetHeight())/3.0
 	spr.Transform.Origin = [2]float32{0.5, 0.5}
-	con.Init(spr.Transform, body)
+	con.Init(spr.Transform, body, &PhysicsMgr)
 
 	gohome.RenderMgr.AddObject(&spr)
-	gohome.UpdateMgr.AddObject(&con)
 
 	p := this.platforms[len(this.platforms)-1]
 	p.Sprite = &spr
@@ -115,7 +114,7 @@ func (this *MoveWeapon) Use(target mgl32.Vec2, energy float32) {
 
 	body.SetUserData(p)
 
-	con.Update(0.0)
+	con.Update()
 
 	this.Ammo--
 }

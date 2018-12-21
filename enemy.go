@@ -61,9 +61,8 @@ func (this *Enemy) Init(pos mgl32.Vec2, player *Player) {
 
 	gohome.UpdateMgr.AddObject(this)
 	gohome.RenderMgr.AddObject(this)
-	this.connector.Init(this.Transform, this.Body)
+	this.connector.Init(this.Transform, this.Body, &PhysicsMgr)
 	this.connector.Offset = [2]float32{ENEMY_OFFSET_X, ENEMY_OFFSET_Y}
-	gohome.UpdateMgr.AddObject(&this.connector)
 
 	this.anim = gohome.SpriteAnimation2D(this.Texture, 3, 4, ENEMY_FRAME_TIME)
 	this.anim.Loop = true
@@ -270,8 +269,8 @@ func (this *Enemy) Terminate() {
 	this.Player.PhysicsMgr.World.DestroyBody(this.Body)
 	gohome.UpdateMgr.RemoveObject(this)
 	gohome.RenderMgr.RemoveObject(this)
-	gohome.UpdateMgr.RemoveObject(&this.connector)
 	gohome.UpdateMgr.RemoveObject(&this.anim)
+	this.connector.Terminate()
 
 	this.terminated = true
 }

@@ -80,10 +80,9 @@ func (this *Player) Init(pos mgl32.Vec2, pmgr *physics2d.PhysicsManager2D) {
 	this.Transform.Origin = [2]float32{0.5, 0.5}
 
 	this.createBody(pmgr)
-	this.connector.Init(this.Transform, this.body)
+	this.connector.Init(this.Transform, this.body, &PhysicsMgr)
 
 	gohome.UpdateMgr.AddObject(this)
-	gohome.UpdateMgr.AddObject(&this.connector)
 	gohome.RenderMgr.AddObject(this)
 
 	this.PhysicsMgr = pmgr
@@ -607,7 +606,6 @@ func (this *Player) terminateSprite() {
 	}
 
 	gohome.UpdateMgr.RemoveObject(this)
-	gohome.UpdateMgr.RemoveObject(&this.connector)
 	gohome.UpdateMgr.RemoveObject(&this.walkAnimation)
 	gohome.UpdateMgr.RemoveObject(&this.fallAnimation)
 	gohome.UpdateMgr.RemoveObject(&this.shootAnimation)
@@ -618,6 +616,7 @@ func (this *Player) terminateSprite() {
 	if this.body != nil {
 		this.PhysicsMgr.World.DestroyBody(this.body)
 	}
+	this.connector.Terminate()
 	this.terminated = true
 }
 

@@ -105,10 +105,9 @@ func (this *FreezeWeapon) createBox(dir mgl32.Vec2, energy float32) *box2d.B2Bod
 	spr.TextureRegion.Max[0] = FREEZE_FRAME_WIDTH
 	spr.Transform.Size[0], spr.Transform.Size[1] = FREEZE_FRAME_WIDTH, FREEZE_FRAME_HEIGHT
 	spr.Transform.Origin = [2]float32{0.5, 0.5}
-	con.Init(spr.Transform, body)
+	con.Init(spr.Transform, body, &PhysicsMgr)
 
 	gohome.RenderMgr.AddObject(&spr)
-	gohome.UpdateMgr.AddObject(&con)
 
 	var block WeaponBlock
 	block.Sprite = &spr
@@ -117,7 +116,7 @@ func (this *FreezeWeapon) createBox(dir mgl32.Vec2, energy float32) *box2d.B2Bod
 
 	body.SetUserData(&this.blocks[len(this.blocks)-1])
 
-	con.Update(0.0)
+	con.Update()
 
 	return body
 }

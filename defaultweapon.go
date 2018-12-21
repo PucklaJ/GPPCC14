@@ -75,10 +75,9 @@ func (this *DefaultWeapon) createBox(dir mgl32.Vec2, energy float32) {
 	var con physics2d.PhysicsConnector2D
 
 	spr.Init("DefaultWeaponBlock")
-	con.Init(spr.Transform, body)
+	con.Init(spr.Transform, body, &PhysicsMgr)
 
 	gohome.RenderMgr.AddObject(&spr)
-	gohome.UpdateMgr.AddObject(&con)
 
 	var block WeaponBlock
 	block.Sprite = &spr
@@ -87,7 +86,7 @@ func (this *DefaultWeapon) createBox(dir mgl32.Vec2, energy float32) {
 
 	body.SetUserData(&this.blocks[len(this.blocks)-1])
 
-	con.Update(0.0)
+	con.Update()
 }
 
 func (this *DefaultWeapon) OnDie() {

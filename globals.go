@@ -2,7 +2,10 @@ package main
 
 import (
 	"github.com/PucklaMotzer09/GoHomeEngine/src/gohome"
+	"github.com/PucklaMotzer09/GoHomeEngine/src/physics2d"
 )
+
+var PhysicsMgr physics2d.PhysicsManager2D
 
 const GAME_WIDTH uint32 = 1280.0
 const GAME_HEIGHT uint32 = 720.0

@@ -26,7 +26,7 @@ type WeaponBlock struct {
 
 func (this *WeaponBlock) Terminate() {
 	gohome.RenderMgr.RemoveObject(this.Sprite)
-	gohome.UpdateMgr.RemoveObject(this.Connector)
+	this.Connector.Terminate()
 }
 
 type NilWeapon struct {

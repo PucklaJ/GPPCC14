@@ -32,6 +32,7 @@ type BallWeaponBlock struct {
 func (this *BallWeaponBlock) Terminate() {
 	this.WeaponBlock.Terminate()
 	gohome.UpdateMgr.RemoveObject(&this.anim)
+	this.Connector.Terminate()
 }
 
 type BallWeapon struct {
@@ -114,10 +115,9 @@ func (this *BallWeapon) createBall(dir mgl32.Vec2, energy float32) *box2d.B2Body
 	spr.Init("BallWeaponBlock")
 	spr.TextureRegion.Max[0] = float32(spr.Texture.GetWidth()) / 7.0
 	spr.Transform.Size[0] = spr.TextureRegion.Max[0]
-	con.Init(spr.Transform, body)
+	con.Init(spr.Transform, body, &PhysicsMgr)
 
 	gohome.RenderMgr.AddObject(&spr)
-	gohome.UpdateMgr.AddObject(&con)
 
 	var block BallWeaponBlock
 	block.Sprite = &spr
@@ -143,7 +143,7 @@ func (this *BallWeapon) createBall(dir mgl32.Vec2, energy float32) *box2d.B2Body
 
 	body.SetUserData(this.ballBlocks[len(this.ballBlocks)-1])
 
-	con.Update(0.0)
+	con.Update()
 
 	return body
 }

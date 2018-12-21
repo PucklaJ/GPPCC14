@@ -23,7 +23,6 @@ const (
 )
 
 type LevelScene struct {
-	PhysicsMgr     physics2d.PhysicsManager2D
 	LevelID        uint32
 	Map            gohome.TiledMap
 	Player         Player
@@ -58,9 +57,9 @@ func (this *LevelScene) Init() {
 	physics2d.PIXEL_PER_METER = 10.0
 	gohome.ResourceMgr.LoadTMXMap("Level", LEVELS_TMX_MAPS[this.LevelID])
 
-	this.PhysicsMgr.Init([2]float32{0.0, GRAVITY})
-	gohome.UpdateMgr.AddObject(&this.PhysicsMgr)
-	this.debugDraw = this.PhysicsMgr.GetDebugDraw()
+	PhysicsMgr.Init([2]float32{0.0, GRAVITY})
+	gohome.UpdateMgr.AddObject(&PhysicsMgr)
+	this.debugDraw = PhysicsMgr.GetDebugDraw()
 	this.debugDraw.Visible = false
 	gohome.RenderMgr.AddObject(&this.debugDraw)
 
@@ -73,7 +72,7 @@ func (this *LevelScene) Init() {
 func (this *LevelScene) initMap() {
 	this.Map.Init("Level")
 	gohome.RenderMgr.AddObject(&this.Map)
-	groundBodies := this.PhysicsMgr.LayerToCollision(&this.Map, "Collision")
+	groundBodies := PhysicsMgr.LayerToCollision(&this.Map, "Collision")
 	for i := 0; i < len(groundBodies); i++ {
 		b := groundBodies[i]
 		if b == nil {
@@ -117,7 +116,7 @@ func (this *LevelScene) initMap() {
 		}
 	}
 
-	this.Player.Init(playerStart, &this.PhysicsMgr)
+	this.Player.Init(playerStart, &PhysicsMgr)
 	for i := 0; i < len(this.Enemies); i++ {
 		this.Enemies[i].Init(this.Enemies[i].Transform.Position, &this.Player)
 	}
@@ -188,7 +187,7 @@ func (this *LevelScene) createSpike(pos mgl32.Vec2) {
 		pos[1] + h/2.0,
 	})
 
-	body := this.PhysicsMgr.World.CreateBody(&bdef)
+	body := PhysicsMgr.World.CreateBody(&bdef)
 
 	fdef := box2d.MakeB2FixtureDef()
 	fdef.Friction = GROUND_FRICTION
@@ -353,7 +352,7 @@ func (this *LevelScene) PauseGame() {
 	for _, e := range this.Enemies {
 		e.paused = true
 	}
-	this.PhysicsMgr.Paused = true
+	PhysicsMgr.Paused = true
 	this.pauseBtn.Texture = gohome.ResourceMgr.GetTexture("Resume")
 }
 
@@ -375,7 +374,7 @@ func (this *LevelScene) Resume() {
 	for _, e := range this.Enemies {
 		e.paused = false
 	}
-	this.PhysicsMgr.Paused = false
+	PhysicsMgr.Paused = false
 	this.pauseBtn.Texture = gohome.ResourceMgr.GetTexture("Pause")
 }
 
@@ -556,7 +555,7 @@ func (this *LevelScene) Update(delta_time float32) {
 }
 
 func (this *LevelScene) Terminate() {
-	gohome.UpdateMgr.RemoveObject(&this.PhysicsMgr)
+	gohome.UpdateMgr.RemoveObject(&PhysicsMgr)
 	gohome.RenderMgr.RemoveObject(&this.Map)
 	gohome.RenderMgr.RemoveObject(&this.debugDraw)
 
@@ -584,5 +583,5 @@ func (this *LevelScene) Terminate() {
 	}
 	this.Player.Terminate()
 	this.Map.Terminate()
-	this.PhysicsMgr.Terminate()
+	PhysicsMgr.Terminate()
 }
