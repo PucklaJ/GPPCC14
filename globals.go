@@ -67,6 +67,8 @@ const PLAYER_FEET_SENSOR_CATEGORY uint16 = (1 << 10) | PLAYER_CATEGORY
 const SPIKE_CATEGORY uint16 = 1 << 11
 const BALL_CATEGORY uint16 = 1 << 12
 
+const AI_DISTANCE float32 = CAMERA_BOX_WIDTH * ZOOM / 3.0
+
 const WIN_CONDITION_TARGET bool = true
 const WIN_CONDITION_ENEMY bool = false
 

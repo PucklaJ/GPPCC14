@@ -247,6 +247,17 @@ func (this *Enemy) Update(delta_time float32) {
 		return
 	}
 
+	disttoplayer := this.Transform.Position.Sub(this.Player.Transform.Position).Len2()
+	if disttoplayer > AI_DISTANCE*AI_DISTANCE {
+		if this.Body.IsActive() {
+			this.Body.SetActive(false)
+		}
+		return
+	}
+	if !this.Body.IsActive() {
+		this.Body.SetActive(true)
+	}
+
 	this.checkCollisions()
 	this.updateVelocity()
 	this.updateAnimation()
