@@ -113,11 +113,9 @@ func (this *OptionsMenu) Init() {
 	this.volumeSlider.Circle.Depth = MENU_DEPTH
 	this.volumeSlider.Long.Depth = MENU_DEPTH
 	this.volumeSlider.ValueChangedCallback = func(sld *gohome.Slider) {
-		audio := gohome.Framew.GetAudioManager()
-		audio.SetVolume(sld.Value)
-
+		gohome.AudioMgr.SetVolume(sld.Value)
 	}
-	this.volumeSlider.Value = gohome.Framew.GetAudioManager().GetVolume()
+	this.volumeSlider.Value = gohome.AudioMgr.GetVolume()
 	this.volumeSlider.StepSize = VOLUME_SLIDER_STEP_SIZE
 
 	this.text.Init(gohome.ButtonFont, gohome.ButtonFontSize*2.0, "Lautstärke")

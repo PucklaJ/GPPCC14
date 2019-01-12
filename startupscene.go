@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/PucklaMotzer09/GoHomeEngine/src/audio"
 	"github.com/PucklaMotzer09/GoHomeEngine/src/gohome"
 	"time"
 )
@@ -36,9 +37,8 @@ func (this *StartupScene) Init() {
 
 	gohome.Init2DShaders()
 
-	audio := gohome.Framew.GetAudioManager()
-	audio.Init()
-	audio.SetVolume(0.5)
+	audio.InitAudio()
+	gohome.AudioMgr.SetVolume(0.5)
 
 	LoadResources()
 
