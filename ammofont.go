@@ -6,13 +6,12 @@ import (
 )
 
 const (
-	AMMO_TEXT_PADDING float32 = 1.0
-	AMMO_TEXT_SIZE    float32 = 16.0
+	AMMO_TEXT_PADDING = 1
+	AMMO_TEXT_SIZE    = 16
+	AMMO_TEXT_SCALE   = 1
 )
 
-var (
-	AMMO_TEXT_SCALE float32 = 1.0
-)
+var ()
 
 type AmmoText struct {
 	gohome.Sprite2D
@@ -34,7 +33,7 @@ func (this *AmmoText) updateTexture() {
 		this.Texture.Terminate()
 	}
 	str := strconv.FormatUint(uint64(this.Number), 10)
-	rt := gohome.Render.CreateRenderTexture("AmmoTextTexture", uint32((float32(len(str))*(AMMO_TEXT_SIZE+AMMO_TEXT_PADDING)-AMMO_TEXT_PADDING)*AMMO_TEXT_SCALE), uint32(AMMO_TEXT_SIZE*AMMO_TEXT_SCALE), 1, false, false, false, false)
+	rt := gohome.Render.CreateRenderTexture("AmmoTextTexture", int((float32(len(str))*(AMMO_TEXT_SIZE+AMMO_TEXT_PADDING)-AMMO_TEXT_PADDING)*AMMO_TEXT_SCALE), AMMO_TEXT_SIZE*AMMO_TEXT_SCALE, 1, false, false, false, false)
 	rt.SetFiltering(gohome.FILTERING_NEAREST)
 	prevProj := gohome.RenderMgr.Projection2D
 	rt.SetAsTarget()

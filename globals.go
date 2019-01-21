@@ -7,21 +7,21 @@ import (
 
 var PhysicsMgr physics2d.PhysicsManager2D
 
-const GAME_WIDTH uint32 = 1280.0
-const GAME_HEIGHT uint32 = 720.0
+const GAME_WIDTH = 1280
+const GAME_HEIGHT = 720
 
-const GRAVITY float32 = 200.0
-const ZOOM float32 = 3.0
+const GRAVITY = 200
+const ZOOM = 3
 
-const PLAYER_DEPTH uint8 = 1
-const DELETE_RAY_DEPTH uint8 = 2
-const WEAPON_DEPTH uint8 = 3
-const SPECIAL_DEPTH uint8 = 4
-const INVENTORY_DEPTH uint8 = 5
-const SCOPE_DEPTH uint8 = 6
-const MENU_DEPTH uint8 = 7
+const PLAYER_DEPTH = 1
+const DELETE_RAY_DEPTH = 2
+const WEAPON_DEPTH = 3
+const SPECIAL_DEPTH = 4
+const INVENTORY_DEPTH = 5
+const SCOPE_DEPTH = 6
+const MENU_DEPTH = 7
 
-const NUM_LEVELS uint32 = 9
+const NUM_LEVELS = 9
 
 var (
 	LEVELS_TMX_MAPS = [NUM_LEVELS]string{
@@ -69,8 +69,8 @@ const BALL_CATEGORY uint16 = 1 << 12
 
 const AI_DISTANCE float32 = CAMERA_BOX_WIDTH * ZOOM / 3.0
 
-const WIN_CONDITION_TARGET bool = true
-const WIN_CONDITION_ENEMY bool = false
+const WIN_CONDITION_TARGET = true
+const WIN_CONDITION_ENEMY = false
 
 var CURRENT_WIN_CONDITION bool
 

@@ -7,15 +7,15 @@ import (
 )
 
 const (
-	INVENTORY_TEXTURE_SIZE float32 = 48.0
-	INVENTORY_PADDING      float32 = INVENTORY_TEXTURE_SIZE / 8.0
-	AMMO_TEXT_FONT_SIZE    uint32  = 20
-	AMMO_TEXT_OFFSET_X     float32 = INVENTORY_PADDING + 8
-	AMMO_TEXT_OFFSET_Y     float32 = 2
-	AMMO_TEXT_POS_X        float32 = INVENTORY_TEXTURE_SIZE + INVENTORY_PADDING
-	AMMO_TEXT_POS_Y        float32 = INVENTORY_PADDING
-	AMMO_TEXT_ORIGIN_X     float32 = 1.0
-	AMMO_TEXT_ORIGIN_Y     float32 = 0.0
+	INVENTORY_TEXTURE_SIZE = 48
+	INVENTORY_PADDING      = INVENTORY_TEXTURE_SIZE / 8
+	AMMO_TEXT_FONT_SIZE    = 20
+	AMMO_TEXT_OFFSET_X     = INVENTORY_PADDING + 8
+	AMMO_TEXT_OFFSET_Y     = 2
+	AMMO_TEXT_POS_X        = INVENTORY_TEXTURE_SIZE + INVENTORY_PADDING
+	AMMO_TEXT_POS_Y        = INVENTORY_PADDING
+	AMMO_TEXT_ORIGIN_X     = 1
+	AMMO_TEXT_ORIGIN_Y     = 0
 )
 
 type InventoryBar struct {
@@ -31,7 +31,7 @@ type InventoryBar struct {
 }
 
 func (this *InventoryBar) Init() {
-	tex := gohome.Render.CreateRenderTexture("InventoryBarTexture", uint32(INVENTORY_TEXTURE_SIZE+INVENTORY_PADDING*2.0), uint32(INVENTORY_TEXTURE_SIZE+INVENTORY_PADDING*2.0), 1, false, false, false, false)
+	tex := gohome.Render.CreateRenderTexture("InventoryBarTexture", INVENTORY_TEXTURE_SIZE+INVENTORY_PADDING*2, INVENTORY_TEXTURE_SIZE+INVENTORY_PADDING*2, 1, false, false, false, false)
 	this.Sprite2D.InitTexture(tex)
 
 	gohome.RenderMgr.AddObject(this)
@@ -106,10 +106,10 @@ func (this *InventoryBar) Update(delta_time float32) {
 
 func (this *InventoryBar) setRenderTarget() (gohome.Projection, float32) {
 	rt := this.Texture.(gohome.RenderTexture)
-	width := INVENTORY_PADDING*2 + INVENTORY_TEXTURE_SIZE
+	width := float32(INVENTORY_PADDING*2 + INVENTORY_TEXTURE_SIZE)
 
-	imgWidth := uint32(len(this.weapons)) * uint32(width)
-	imgHeight := uint32(rt.GetHeight())
+	imgWidth := len(this.weapons) * int(width)
+	imgHeight := rt.GetHeight()
 
 	rt.ChangeSize(imgWidth, imgHeight)
 	this.Transform.Size = [2]float32{float32(imgWidth), float32(imgHeight)}
@@ -168,7 +168,7 @@ func (this *InventoryBar) renderBox(col color.Color, x float32) {
 }
 
 func (this *InventoryBar) renderBar() {
-	width := INVENTORY_PADDING*2 + INVENTORY_TEXTURE_SIZE
+	width := float32(INVENTORY_PADDING*2 + INVENTORY_TEXTURE_SIZE)
 	for i := 0; i < len(this.weapons); i++ {
 		x := width * float32(i)
 		this.renderBox(colornames.Gray, x)
@@ -176,7 +176,7 @@ func (this *InventoryBar) renderBar() {
 }
 
 func (this *InventoryBar) renderTextures() {
-	width := INVENTORY_PADDING*2 + INVENTORY_TEXTURE_SIZE
+	width := float32(INVENTORY_PADDING*2 + INVENTORY_TEXTURE_SIZE)
 	for i := 0; i < len(this.weapons); i++ {
 		wt := this.weapons[i].GetInventoryTexture()
 		x := width * float32(i)
@@ -192,20 +192,20 @@ func (this *InventoryBar) renderTextures() {
 }
 
 func (this *InventoryBar) renderCurrent() {
-	width := INVENTORY_PADDING*2 + INVENTORY_TEXTURE_SIZE
+	width := float32(INVENTORY_PADDING*2 + INVENTORY_TEXTURE_SIZE)
 	x := width * float32(this.current)
 	this.renderBox(colornames.Gold, x)
 }
 
 func (this *InventoryBar) renderAmmoTexts() {
-	width := INVENTORY_PADDING*2 + INVENTORY_TEXTURE_SIZE
+	width := float32(INVENTORY_PADDING*2 + INVENTORY_TEXTURE_SIZE)
 	for i := 0; i < len(this.weapons); i++ {
 		x := width * float32(i)
 		text := this.ammoTexts[i]
 		text.Number = this.weapons[i].GetAmmo()
 		text.Flip = gohome.FLIP_NONE
 		x += AMMO_TEXT_POS_X
-		y := AMMO_TEXT_POS_Y
+		y := float32(AMMO_TEXT_POS_Y)
 
 		text.Transform.Position = [2]float32{x, y}
 		gohome.RenderMgr.RenderRenderObject(text)

@@ -335,7 +335,7 @@ func (this *LevelScene) initMenu(death bool, inMid bool) {
 
 	if death {
 		this.deathText = &gohome.Text2D{}
-		this.deathText.Init(gohome.ButtonFont, uint32(float32(gohome.ButtonFontSize)*1.5), "Sie sind gestorben")
+		this.deathText.Init(gohome.ButtonFont, int(float32(gohome.ButtonFontSize)*1.5), "Sie sind gestorben")
 		this.deathText.NotRelativeToCamera = 0
 		this.deathText.Transform.Origin = [2]float32{0.5, 0.5}
 		this.deathText.Transform.Position = deathTextPos

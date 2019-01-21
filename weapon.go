@@ -46,7 +46,7 @@ const (
 
 func (this *NilWeapon) OnAdd(p *Player) {
 	this.Player = p
-	this.tex = gohome.Render.CreateRenderTexture("NilWeaponInventoryTexture", uint32(INVENTORY_TEXTURE_SIZE), uint32(INVENTORY_TEXTURE_SIZE), 1, false, false, false, false)
+	this.tex = gohome.Render.CreateRenderTexture("NilWeaponInventoryTexture", INVENTORY_TEXTURE_SIZE, INVENTORY_TEXTURE_SIZE, 1, false, false, false, false)
 	this.tex.SetAsTarget()
 	gohome.Render.ClearScreen(gohome.Color{255, 100, 0, 255})
 	this.tex.UnsetAsTarget()
